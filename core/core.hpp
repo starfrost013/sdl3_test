@@ -18,13 +18,15 @@ struct GameInfo
 
 struct Game
 {
-    SDL_Window* window; 
+    SDL_Window* window;         // SDL Window
 
-    SDL_Renderer* renderer; 
+    SDL_Renderer* renderer;     // SDL Renderer
+
+    SDL_Texture* render_target;  // Texture that gets blited to the display
 
     uint32_t tickrate;          // The game's tickrate
 
-    uint64_t last_tick_time;   // last frame time in nanoseconds (returned by SDL_GetTicksNS)
+    uint64_t last_tick_time;    // last frame time in nanoseconds (returned by SDL_GetTicksNS)
 
     GameInfo info;              // Level-specific game information
 

@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include "SDL3/SDL_error.h"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_init.h"
 #include "SDL3/SDL_render.h"
@@ -20,6 +21,15 @@ bool Game_Init()
 
     if (!SDL_CreateWindowAndRenderer(APP_SIGNON_STRING, game.settings.screen_x, game.settings.screen_y, 0, &game.window, &game.renderer))
         return false;
+
+    // not really a render target, but w/e
+    game.render_target = SDL_CreateTexture(game.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, game.settings.screen_x, game.settings.screen_y);
+
+    if (!game.render_target)
+    {
+        std::cout << "Failed to create render target " << SDL_GetError() << std::endl;
+        Game_Shutdown();
+    }
     
     game.running = true; 
     game.tickrate = 60; 
@@ -40,6 +50,8 @@ bool Game_Init()
 
     player.move_speed = 0.09;
     player.rotation_speed = 0.09; // radians
+
+    Game_SetLevel(0);
 
     return true; 
 }
@@ -127,6 +139,8 @@ bool Game_Shutdown()
     SDL_DestroyWindow(game.window);
 
     SDL_Quit();
+
+    exit(0); // allow exit codes for errors?
 
     return true;
 }

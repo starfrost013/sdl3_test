@@ -15,7 +15,6 @@ void Game_SetLevel(uint32_t level_id)
         //temp
         std::cout << "Invalid level selected" << std::endl;
         Game_Shutdown();
-        exit(1);
     }
 
     game.info.level_id = level_id; 
