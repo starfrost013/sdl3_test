@@ -143,7 +143,7 @@ void Game_RenderLevel()
                 b <<= 1; 
             }
 
-            // blit it to the texture one line at a time while also clearing off the old stuf, starting at y=0
+            // blit it to the texture one line at a time while also clearing off the old stuff, starting at y=0
             uint32_t texture_pos = x; // 32-bit texture 
 
             for (int32_t y = 0; y < game.settings.screen_y; y++)
@@ -156,13 +156,8 @@ void Game_RenderLevel()
                 else
                     texture_pixels[texture_pos] = 0;
 
-                texture_pos += (pitch >> 2);//pitch is in bytes and this is a 32-bit texture 
+                texture_pos += (pitch >> 2); //pitch is in bytes and this is a 32-bit texture 
             }
-            /*
-            SDL_SetRenderDrawColor(game.renderer, r, g, b, 255);
-            SDL_RenderLine(game.renderer, x, draw_start, x, draw_end);
-            SDL_SetRenderDrawColor(game.renderer, 0, 0, 0, 0);
-            */
         }
     }
 

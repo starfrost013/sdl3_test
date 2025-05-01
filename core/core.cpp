@@ -35,8 +35,8 @@ bool Game_Init()
     game.tickrate = 60; 
 
     /* temp player init code */
-    player.x = 3;
-    player.y = 3;
+    player.x = 2.5;
+    player.y = 4;
     
     // works for both
     player.spawn_x = 3;
