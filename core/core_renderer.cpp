@@ -1,6 +1,6 @@
 #include <cmath>
 #include <iostream>
-#include "SDL3/SDL_oldnames.h"
+#include "SDL3/SDL_rect.h"
 #include "SDL3/SDL_render.h"
 
 #include <core/core.hpp>
@@ -37,6 +37,18 @@ void Game_RenderLevel()
     || player.x < 0
     || player.y < 0)
         return;
+
+    SDL_Rect new_rect;
+
+    new_rect.x = 0;
+    new_rect.y = 0;
+    new_rect.w = game.settings.screen_x;
+    new_rect.h = game.settings.screen_y;
+
+    uint32_t* texture_pixels;  
+    int32_t pitch; 
+
+    SDL_LockTexture(game.render_target, &new_rect, (void**)&texture_pixels, &pitch);
 
     // float should be sufficient for what we need 
     for (int32_t x = 0; x < game.settings.screen_x; x++)
@@ -108,7 +120,7 @@ void Game_RenderLevel()
 
         if (draw_start < 0)
             draw_start = 0;
-
+        
         int32_t draw_end = line_height / 2 + game.settings.screen_y / 2;
 
         if (draw_end > game.settings.screen_y)
@@ -119,6 +131,7 @@ void Game_RenderLevel()
             uint8_t r = 60;
             uint8_t g = 170;
             uint8_t b = 40; 
+            uint8_t a = 255;
 
             // draw darker if y
 
@@ -130,12 +143,31 @@ void Game_RenderLevel()
                 b <<= 1; 
             }
 
+            // blit it to the texture one line at a time while also clearing off the old stuf, starting at y=0
+            uint32_t texture_pos = x; // 32-bit texture 
+
+            for (int32_t y = 0; y < game.settings.screen_y; y++)
+            {
+                if (y >= draw_start 
+                && y <= draw_end)
+                {
+                    texture_pixels[texture_pos] = (a << 24) | (r << 16) | (g << 8) | b;
+                }
+                else
+                    texture_pixels[texture_pos] = 0;
+
+                texture_pos += (pitch >> 2);//pitch is in bytes and this is a 32-bit texture 
+            }
+            /*
             SDL_SetRenderDrawColor(game.renderer, r, g, b, 255);
             SDL_RenderLine(game.renderer, x, draw_start, x, draw_end);
             SDL_SetRenderDrawColor(game.renderer, 0, 0, 0, 0);
-
+            */
         }
-
     }
 
+    SDL_UnlockTexture(game.render_target);
+    
+    // render the texture
+    SDL_RenderTexture(game.renderer, game.render_target, NULL, NULL);
 }

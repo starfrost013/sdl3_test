@@ -50,6 +50,6 @@ void Game_RenderLevel();
 // Input
 
 // scancodes are a terrible idea
-extern bool key_is_down[];
+extern bool key_state[];
 
 bool Input_KeyIsDown(uint32_t scancode);

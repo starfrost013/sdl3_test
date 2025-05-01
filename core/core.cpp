@@ -69,11 +69,10 @@ void Game_PumpEvents()
         {
             /* TEMP code */
             case SDL_EVENT_KEY_UP:
-                key_is_down[next_event.key.scancode] = false; 
+                key_state[next_event.key.scancode] = false; 
                 break; 
             case SDL_EVENT_KEY_DOWN:
-                key_is_down[next_event.key.scancode] = true;
-                 
+                key_state[next_event.key.scancode] = true;
                 break; 
             case SDL_EVENT_QUIT:
                 game.running = false; 

@@ -7,9 +7,9 @@
 
 /* A pretty basic input system */
 
-bool key_is_down[SDL_SCANCODE_COUNT];
+bool key_state[SDL_SCANCODE_COUNT];
 
 bool Input_KeyIsDown(uint32_t scancode)
 {
-    return key_is_down[scancode];
+    return key_state[scancode];
 }
