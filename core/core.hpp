@@ -16,6 +16,8 @@ struct GameInfo
     uint32_t level_id; 
 };
 
+#define NS_PER_SECOND 1000000000
+
 struct Game
 {
     SDL_Window* window;         // SDL Window

@@ -19,7 +19,7 @@ int32_t main(int32_t argc, char** argv)
         /* Now, pump the game's event queue */
         Game_PumpEvents();
 
-        if (time_now > (game.last_tick_time + (1000000000 / game.tickrate)))
+        if (time_now > (game.last_tick_time + (NS_PER_SECOND / game.tickrate)))
         {
             /* Update the world state and actually *HANDLE* those events */
             Game_Tick();

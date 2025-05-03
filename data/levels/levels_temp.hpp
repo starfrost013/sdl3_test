@@ -12,3 +12,6 @@
 
 extern uint8_t level_temp_01[];
 extern uint8_t level_temp_02[]; 
+
+uint8_t* LevelTemp_GetLevelDataArray();
+uint32_t Level_GetIndexForPosition(int32_t x, int32_t y);

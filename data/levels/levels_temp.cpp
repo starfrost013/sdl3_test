@@ -37,3 +37,31 @@ uint8_t level_temp_02[] =
     1, 0, 0, 0, 1, 1, 1, 1,     // Line6
     1, 1, 1, 1, 1, 1, 1, 1,     // Line7
 };
+
+/* Temporary function to get a level data array */
+uint8_t* LevelTemp_GetLevelDataArray()
+{
+    uint8_t* level_data = level_temp_01;
+
+    if (game.info.level_id == 1)
+        level_data = level_temp_02;
+
+    return level_data;
+}
+
+// Get index for level position
+uint32_t Level_GetIndexForPosition(int32_t x, int32_t y)
+{
+    uint8_t* level_data = LevelTemp_GetLevelDataArray();
+
+    // do something if were out of bounds
+    if (x < 0
+    || y < 0
+    || x >= level_data[LEVEL_HEADER_SIZE_X]
+    || y >= level_data[LEVEL_HEADER_SIZE_Y])
+    {
+        return 0;
+    }
+
+    return (level_data[LEVEL_HEADER_SIZE_Y] * y) + x + LEVEL_HEADER_SIZE;
+}

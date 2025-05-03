@@ -23,11 +23,9 @@ void Game_SetLevel(uint32_t level_id)
 // Implements the Digital Differential Analyzer (DDA) algorithm, for the purposes of rendering a level.
 void Game_RenderLevel()
 {  
-    uint8_t* level_data = level_temp_01;
 
-    if (game.info.level_id == 1)
-        level_data = level_temp_02;
-
+    uint8_t* level_data = LevelTemp_GetLevelDataArray();
+    
     uint32_t size_x = level_data[LEVEL_HEADER_SIZE_X];
     uint32_t size_y = level_data[LEVEL_HEADER_SIZE_Y];
 

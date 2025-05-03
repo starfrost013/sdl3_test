@@ -6,6 +6,7 @@
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_video.h"
 #include <core/core.hpp>
+#include <data/levels/levels_temp.hpp>
 #include <entities/entity_player.hpp>
 
 
@@ -84,23 +85,22 @@ void Game_PumpEvents()
 
 void Game_Tick()
 {
+    /* TODO: Move to entity event */
+
     bool w_down = Input_KeyIsDown(SDL_SCANCODE_W);
     bool a_down = Input_KeyIsDown(SDL_SCANCODE_A);
     bool s_down = Input_KeyIsDown(SDL_SCANCODE_S);
     bool d_down = Input_KeyIsDown(SDL_SCANCODE_D);
 
-    /* move the player around based on their movement speed */
-    if (w_down) 
-    {
-        player.x += player.dir_x * player.move_speed;
-        player.y += player.dir_y * player.move_speed;
-    }
+    int32_t map_position_x_ahead = int(player.x + player.dir_x * player.move_speed);
+    int32_t map_position_y_ahead = int(player.y + player.dir_y * player.move_speed);
+    int32_t map_position_x_behind = int(player.x - player.dir_x * player.move_speed);
+    int32_t map_position_y_behind = int(player.y - player.dir_y * player.move_speed);
+    
+    /* get the level data and try collision */
+    uint8_t* level_data = LevelTemp_GetLevelDataArray();
 
-    if (s_down) 
-    {
-        player.x -= player.dir_x * player.move_speed;
-        player.y -= player.dir_y * player.move_speed;
-    }
+
     
     // rotate using some basic trig
     if (d_down)
@@ -126,10 +126,32 @@ void Game_Tick()
         player.plane_y = old_plane_x * sin(player.rotation_speed) + player.plane_y * cos(player.rotation_speed);
     }
 
-    if (w_down || a_down || s_down || d_down)
+    
+    /* move the player around based on their movement speed */
+    if (w_down) 
     {
-        std::cout << "X: " << player.x << " Y: " << player.y << std::endl;
+        uint32_t collision_index = Level_GetIndexForPosition(map_position_x_ahead, map_position_y_ahead);
+    
+        if (level_data[collision_index])
+            return;
+
+        player.x += player.dir_x * player.move_speed;
+        player.y += player.dir_y * player.move_speed;
     }
+
+    if (s_down) 
+    {
+        uint32_t collision_index = Level_GetIndexForPosition(map_position_x_behind, map_position_y_behind);
+
+        if (level_data[collision_index])
+            return;
+            
+        player.x -= player.dir_x * player.move_speed;
+        player.y -= player.dir_y * player.move_speed;
+    }
+
+    if (w_down || a_down || s_down || d_down)
+        std::cout << "X: " << player.x << " Y: " << player.y << std::endl;
 }
 
 bool Game_Shutdown()
