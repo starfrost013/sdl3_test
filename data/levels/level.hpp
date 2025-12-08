@@ -3,26 +3,30 @@
 #include <Capy.hpp>
 #include <data/entities/entity_world.hpp>
 
-#define LEVEL_FORMAT_VERSION            1
-
-/* Defines the level header */
-struct LevelHeader 
+namespace Capy
 {
-    uint32_t format_version;            // Level format version
-    uint32_t size_x;
-    uint32_t size_y; 
-};
+    #define LEVEL_FORMAT_VERSION            1
 
-/* The struct of the current level */
-class Level 
-{
-    LevelHeader header;
+    /* Defines the level header */
+    struct LevelHeader 
+    {
+        uint32_t format_version;            // Level format version
+        uint32_t size_x;
+        uint32_t size_y; 
+    };
 
-    WorldEntity world; 
+    /* The struct of the current level */
+    class Level 
+    {
+        LevelHeader header;
 
-    /* ALL OTHER ENTITIES GO HERE */
-    std::vector<Entity> entities;
+        WorldEntity world; 
 
-    void Load(const char* path);
+        /* ALL OTHER ENTITIES GO HERE */
+        std::vector<Entity> entities;
 
-};
+        void Load(const char* path);
+
+    };
+
+}
