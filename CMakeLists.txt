@@ -1,16 +1,13 @@
-# Step7 Engine
-# Copyright © 2024, 2025 starfrost
-#
 # CMakeLists.txt: Core CMake file
 
 cmake_minimum_required (VERSION 3.8)
 
-project("DDATest")
+project("Capy")
 
 # Add source to this project's executable.
-add_executable (DDATest 
+add_executable (Capy 
 
-"ddatest.cpp"
+"Capy.cpp"
 
 # Core
 "core/core.cpp"
@@ -18,10 +15,8 @@ add_executable (DDATest
 "core/core_renderer.cpp"
 
 # Entity
-"entities/entity_player.cpp"
-
-# Level
-"data/levels/levels_temp.cpp"
+"data/entities/entity_player.cpp"
+"data/entities/entity_world.cpp"
 
 )
 
@@ -35,18 +30,18 @@ include_directories(${CMAKE_SOURCE_DIR}"/external/sdl3/x86_64-w64-mingw32/includ
 add_library(sdl3 STATIC IMPORTED)
 
 set_target_properties(sdl3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/external/sdl3/x86_64-w64-mingw32/lib/libSDL3.dll.a)
-target_link_libraries(DDATest sdl3)
+target_link_libraries(Capy sdl3)
 
 
 # Build system-specific files
 #if (WIN32)
-#	target_sources(DDATest PUBLIC "sys/windows/sys_win32.cpp")
+#	target_sources(Capy PUBLIC "sys/windows/sys_win32.cpp")
 #else()
-#	target_sources(DDATest PUBLIC "sys/linux/sys_linux.cpp")
+#	target_sources(Capy PUBLIC "sys/linux/sys_linux.cpp")
 #endif()
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET DDATest PROPERTY CXX_STANDARD 20)
+  set_property(TARGET Capy PROPERTY CXX_STANDARD 20)
 endif()
 
 #todo: linux

@@ -1,7 +1,13 @@
 /* Core SDL init/shutdown code */
 #pragma once
 #include "SDL3/SDL_scancode.h"
-#include <ddatest.hpp>
+#include <Capy.hpp>
+
+/* Game states */
+enum GameState 
+{
+    Running = 0,
+};
 
 /* Game settings */
 struct GameSettings

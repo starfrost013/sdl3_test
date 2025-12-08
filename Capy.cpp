@@ -1,9 +1,9 @@
 /* "Wolfenstein 3D" styled Digital Differential Analyzer raycaster (Test Project for SDL3) */
 
 #include "SDL3/SDL_timer.h"
-#include "core/core.hpp"
-#include <ddatest.hpp>
+#include <Capy.hpp>
 #include <core/core.hpp>
+
 #include <iostream>
 
 
@@ -24,8 +24,7 @@ int32_t main(int32_t argc, char** argv)
             /* Update the world state and actually *HANDLE* those events */
             Game_Tick();
             //std::cout << "Last tick time: " << (float(time_now / 1000000.0f)) - (float(game.last_tick_time / 1000000.0f)) << "ms" << std::endl;
-            game.last_tick_time = time_now; 
-            
+            game.last_tick_time = time_now;
         }
 
         SDL_RenderClear(game.renderer);
