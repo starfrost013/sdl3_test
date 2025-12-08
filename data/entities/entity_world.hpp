@@ -1,4 +1,4 @@
-#include <data/entity.hpp>
+#include <data/entities/entity.hpp>
 
 namespace Capy
 {

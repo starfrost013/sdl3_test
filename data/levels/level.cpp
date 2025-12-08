@@ -1,6 +1,6 @@
 /* Level.hpp: Level definitions */
 
-#include <data/level.hpp>
+#include <data/levels/level.hpp>
 
 namespace Capy
 {
@@ -11,7 +11,7 @@ namespace Capy
     {
         char path_buffer[MAX_PATH] = {0};
 
-        
+        return true; 
     }
 }
 

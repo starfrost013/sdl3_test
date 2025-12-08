@@ -84,7 +84,10 @@ namespace Capy
         uint32_t collision_index = 0;
         bool movement_allowed_x = true; //used for debugging 
         bool movement_allowed_y = true; 
-
+    }
+    
+    void Game_Frame()
+    {
         world.Render();
     }
 

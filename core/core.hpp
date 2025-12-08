@@ -51,6 +51,7 @@ namespace Capy
     bool Game_Init();
     void Game_PumpEvents();
     void Game_Tick();               // Run each tick
+    void Game_Frame();
     bool Game_Shutdown();
 
     // scancodes are a terrible idea

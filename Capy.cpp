@@ -29,15 +29,13 @@ namespace Capy
 
             SDL_RenderClear(game.renderer);
 
-            Game_RenderLevel();
+            Game_Frame();
 
             // flip the buffers
             SDL_RenderPresent(game.renderer);
         }
 
         Game_Shutdown();
-
-        return 0; 
     }
 }
 

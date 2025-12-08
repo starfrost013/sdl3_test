@@ -25,7 +25,7 @@ namespace Capy
         /* ALL OTHER ENTITIES GO HERE */
         std::vector<Entity> entities;
 
-        void Load(const char* path);
+        bool Load(const char* path);
 
     };
 

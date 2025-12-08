@@ -1,8 +1,11 @@
+#include <SDL3/SDL.h>
+
+#include <iostream>
+#include <vector>
 
 namespace Capy
 {
     #pragma once 
-    #include <SDL3/SDL.h>
 
     #define APP_NAME "Capybara Wars (Prototype)"
     #define APP_VERSION "Pre-Alpha 2.0"

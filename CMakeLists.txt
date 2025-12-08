@@ -1,6 +1,6 @@
 # CMakeLists.txt: Core CMake file
 
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.10)
 
 project("Capy")
 
@@ -12,12 +12,12 @@ add_executable (Capy
 # Core
 "core/core.cpp"
 "core/core_input.cpp"
-"core/core_renderer.cpp"
 
 # Entity
 "data/entities/entity_player.cpp"
 "data/entities/entity_world.cpp"
 
+"data/levels/level.cpp"
 )
 
 # Base include directories
