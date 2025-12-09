@@ -10,9 +10,9 @@ namespace Capy
         uint32_t colour_b;
         uint32_t colour_a;
         const char* texture_path; 
+        bool emitsLight;
     };
 
-    extern LevelTile tileData[];
 
     /* 
         The class that represents the world.
