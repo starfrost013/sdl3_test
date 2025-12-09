@@ -12,6 +12,8 @@ namespace Capy
         const char* texture_path; 
     };
 
+    extern LevelTile tileData[];
+
     /* 
         The class that represents the world.
 
