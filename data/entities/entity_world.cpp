@@ -4,13 +4,7 @@
 
 namespace Capy
 { 
-    //
-    // DEFINES
-    //
-    #define WIDTH_IN_BLOCKS(x)  (x*TILE_SIZE_X)
-    #define HEIGHT_IN_BLOCKS(x) (x*TILE_SIZE_Y)
-    #define TILE_SIZE_X         4
-    #define TILE_SIZE_Y         4
+
 
     LevelTile levelTileAir = { .colour_r = 0, .colour_g = 0, .colour_b = 0, .colour_a = 0, .texture_path = nullptr, .emitsLight = false, };
     LevelTile levelTileGrass = { .colour_r = 20, .colour_g = 170, .colour_b = 50, .colour_a = 255, .texture_path = nullptr, .emitsLight = false, };
@@ -25,27 +19,24 @@ namespace Capy
     std::unordered_map<uint32_t, LevelTile*> heightData = 
     {
         { HEIGHT_IN_BLOCKS(0), &levelTileAir },
-        { HEIGHT_IN_BLOCKS(24), &levelTileGrass },
-        { HEIGHT_IN_BLOCKS(72), &levelTileStone },
-        { HEIGHT_IN_BLOCKS(180), &levelTileLava },
+        { HEIGHT_IN_BLOCKS(16), &levelTileGrass },
+        { HEIGHT_IN_BLOCKS(28), &levelTileStone },
+        { HEIGHT_IN_BLOCKS(64), &levelTileLava },
     };
 
-
-    void WorldEntity::Create()
+    void WorldEntity::CreateGenerateNoise()
     {
-        // mock 'sky' colour 
-        SDL_SetRenderDrawColor(game.renderer, 30, 50, 180, 255);
+        for (uint32_t i = 0; i < NOISE_STEPS; i++)
+        {
+            NoiseData[i] = Util_G; 
+        }
+    }
 
-        uint32_t* texture_pixels;  
-        uint32_t index; 
-        int32_t pitch; 
-
-        SDL_Rect new_rect = { 0, 0, (int32_t)game.settings.screen_x, (int32_t)game.settings.screen_y};
-
-        SDL_LockTexture(game.render_target, &new_rect, (void**)&texture_pixels, &pitch);
-
+    void WorldEntity::CreateGenerateWorld(uint32_t* texture_pixels, int32_t pitch)
+    {
         // 32bpp so 1 index = 4 bytes
         uint32_t tile_y = 0, tile_x = 0;
+        uint32_t first_ground_y = 0;
         uint32_t last_light_border_y = 0; 
 
         LevelTile* currentTile = heightData[0];
@@ -66,6 +57,9 @@ namespace Capy
                 {
                     currentTile = newTileCandidate;
 
+                    if (currentTile != &levelTileAir)
+                        first_ground_y = y;
+
                     if (currentTile->emitsLight)
                         last_light_border_y = y;
                 }
@@ -75,16 +69,11 @@ namespace Capy
                 int32_t final_colour_g = currentTile->colour_g + rand() % 12;
                 int32_t final_colour_b = currentTile->colour_b + rand() % 12;
 
-                // further down should be darker
-                //final_colour_r -= ((y - last_border_y) / 2);
-                //final_colour_g -= ((y - last_border_y) / 2);
-                //final_colour_b -= ((y - last_border_y) / 2);
-
                 if (!currentTile->emitsLight)
                 {
-                    final_colour_r -= y / 3;
-                    final_colour_g -= y / 3;
-                    final_colour_b -= y / 3;
+                    final_colour_r -= (y - first_ground_y) >> 1;
+                    final_colour_g -= (y - first_ground_y) >> 1;
+                    final_colour_b -= (y - first_ground_y) >> 1;
                 }
                 else
                 {
@@ -100,7 +89,6 @@ namespace Capy
                 if (final_colour_r < 0) final_colour_r = 0; 
                 if (final_colour_g < 0) final_colour_g = 0;
                 if (final_colour_b < 0) final_colour_b = 0;
-
 
                 // draw 4x4
                 for (uint32_t yy = 0; yy < TILE_SIZE_Y; yy++)
@@ -124,6 +112,22 @@ namespace Capy
 
             tile_y++;
         }        
+    }
+
+    void WorldEntity::Create()
+    {
+        // mock 'sky' colour 
+        SDL_SetRenderDrawColor(game.renderer, 30, 50, 180, 255);
+
+        uint32_t* texture_pixels;  
+        uint32_t index; 
+        int32_t pitch; 
+
+        SDL_Rect new_rect = { 0, 0, (int32_t)game.settings.screen_x, (int32_t)game.settings.screen_y};
+
+        SDL_LockTexture(game.render_target, &new_rect, (void**)&texture_pixels, &pitch);
+
+        CreateGenerateWorld(texture_pixels, pitch);
 
         // go
         SDL_UnlockTexture(game.render_target);

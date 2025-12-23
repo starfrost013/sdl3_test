@@ -27,12 +27,28 @@ namespace Capy
     {
     public: 
         
+        //
+        // DEFINES
+        //
+        #define WIDTH_IN_BLOCKS(x)  (x*TILE_SIZE_X)
+        #define HEIGHT_IN_BLOCKS(x) (x*TILE_SIZE_Y)
+        #define TILE_SIZE_X         8
+        #define TILE_SIZE_Y         8
+
+        #define NOISE_STEPS         32
+
         void Create();
         void Render(); 
         void Tick();
         void Destroy();
 
+
     private: 
+        void CreateGenerateWorld(uint32_t* texture_pixels, int32_t pitch);
+        void CreateGenerateNoise();
+
+        float NoiseData[NOISE_STEPS];
+
 
     };
 }
