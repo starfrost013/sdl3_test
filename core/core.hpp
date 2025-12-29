@@ -14,8 +14,8 @@ namespace Capy
     /* Game settings */
     struct GameSettings
     {  
-        uint32_t screen_x;
-        uint32_t screen_y;
+        uint32_t screenX;
+        uint32_t screenY;
     };
 
     /* Game information that changes on level change */

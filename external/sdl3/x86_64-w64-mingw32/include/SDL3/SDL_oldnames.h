@@ -1117,7 +1117,7 @@
 /* ##SDL_pixels.h */
 #define SDL_AllocFormat SDL_AllocFormat_renamed_SDL_GetPixelFormatDetails
 #define SDL_AllocPalette SDL_AllocPalette_renamed_SDL_CreatePalette
-#define SDL_Colour SDL_Colour_renamed_SDL_Color
+#define SDL_Colour SDL_colourRenamed_SDL_Color
 #define SDL_FreePalette SDL_FreePalette_renamed_SDL_DestroyPalette
 #define SDL_MasksToPixelFormatEnum SDL_MasksToPixelFormatEnum_renamed_SDL_GetPixelFormatForMasks
 #define SDL_PIXELFORMAT_BGR444 SDL_PIXELFORMAT_BGR444_renamed_SDL_PIXELFORMAT_XBGR4444

@@ -18,6 +18,8 @@ add_executable (Capy
 "data/entities/entity_world.cpp"
 
 "data/levels/level.cpp"
+
+"util/util.cpp"
 )
 
 # Base include directories

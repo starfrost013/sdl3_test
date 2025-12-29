@@ -5,10 +5,10 @@ namespace Capy
     /* World tile representation */
     struct LevelTile 
     {
-        uint32_t colour_r;
-        uint32_t colour_g;
-        uint32_t colour_b;
-        uint32_t colour_a;
+        uint32_t colourR;
+        uint32_t colourG;
+        uint32_t colourB;
+        uint32_t colourA;
         const char* texture_path; 
         bool emitsLight;
     };
@@ -34,8 +34,10 @@ namespace Capy
         #define HEIGHT_IN_BLOCKS(x) (x*TILE_SIZE_Y)
         #define TILE_SIZE_X         8
         #define TILE_SIZE_Y         8
-
-        #define NOISE_STEPS         32
+        
+        // 1D perlin noise steps. We interpolate between these.
+        #define NOISE_STEPS         36
+        #define NOISE_MAX_VARIANCE  72
 
         void Create();
         void Render(); 
@@ -47,7 +49,7 @@ namespace Capy
         void CreateGenerateWorld(uint32_t* texture_pixels, int32_t pitch);
         void CreateGenerateNoise();
 
-        float NoiseData[NOISE_STEPS];
+        float noiseData[NOISE_STEPS];
 
 
     };

@@ -1,7 +1,7 @@
 
-#include <util.hpp>
+#include <util/util.hpp>
 
-float Util_RandomFloat()
+float Util_RandomSingle()
 {
     std::mt19937 rng(std::random_device{}());
 
