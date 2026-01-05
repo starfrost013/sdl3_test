@@ -10,6 +10,7 @@ namespace Capy
         public: 
             const char* classname; 
 
+            
             // 
             // Events
             //

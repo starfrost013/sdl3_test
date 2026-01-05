@@ -37,9 +37,10 @@ namespace Capy
         
         // 1D perlin noise steps. We interpolate between these.
         #define NOISE_STEPS         36
-        #define NOISE_MAX_VARIANCE  72
+        #define NOISE_MAX_VARIANCE  72       
 
         void Create();
+        void Deserialise();
         void Render(); 
         void Tick();
         void Destroy();
@@ -48,6 +49,11 @@ namespace Capy
     private: 
         void CreateGenerateWorld(uint32_t* texture_pixels, int32_t pitch);
         void CreateGenerateNoise();
+
+        Vector2 size; 
+
+        /* Tilemap */
+
 
         float noiseData[NOISE_STEPS];
 

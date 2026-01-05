@@ -20,6 +20,7 @@ add_executable (Capy
 "data/levels/level.cpp"
 
 "util/util.cpp"
+"util/logging.cpp"
 )
 
 # Base include directories

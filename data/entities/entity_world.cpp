@@ -83,7 +83,11 @@ namespace Capy
             if (y > 0 
             && newTileCandidate != currentTile
             && newTileCandidate != nullptr)
+            {
+                //reroll noise
                 currentTile = newTileCandidate;
+                CreateGenerateNoise();
+            }
 
             for (uint32_t x = 0; x < game.settings.screenX; x += TILE_SIZE_X)
             {
@@ -191,6 +195,12 @@ namespace Capy
 
         // go
         SDL_UnlockTexture(game.render_target);
+    }
+
+    // Called during level loading
+    void WorldEntity::Deserialise()
+    {
+
     }
 
     void WorldEntity::Render()
