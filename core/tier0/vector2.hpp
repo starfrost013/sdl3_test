@@ -5,16 +5,18 @@
 
 namespace Capy
 {
+    template <typename T>
     class Vector2
     {
-        float x, y;
+    public:
+        T x, y;
 
         Vector2()
         {
             x = y = 0;
         }
 
-        Vector2(float x, float y)
+        Vector2(T x, T y)
         {
             this->x = x;
             this->y = y; 
@@ -22,7 +24,7 @@ namespace Capy
 
         Vector2 operator+(const Vector2& other)
         {
-            Vector2 v;
+            Vector2<T> v;
             v.x = x + other.x;
             v.y = y + other.y;
             return v;
@@ -30,7 +32,7 @@ namespace Capy
 
         Vector2 operator-(const Vector2& other)
         {
-            Vector2 v;
+            Vector2<T> v;
             v.x = x - other.x;
             v.y = y - other.y;
             return v;
@@ -38,7 +40,7 @@ namespace Capy
         
         Vector2 operator*(const Vector2& other)
         {
-            Vector2 v;
+            Vector2<T> v;
             v.x = x * other.x;
             v.y = y * other.y;
             return v;
@@ -46,7 +48,7 @@ namespace Capy
 
         Vector2 operator/(const Vector2& other)
         {
-            Vector2 v;
+            Vector2<T> v;
             v.x = x / other.x;
             v.y = y / other.y;
             return v;

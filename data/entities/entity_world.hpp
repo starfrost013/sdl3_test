@@ -13,6 +13,13 @@ namespace Capy
         bool emitsLight;
     };
 
+    /* World file format header */
+    struct WorldHeader
+    {   
+        uint32_t version; 
+        Vector2i size;
+    };
+
 
     /* 
         The class that represents the world.
@@ -52,7 +59,7 @@ namespace Capy
 
         Vector2 size; 
 
-        /* Tilemap */
+        /* quadtree */
 
 
         float noiseData[NOISE_STEPS];

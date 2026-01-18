@@ -2,7 +2,8 @@
 #include <SDL3/SDL.h>
 
 // Core Utils
-#include <core/vector2.hpp>
+#include <core/tier0/vector2.hpp>
+#include <core/tier0/vector2i.hpp>
 
 #include <iostream>
 #include <unordered_map>
