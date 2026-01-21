@@ -201,7 +201,7 @@ typedef enum SDL_EventType
     SDL_EVENT_GAMEPAD_ADDED,                /**< A new gamepad has been inserted into the system */
     SDL_EVENT_GAMEPAD_REMOVED,              /**< A gamepad has been removed */
     SDL_EVENT_GAMEPAD_REMAPPED,             /**< The gamepad mapping was updated */
-    SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN,        /**< Gamepad touchpad was touched */
+    SDL_EVENT_GAMEPAD_TOUCHPAdDown,        /**< Gamepad touchpad was touched */
     SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION,      /**< Gamepad touchpad finger was moved */
     SDL_EVENT_GAMEPAD_TOUCHPAD_UP,          /**< Gamepad touchpad finger was lifted */
     SDL_EVENT_GAMEPAD_SENSOR_UPDATE,        /**< Gamepad sensor was updated */
@@ -674,7 +674,7 @@ typedef struct SDL_GamepadDeviceEvent
  */
 typedef struct SDL_GamepadTouchpadEvent
 {
-    SDL_EventType type; /**< SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN or SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION or SDL_EVENT_GAMEPAD_TOUCHPAD_UP */
+    SDL_EventType type; /**< SDL_EVENT_GAMEPAD_TOUCHPAdDown or SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION or SDL_EVENT_GAMEPAD_TOUCHPAD_UP */
     Uint32 reserved;
     Uint64 timestamp;   /**< In nanoseconds, populated using SDL_GetTicksNS() */
     SDL_JoystickID which; /**< The joystick instance id */

@@ -5,6 +5,7 @@
 #include <cstring>
 #include <iostream>
 
+
 //
 // Logging system (Version 4.4) - everything before 4.3 is retroactive
 // 
@@ -30,7 +31,7 @@
 // This should be updated each time a feature gets added to the logging system.
 #define STARFROSTLOG_VERSION 	"Starfrost Shared Logging System 4.4 (December 31, 2025)"
 
-namespace NV1Sim
+namespace Capy
 {
 	// Enumerate console colours
 	enum ConsoleColor

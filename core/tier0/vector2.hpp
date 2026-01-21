@@ -1,7 +1,5 @@
 /* A basic 2D vector */
 #pragma once
-#include "SDL3/SDL_scancode.h"
-#include <Capy.hpp>
 
 namespace Capy
 {

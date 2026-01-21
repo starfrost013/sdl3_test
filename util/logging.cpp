@@ -7,7 +7,7 @@
 
 #include "logging.hpp"
 
-namespace NV1Sim
+namespace Capy
 {
 	
 	// Defines 

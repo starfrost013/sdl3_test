@@ -1,9 +1,12 @@
+#include "core/tier0/quadtree.hpp"
 #include <data/entities/entity.hpp>
 
 namespace Capy
 {
+    #define WORLD_NAME_LENGTH           48
+
     /* World tile representation */
-    struct LevelTile 
+    struct WorldTile 
     {
         uint32_t colourR;
         uint32_t colourG;
@@ -12,14 +15,6 @@ namespace Capy
         const char* texture_path; 
         bool emitsLight;
     };
-
-    /* World file format header */
-    struct WorldHeader
-    {   
-        uint32_t version; 
-        Vector2i size;
-    };
-
 
     /* 
         The class that represents the world.
@@ -52,15 +47,29 @@ namespace Capy
         void Tick();
         void Destroy();
 
-
     private: 
+    
+        /* World file format header */
+        struct WorldHeader
+        {   
+            uint32_t version; 
+            Vector2<int32_t> size;
+            char name[WORLD_NAME_LENGTH];
+        };
+
         void CreateGenerateWorld(uint32_t* texture_pixels, int32_t pitch);
         void CreateGenerateNoise();
 
-        Vector2 size; 
+        WorldHeader header;
 
-        /* quadtree */
+        /* 
+            World representation
 
+            * A 2d array of 8-bit tile indicies (max 256 tiles, tile 0 is air)
+            * A quadtree generated from that 2d array for collision detection purposes.
+        */
+        uint8_t* world;
+        QuadTree<uint8_t*> collision;
 
         float noiseData[NOISE_STEPS];
 

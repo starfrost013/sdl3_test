@@ -5,22 +5,22 @@
 
 namespace Capy
 { 
-    LevelTile levelTileAir = { .colourR = 0, .colourG = 0, .colourB = 0, .colourA = 0, .texture_path = nullptr, .emitsLight = false, };
-    LevelTile levelTileGrass = { .colourR = 20, .colourG = 170, .colourB = 50, .colourA = 255, .texture_path = nullptr, .emitsLight = false, };
-    LevelTile levelTileStone = { .colourR = 180, .colourG = 175, .colourB = 185, .colourA = 255, .texture_path = nullptr, .emitsLight = false, };
-    LevelTile levelTileLava = { .colourR = 255, .colourG = 134, .colourB = 35, .colourA = 255, .texture_path = nullptr, .emitsLight = true, };
-    LevelTile levelTileSand = { .colourR = 180, .colourG = 175, .colourB = 185, .colourA = 255, .texture_path = nullptr, .emitsLight = false, };
-    LevelTile levelTileGlass = { .colourR = 241, .colourG = 243, .colourB = 242, .colourA = 127, .texture_path = nullptr, .emitsLight = false, };
-    LevelTile levelTileCrystal = { .colourR = 240, .colourG = 186, .colourB = 255, .colourA = 255, .texture_path = nullptr, .emitsLight = false,  };
-    LevelTile levelTileWater = { .colourR = 4, .colourG = 24, .colourB = 155, .colourA = 127, .texture_path = nullptr, .emitsLight = false,  };
+    WorldTile WorldTileAir = { .colourR = 0, .colourG = 0, .colourB = 0, .colourA = 0, .texture_path = nullptr, .emitsLight = false, };
+    WorldTile WorldTileGrass = { .colourR = 20, .colourG = 170, .colourB = 50, .colourA = 255, .texture_path = nullptr, .emitsLight = false, };
+    WorldTile WorldTileStone = { .colourR = 180, .colourG = 175, .colourB = 185, .colourA = 255, .texture_path = nullptr, .emitsLight = false, };
+    WorldTile WorldTileLava = { .colourR = 255, .colourG = 134, .colourB = 35, .colourA = 255, .texture_path = nullptr, .emitsLight = true, };
+    WorldTile WorldTileSand = { .colourR = 180, .colourG = 175, .colourB = 185, .colourA = 255, .texture_path = nullptr, .emitsLight = false, };
+    WorldTile WorldTileGlass = { .colourR = 241, .colourG = 243, .colourB = 242, .colourA = 127, .texture_path = nullptr, .emitsLight = false, };
+    WorldTile WorldTileCrystal = { .colourR = 240, .colourG = 186, .colourB = 255, .colourA = 255, .texture_path = nullptr, .emitsLight = false,  };
+    WorldTile WorldTileWater = { .colourR = 4, .colourG = 24, .colourB = 155, .colourA = 127, .texture_path = nullptr, .emitsLight = false,  };
 
     // THESE ARE IN COORDINATES
-    std::unordered_map<uint32_t, LevelTile*> heightData = 
+    std::unordered_map<uint32_t, WorldTile*> heightData = 
     {
-        { HEIGHT_IN_BLOCKS(0), &levelTileAir },
-        { HEIGHT_IN_BLOCKS(16), &levelTileGrass },
-        { HEIGHT_IN_BLOCKS(28), &levelTileStone },
-        { HEIGHT_IN_BLOCKS(64), &levelTileLava },
+        { HEIGHT_IN_BLOCKS(0), &WorldTileAir },
+        { HEIGHT_IN_BLOCKS(16), &WorldTileGrass },
+        { HEIGHT_IN_BLOCKS(28), &WorldTileStone },
+        { HEIGHT_IN_BLOCKS(64), &WorldTileLava },
     };
 
     void WorldEntity::CreateGenerateNoise()
@@ -33,11 +33,38 @@ namespace Capy
 
     void WorldEntity::CreateGenerateWorld(uint32_t* texture_pixels, int32_t pitch)
     {
+
+        // generate root quadtile children
+        collision.root->Divide();
+
+        uint32_t currentQuadScaleX = header.size.x;
+        uint32_t currentQuadScaleY = header.size.y;
+
+        Quad<WorldTile>* current = collision.root;
+
+        while (currentQuadScaleX >= TILE_SIZE_X
+        || currentQuadScaleY >= TILE_SIZE_Y)
+        {
+            /* identical objects are merged into the same quad */
+            for (int32_t y = 0; y < header.size.y; y += currentQuadScaleY)
+            {
+
+            }
+
+            // gen step done
+            if (currentQuadScaleX > TILE_SIZE_X)
+                currentQuadScaleX >>= 1;
+
+            if (currentQuadScaleY > TILE_SIZE_Y)
+                currentQuadScaleY >>= 1;
+        }
+
+        /*
         // 32bpp so 1 index = 4 bytes
         uint32_t firstGroundY = 0;
         uint32_t lastLightBorderY = 0; 
         
-        LevelTile* currentTile = heightData[0];
+        WorldTile* currentTile = heightData[0];
 
         // size is simply screen size for now
         // set up initial operation
@@ -47,7 +74,7 @@ namespace Capy
             // this seems like an expensive operation but it's only done at creation time.
             // invalid elements construct a nullptr in STL
             // maybe generate an array instead 
-            LevelTile* newTileCandidate = heightData[y];
+            WorldTile* newTileCandidate = heightData[y];
 
             if (y > 0 
             && newTileCandidate != currentTile
@@ -55,7 +82,7 @@ namespace Capy
             {
                 currentTile = newTileCandidate;
 
-                if (currentTile != &levelTileAir
+                if (currentTile != &WorldTileAir
                 && firstGroundY == 0)
                     firstGroundY = y;
 
@@ -77,7 +104,7 @@ namespace Capy
             // this seems like an expensive operation but it's only done at creation time.
             // invalid elements construct a nullptr in STL
             // maybe generate an array instead 
-            LevelTile* newTileCandidate = heightData[y];
+            WorldTile* newTileCandidate = heightData[y];
 
             // this part needs to be duplicated
             if (y > 0 
@@ -175,10 +202,12 @@ namespace Capy
             // reset step counter
             stepCurrent = stepProgress = 0;
         }        
+    */
     }
 
     void WorldEntity::Create()
     {
+        
         // mock 'sky' colour 
         SDL_SetRenderDrawColor(game.renderer, 30, 50, 180, 255);
 

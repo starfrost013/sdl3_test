@@ -9,6 +9,8 @@ namespace Capy
 {
     void Capy_Main(int32_t argc, char** argv)
     {
+        Logging_Init();
+        
         Game_Init();
 
         while (game.running)

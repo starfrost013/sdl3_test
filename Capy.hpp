@@ -1,10 +1,12 @@
 #pragma once 
 #include <SDL3/SDL.h>
 
-// Core Utils
-#include <core/tier0/vector2.hpp>
-#include <core/tier0/vector2i.hpp>
 
+#include <util/logging.hpp>
+
+// Core 
+#include <core/tier0/quadtree.hpp>
+#include <core/tier0/vector2.hpp>
 #include <iostream>
 #include <unordered_map>
 #include <vector>

@@ -17,8 +17,12 @@ namespace Capy
 
     bool Game_Init()
     {
+        Logging_LogChannel("Initialising SDL...", LogChannel::Message);
+
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS))
             return false; 
+
+        Logging_LogChannel("Initialising window and renderer...", LogChannel::Message);
 
         game.settings.screenX = 1024;
         game.settings.screenY = 768;
@@ -26,12 +30,15 @@ namespace Capy
         if (!SDL_CreateWindowAndRenderer(APP_SIGNON_STRING, game.settings.screenX, game.settings.screenY, 0, &game.window, &game.renderer))
             return false;
 
+        Logging_LogChannel("Initialising render texture...", LogChannel::Message);
+
         // not really a render target, but w/e
         game.render_target = SDL_CreateTexture(game.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, game.settings.screenX, game.settings.screenY);
 
         if (!game.render_target)
         {
-            std::cout << "Failed to create render target " << SDL_GetError() << std::endl;
+            Logging_LogChannel("Failed to create render target: %s", LogChannel::Error, SDL_GetError());
+
             Game_Shutdown();
         }
         
@@ -48,9 +55,6 @@ namespace Capy
 
         if (SDL_PollEvent(&next_event))
         {
-            bool w_down = false, a_down = false, s_down = false, d_down = false;
-            bool left_down = false, right_down = false, up_down = false, down_down = false;  
-
             switch (next_event.type)
             {
                 /* TEMP code */
@@ -72,18 +76,18 @@ namespace Capy
     {
         /* TODO: Move to entity event */
 
-        bool w_down = Input_KeyIsDown(SDL_SCANCODE_W);
-        bool a_down = Input_KeyIsDown(SDL_SCANCODE_A);
-        bool s_down = Input_KeyIsDown(SDL_SCANCODE_S);
-        bool d_down = Input_KeyIsDown(SDL_SCANCODE_D);
+        bool wDown = Input_KeyIsDown(SDL_SCANCODE_W);
+        bool aDown = Input_KeyIsDown(SDL_SCANCODE_A);
+        bool sDown = Input_KeyIsDown(SDL_SCANCODE_S);
+        bool dDown = Input_KeyIsDown(SDL_SCANCODE_D);
         /* 
             move the player around based on their movement speed
             test each axis individually so we can slide along walls 
         */
 
-        uint32_t collision_index = 0;
-        bool movement_allowed_x = true; //used for debugging 
-        bool movement_allowed_y = true; 
+        uint32_t collisionIndex = 0;
+        bool movementAllowedX = true; //used for debugging 
+        bool movementAllowedY = true; 
     }
     
     void Game_Frame()

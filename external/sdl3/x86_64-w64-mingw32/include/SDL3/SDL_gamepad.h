@@ -159,7 +159,7 @@ typedef enum SDL_GamepadButton
     SDL_GAMEPAD_BUTTON_LEFT_SHOULDER,
     SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER,
     SDL_GAMEPAD_BUTTON_DPAD_UP,
-    SDL_GAMEPAD_BUTTON_DPAD_DOWN,
+    SDL_GAMEPAD_BUTTON_DPAdDown,
     SDL_GAMEPAD_BUTTON_DPAD_LEFT,
     SDL_GAMEPAD_BUTTON_DPAD_RIGHT,
     SDL_GAMEPAD_BUTTON_MISC1,           /**< Additional button (e.g. Xbox Series X share button, PS5 microphone button, Nintendo Switch Pro capture button, Amazon Luna microphone button, Google Stadia capture button) */
