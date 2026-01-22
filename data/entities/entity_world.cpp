@@ -33,42 +33,28 @@ namespace Capy
 
     void WorldEntity::CreateGenerateWorld(uint32_t* texture_pixels, int32_t pitch)
     {
-
-        // generate root quadtile children
-        collision.root->Divide();
-
-        uint32_t currentQuadScaleX = header.size.x;
-        uint32_t currentQuadScaleY = header.size.y;
-
-        Quad<WorldTile>* current = collision.root;
-
-        while (currentQuadScaleX >= TILE_SIZE_X
-        || currentQuadScaleY >= TILE_SIZE_Y)
+        if (header.size.x == 0
+        || header.size.y == 0)
         {
-            /* identical objects are merged into the same quad */
-            for (int32_t y = 0; y < header.size.y; y += currentQuadScaleY)
-            {
-
-            }
-
-            // gen step done
-            if (currentQuadScaleX > TILE_SIZE_X)
-                currentQuadScaleX >>= 1;
-
-            if (currentQuadScaleY > TILE_SIZE_Y)
-                currentQuadScaleY >>= 1;
+            Logging_LogChannel("Tried to create a world with a size of 0 in at least one dimension.", LogChannel::Fatal);
+            return;
         }
+    
+        world = new uint8_t[header.size.x * header.size.y];
 
-        /*
         // 32bpp so 1 index = 4 bytes
         uint32_t firstGroundY = 0;
         uint32_t lastLightBorderY = 0; 
         
+        uint32_t data = 0;
+
+        uint32_t dataIndex = 0;
+
         WorldTile* currentTile = heightData[0];
 
         // size is simply screen size for now
         // set up initial operation
-        for (uint32_t y = 0; y < game.settings.screenY; y += TILE_SIZE_Y)
+        for (uint32_t y = 0; y < header.size.y; y += TILE_SIZE_Y)
         {
 
             // this seems like an expensive operation but it's only done at creation time.
@@ -81,7 +67,7 @@ namespace Capy
             && newTileCandidate != nullptr)
             {
                 currentTile = newTileCandidate;
-
+                
                 if (currentTile != &WorldTileAir
                 && firstGroundY == 0)
                     firstGroundY = y;
@@ -91,15 +77,14 @@ namespace Capy
             }
         }
 
-        uint32_t step = game.settings.screenX/NOISE_STEPS;
+        uint32_t step = header.size.x/NOISE_STEPS;
         uint32_t stepCurrent = 0;       // current step
         uint32_t stepProgress = 0;      // current progresss within the step
 
         //reset currenttile so it can be selected again...we don't need to create the hashtable entries again so it should bef aster
         currentTile = heightData[0];
 
-        // size is simply screen size for now
-        for (uint32_t y = 0; y < game.settings.screenY; y += TILE_SIZE_Y)
+        for (uint32_t y = 0; y < header.size.y; y += TILE_SIZE_Y)
         {
             // this seems like an expensive operation but it's only done at creation time.
             // invalid elements construct a nullptr in STL
@@ -116,7 +101,7 @@ namespace Capy
                 CreateGenerateNoise();
             }
 
-            for (uint32_t x = 0; x < game.settings.screenX; x += TILE_SIZE_X)
+            for (uint32_t x = 0; x < header.size.x; x += TILE_SIZE_X)
             {
                 //
                 // NOISE
@@ -150,8 +135,8 @@ namespace Capy
                 }
 
                 // Aggressive anti-memory corruption activities
-                if (adjustedY > (game.settings.screenY - TILE_SIZE_Y))
-                    adjustedY = game.settings.screenY - TILE_SIZE_Y;
+                if (adjustedY > (header.size.y - TILE_SIZE_Y))
+                    adjustedY = header.size.y - TILE_SIZE_Y;
                         
                 if (adjustedY < 0)
                     adjustedY = 0;
@@ -187,13 +172,14 @@ namespace Capy
                     for (uint32_t xx = 0; xx < TILE_SIZE_X; xx++)
                     {
                         // >> 2 because 32bpp
-                        uint32_t index = (((adjustedY + yy) * pitch) + ((x + xx) << 2)) >> 2;
+                        uint32_t index = (((adjustedY + yy) * pitch) + ((x + xx) << 2));
 
                         uint32_t value = ((currentTile->colourA & 0xFF) << 24)
                             | ((finalColourR & 0xFF) << 16) 
                             | ((finalColourG & 0xFF) << 8)
                             | ((finalColourB));
 
+                        world[index] = 
                         texture_pixels[index] = value;
                     }
                 }
@@ -202,6 +188,37 @@ namespace Capy
             // reset step counter
             stepCurrent = stepProgress = 0;
         }        
+
+        // Now the generation of the world data is done.
+        // So we can generate the quadtree.
+
+        // generate root quadtile children
+        collision.root->Divide();
+
+        uint32_t currentQuadScaleX = header.size.x;
+        uint32_t currentQuadScaleY = header.size.y;
+
+        Quad<uint8_t*>* current = collision.root;
+
+        while (currentQuadScaleX >= TILE_SIZE_X
+        || currentQuadScaleY >= TILE_SIZE_Y)
+        {
+            /* identical objects are merged into the same quad */
+            for (int32_t y = 0; y < header.size.y; y += currentQuadScaleY)
+            {
+
+            }
+
+            // gen step done
+            if (currentQuadScaleX > TILE_SIZE_X)
+                currentQuadScaleX >>= 1;
+
+            if (currentQuadScaleY > TILE_SIZE_Y)
+                currentQuadScaleY >>= 1;
+        }
+
+        /*
+       
     */
     }
 
@@ -215,7 +232,7 @@ namespace Capy
         uint32_t index; 
         int32_t pitch; 
 
-        SDL_Rect new_rect = { 0, 0, (int32_t)game.settings.screenX, (int32_t)game.settings.screenY};
+        SDL_Rect new_rect = { 0, 0, (int32_t)game.settings.screenX, (int32_t)game.settings.screenY };
 
         SDL_LockTexture(game.render_target, &new_rect, (void**)&texture_pixels, &pitch);
 
