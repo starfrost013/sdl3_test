@@ -36,12 +36,13 @@ set_target_properties(sdl3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/exte
 target_link_libraries(Capy sdl3)
 
 
-# Build system-specific files
-#if (WIN32)
-#	target_sources(Capy PUBLIC "sys/windows/sys_win32.cpp")
-#else()
-#	target_sources(Capy PUBLIC "sys/linux/sys_linux.cpp")
-#endif()
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+  target_compile_definitions(Capy PRIVATE DEBUG)
+elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+  target_compile_definitions(Capy PRIVATE RELEASE)
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
+endif()
+
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Capy PROPERTY CXX_STANDARD 20)

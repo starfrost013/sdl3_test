@@ -32,11 +32,10 @@ namespace Capy
 			color_final = 90 + (color & ConsoleColor::FirstBright - 1);
 
 		// 10 (max) + 1 + 4 + 1 for safety
-		char final_string[CONSOLE_COLOR_BUFFER_SIZE] = { 0 };
+		char finalString[CONSOLE_COLOR_BUFFER_SIZE] = { 0 };
 
-		snprintf(final_string, CONSOLE_COLOR_BUFFER_SIZE, "%s%dm", CONSOLE_TERMINAL_COMMAND_PREFIX, color_final);
-
-		printf("%s", final_string);
+		snprintf(finalString, CONSOLE_COLOR_BUFFER_SIZE, "%s%dm", CONSOLE_TERMINAL_COMMAND_PREFIX, color_final);
+		printf("%s", finalString);
 	}
 
 	void Util_ConsoleSetBackgroundColor(ConsoleColor color)
@@ -47,11 +46,10 @@ namespace Capy
 			color_final = 100 + (color & ConsoleColor::FirstBright - 1);
 
 		// 10 (max) + 1 + 4 + 1 for safety
-		char final_string[CONSOLE_COLOR_BUFFER_SIZE] = { 0 };
+		char finalString[CONSOLE_COLOR_BUFFER_SIZE] = { 0 };
 
-		snprintf(final_string, CONSOLE_COLOR_BUFFER_SIZE, "%s%dm", CONSOLE_TERMINAL_COMMAND_PREFIX, color_final);
-		
-		printf("%s", final_string);
+		snprintf(finalString, CONSOLE_COLOR_BUFFER_SIZE, "%s%dm", CONSOLE_TERMINAL_COMMAND_PREFIX, color_final);
+		printf("%s", finalString);
 	}
 
 	void Util_ConsoleResetForegroundColor()
@@ -74,27 +72,34 @@ namespace Capy
 		if (!logger.settings.changed)
 		{
 			logger.settings.channels = (LogChannel)(LogChannel::Debug | LogChannel::Message | LogChannel::Warning | LogChannel::Error | LogChannel::Fatal | LogChannel::SuperFatal);
-			logger.settings.source = (LogDestination)(LogDestination::Printf | LogDestination::File);
+			logger.settings.destination = (LogDestination)(LogDestination::Printf | LogDestination::File);
 			logger.settings.keepOldLogs = false; 
 		}
 
-		if (!logger.settings.file_name) 
-			logger.settings.file_name = "latest.log";
+		if (!logger.settings.fileName) 
+			logger.settings.fileName = "latest.log";
 
-		if (logger.settings.source & LogDestination::File)
+		if (logger.settings.destination & LogDestination::File)
 		{
-			logger.handle = fopen(logger.settings.file_name, "w+");
+			logger.handle = fopen(logger.settings.fileName, "w+");
 
 			if (!logger.handle)
 			{
-				printf("Log failed: 0x0002DEAD Error opening logfile %s: errno %d\n", logger.settings.file_name, errno);
-				return false;
+				printf("Log failed: 0x0002DEAD Error opening logfile %s: errno %d\n", logger.settings.fileName, errno);
+				logger.initFailed = true; 
 			}
 		}
 
-		logger.initialised = true;
+		if (logger.initFailed)
+			return false;
 
-		Logging_LogChannel("%s initialised", LogChannel::Debug, STARFROSTLOG_VERSION);
+		// we didn't fail so go ahead and set the variables. Any error they will get will be printed above
+
+		logger.initialised = true;
+		logger.initFailed = false;
+
+		if (!logger.settings.suppressSignOnMessage)
+			Logging_LogChannel("%s initialised", LogChannel::Debug, STARFROSTLOG_VERSION);
 
 		return true;
 	}
@@ -126,6 +131,12 @@ namespace Capy
 	// yes this is required
 	void Logging_Log(const char* text, LogChannel channel, va_list args)
 	{
+		if (!logger.initialised && !logger.initFailed)
+		{
+			printf("SSLS: Call Logging_Init!\n");
+			return; 
+		}
+
 		// don't print messages on closed log channels
 		if (!(logger.settings.channels & channel))
 			return;
@@ -138,7 +149,7 @@ namespace Capy
 
 		if (strlen(text) > LOGGING_MAX_LENGTH_TEXT)
 		{
-			printf("Log failed: cannot log string of length 0 or above %d bytes!", LOGGING_MAX_LENGTH_TEXT);
+			printf("Log failed: Maximum log string length is %d bytes!", LOGGING_MAX_LENGTH_TEXT);
 			return;
 		}
 
@@ -182,7 +193,7 @@ namespace Capy
 		snprintf(logStringBuffer, sizeof(logStringBuffer), 
 		"%s%s%s %s %s", prefix, dateBuffer, suffixDate, text, suffix);
 
-		if (logger.settings.source & LogDestination::Printf)
+		if (logger.settings.destination & LogDestination::Printf)
 		{
 			switch (channel)
 			{
@@ -216,13 +227,13 @@ namespace Capy
 				
 		}
 
-		if (logger.settings.source & LogDestination::File)
+		if (logger.settings.destination & LogDestination::File)
 			vfprintf(logger.handle, logStringBuffer, args);
 
 		if (channel & LogChannel::SuperFatal)
 		{
 			std::cout << "MEMORY COMPLETELY HOSED. NOT SAFE TO CLEANLY SHUT DOWN - LET'S GET THE HELL OUT OF HERE!!!" << std::endl;
-			exit(ITS_OVER);
+			std::terminate();
 		}
 
 		va_end(args);

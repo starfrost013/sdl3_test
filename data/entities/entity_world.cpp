@@ -5,14 +5,40 @@
 
 namespace Capy
 { 
-    WorldTile WorldTileAir = { .colourR = 0, .colourG = 0, .colourB = 0, .colourA = 0, .texture_path = nullptr, .emitsLight = false, };
-    WorldTile WorldTileGrass = { .colourR = 20, .colourG = 170, .colourB = 50, .colourA = 255, .texture_path = nullptr, .emitsLight = false, };
-    WorldTile WorldTileStone = { .colourR = 180, .colourG = 175, .colourB = 185, .colourA = 255, .texture_path = nullptr, .emitsLight = false, };
-    WorldTile WorldTileLava = { .colourR = 255, .colourG = 134, .colourB = 35, .colourA = 255, .texture_path = nullptr, .emitsLight = true, };
-    WorldTile WorldTileSand = { .colourR = 180, .colourG = 175, .colourB = 185, .colourA = 255, .texture_path = nullptr, .emitsLight = false, };
-    WorldTile WorldTileGlass = { .colourR = 241, .colourG = 243, .colourB = 242, .colourA = 127, .texture_path = nullptr, .emitsLight = false, };
-    WorldTile WorldTileCrystal = { .colourR = 240, .colourG = 186, .colourB = 255, .colourA = 255, .texture_path = nullptr, .emitsLight = false,  };
-    WorldTile WorldTileWater = { .colourR = 4, .colourG = 24, .colourB = 155, .colourA = 127, .texture_path = nullptr, .emitsLight = false,  };
+    WorldTile WorldTileAir = { .colourR = 0, .colourG = 0, .colourB = 0, .colourA = 0, 
+        .texture_path = nullptr, .name = "Air [No render]", .emitsLight = false, };
+    WorldTile WorldTileGrass = { .colourR = 20, .colourG = 170, .colourB = 50, .colourA = 255, 
+        .texture_path = nullptr, .name = "Grass",  .emitsLight = false, };
+    WorldTile WorldTileStone = { .colourR = 180, .colourG = 175, .colourB = 185, .colourA = 255, 
+        .texture_path = nullptr, .name = "Stone",  .emitsLight = false, };
+    WorldTile WorldTileLava = { .colourR = 255, .colourG = 134, .colourB = 35, .colourA = 255, 
+        .texture_path = nullptr, .name = "Lava",  .emitsLight = true, };
+    WorldTile WorldTileSand = { .colourR = 180, .colourG = 175, .colourB = 185, .colourA = 255, 
+        .texture_path = nullptr, .name = "Sand", .emitsLight = false, };
+    WorldTile WorldTileGlass = { .colourR = 241, .colourG = 243, .colourB = 242, .colourA = 127, 
+        .texture_path = nullptr, .name = "Glass", .emitsLight = false, };
+    WorldTile WorldTileCrystal = { .colourR = 240, .colourG = 186, .colourB = 255, .colourA = 255, 
+        .texture_path = nullptr, .name = "Crystal Meth", .emitsLight = false,  };
+    WorldTile WorldTileWater = { .colourR = 4, .colourG = 24, .colourB = 155, .colourA = 127, 
+        .texture_path = nullptr, .name = "Water", .emitsLight = false,  };
+
+    /* 
+        for each of maintenance these are separate lists.
+        search is faster than using an array, and these are the "wrong way around" so the level generation code cna use the pointers to find the indices
+    */
+    std::unordered_map<WorldTile*, uint8_t> tileIndices = 
+    {
+        { &WorldTileAir, 0 },
+        { &WorldTileGrass, 1 },
+        { &WorldTileStone, 2 },
+        { &WorldTileLava, 3 },
+
+        { &WorldTileSand, 4 },
+        { &WorldTileGlass, 5 },
+        { &WorldTileCrystal, 6 },
+        { &WorldTileWater, 7 },
+    };
+
 
     // THESE ARE IN COORDINATES
     std::unordered_map<uint32_t, WorldTile*> heightData = 
@@ -25,13 +51,16 @@ namespace Capy
 
     void WorldEntity::CreateGenerateNoise()
     {
+        Logging_LogChannel("[Phase 1] Generating noisemap (%d points, %d variance)", LogChannel::Debug,
+        NOISE_STEPS, NOISE_MAX_VARIANCE);
+
         for (uint32_t i = 0; i < NOISE_STEPS; i++)
         {
             noiseData[i] = (float)(Util_RandomSingle() * NOISE_MAX_VARIANCE); 
         }
     }
 
-    void WorldEntity::CreateGenerateWorld(uint32_t* texture_pixels, int32_t pitch)
+    void WorldEntity::CreateGenerateWorld(uint32_t* texturePixels)
     {
         if (header.size.x == 0
         || header.size.y == 0)
@@ -39,8 +68,14 @@ namespace Capy
             Logging_LogChannel("Tried to create a world with a size of 0 in at least one dimension.", LogChannel::Fatal);
             return;
         }
-    
-        world = new uint8_t[header.size.x * header.size.y];
+
+        uint32_t mapSizeBytes = header.size.x * header.size.y;
+
+        Logging_LogChannel("[Phase 2] Allocating memory for map (size will be %d bytes, %d x %d tiles, %d x %d pixels)", 
+            LogChannel::Debug, 
+        mapSizeBytes, header.size.x, header.size.y, (header.size.x * TILE_SIZE_X), (header.size.y * TILE_SIZE_Y));
+
+        world = new uint8_t[mapSizeBytes];
 
         // 32bpp so 1 index = 4 bytes
         uint32_t firstGroundY = 0;
@@ -48,15 +83,18 @@ namespace Capy
         
         uint32_t data = 0;
 
-        uint32_t dataIndex = 0;
-
         WorldTile* currentTile = heightData[0];
+
+        Logging_LogChannel("[Phase 3] Generating terrain layers...", LogChannel::Debug);
+
+#ifdef DEBUG
+        uint32_t layerNumber = 0;  
+#endif
 
         // size is simply screen size for now
         // set up initial operation
         for (uint32_t y = 0; y < header.size.y; y += TILE_SIZE_Y)
         {
-
             // this seems like an expensive operation but it's only done at creation time.
             // invalid elements construct a nullptr in STL
             // maybe generate an array instead 
@@ -67,7 +105,12 @@ namespace Capy
             && newTileCandidate != nullptr)
             {
                 currentTile = newTileCandidate;
-                
+#ifdef DEBUG
+                layerNumber++;  
+
+                Logging_LogChannel("[Phase 3.%d] Generating layer for tile: %s", LogChannel::Debug, layerNumber, currentTile->name);
+#endif
+
                 if (currentTile != &WorldTileAir
                 && firstGroundY == 0)
                     firstGroundY = y;
@@ -172,22 +215,23 @@ namespace Capy
                     for (uint32_t xx = 0; xx < TILE_SIZE_X; xx++)
                     {
                         // >> 2 because 32bpp
-                        uint32_t index = (((adjustedY + yy) * pitch) + ((x + xx) << 2));
+                        uint32_t index = ((adjustedY + yy) + (x + xx));
 
                         uint32_t value = ((currentTile->colourA & 0xFF) << 24)
                             | ((finalColourR & 0xFF) << 16) 
                             | ((finalColourG & 0xFF) << 8)
                             | ((finalColourB));
 
-                        world[index] = 
-                        texture_pixels[index] = value;
+                        world[index] = tileIndices[currentTile];
                     }
                 }
             }
 
             // reset step counter
             stepCurrent = stepProgress = 0;
-        }        
+        }  
+
+        Logging_LogChannel("[Phase 4] Terrain generation done. Generating quadmap for collision... (wip)", LogChannel::Debug, layerNumber, currentTile->name);
 
         // Now the generation of the world data is done.
         // So we can generate the quadtree.
@@ -224,23 +268,24 @@ namespace Capy
 
     void WorldEntity::Create()
     {
-        
+        Logging_LogChannel("World Generation:", LogChannel::Debug);
+
         // mock 'sky' colour 
         SDL_SetRenderDrawColor(game.renderer, 30, 50, 180, 255);
 
-        uint32_t* texture_pixels;  
+        uint32_t* texturePixels;  
         uint32_t index; 
         int32_t pitch; 
 
         SDL_Rect new_rect = { 0, 0, (int32_t)game.settings.screenX, (int32_t)game.settings.screenY };
 
-        SDL_LockTexture(game.render_target, &new_rect, (void**)&texture_pixels, &pitch);
+        SDL_LockTexture(game.renderTarget, &new_rect, (void**)&texturePixels, &pitch);
 
         CreateGenerateNoise();
-        CreateGenerateWorld(texture_pixels, pitch);
+        CreateGenerateWorld(texturePixels);
 
         // go
-        SDL_UnlockTexture(game.render_target);
+        SDL_UnlockTexture(game.renderTarget);
     }
 
     // Called during level loading
@@ -254,7 +299,7 @@ namespace Capy
         // world generation test code
 
 
-        SDL_RenderTexture(game.renderer, game.render_target, NULL, NULL);
+        SDL_RenderTexture(game.renderer, game.renderTarget, NULL, NULL);
     }
 
     void WorldEntity::Tick()

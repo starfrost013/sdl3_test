@@ -5,7 +5,6 @@
 #include <cstring>
 #include <iostream>
 
-
 //
 // Logging system (Version 4.4) - everything before 4.3 is retroactive
 // 
@@ -27,9 +26,15 @@
 //								- Use camelCase (this is C++!)
 // December 31, 2025 (4.4):
 //								- Remove stdbool include
+// January 22, 2026 (4.5): 		
+//								- Use camelCase everywhere
+//								- Renamed LogSettings::source to LogSettings::destination
+//								- Call std::terminate on superfatals instead of abort
+//								- Add suppressSignonMessage setting to suppress sign-on message (default false)
+//								- Print message if the logger wasn't initialised properly. It doesn't get called if the logger failed to initialise
 
 // This should be updated each time a feature gets added to the logging system.
-#define STARFROSTLOG_VERSION 	"Starfrost Shared Logging System 4.4 (December 31, 2025)"
+#define STARFROSTLOG_VERSION 	"Starfrost Shared Logging System 4.5 (January 22, 2026)"
 
 namespace Capy
 {
@@ -94,20 +99,22 @@ namespace Capy
 	// Struct storing log settings.
 	struct LogSettings
 	{
-		const char* file_name;
-		LogChannel channels;
-		LogDestination source;
-		bool keepOldLogs;
-		bool changed; 
-		void (*fatalFunction)();
+		const char* fileName;						// File name to log.
+		LogChannel channels;						// Bitmask of logging channels.
+		LogDestination destination;					// Bitmask of logging destinations.
+		bool keepOldLogs;							// Keep old logs?
+		bool changed; 								// Did the log settings change? (only used on Logger_Init so it doesn't overwrite the user's settings)
+		bool suppressSignOnMessage;					// Print the sign-on message?
+		void (*fatalFunction)();					// Function callback, called on fatal error (optional)
 	};
 
 	// Struct storing the actual logger itelf.
 	struct Logger
 	{
-		LogSettings settings;
-		FILE* handle;
-		bool initialised;
+		LogSettings settings;						// Logger settings.
+		FILE* handle;								// File handle for logging
+		bool initialised;							// Is the logger initialised?
+		bool initFailed;							// Did the logger try to initialise, but fail?
 	};
 
 	bool Logging_Init();

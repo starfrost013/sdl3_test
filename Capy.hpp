@@ -13,7 +13,6 @@
 
 namespace Capy
 {
-
     #define APP_NAME "Capybara Wars (Prototype)"
     #define APP_VERSION "Pre-Alpha 3.0"
     #define APP_BUILD_DATE __DATE__ " " __TIME__ 

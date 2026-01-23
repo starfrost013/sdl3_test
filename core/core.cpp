@@ -33,9 +33,9 @@ namespace Capy
         Logging_LogChannel("Initialising render texture...", LogChannel::Message);
 
         // not really a render target, but w/e
-        game.render_target = SDL_CreateTexture(game.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, game.settings.screenX, game.settings.screenY);
+        game.renderTarget = SDL_CreateTexture(game.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, game.settings.screenX, game.settings.screenY);
 
-        if (!game.render_target)
+        if (!game.renderTarget)
         {
             Logging_LogChannel("Failed to create render target: %s", LogChannel::Error, SDL_GetError());
 
@@ -44,6 +44,8 @@ namespace Capy
         
         game.running = true; 
         game.tickrate = 60; 
+
+        world.GetHeader().SetSize(Vector2(3000, 400));
 
         world.Create();
         return true; 

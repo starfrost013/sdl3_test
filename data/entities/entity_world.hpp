@@ -13,6 +13,7 @@ namespace Capy
         uint32_t colourB;
         uint32_t colourA;
         const char* texture_path; 
+        const char* name;
         bool emitsLight;
     };
 
@@ -28,6 +29,8 @@ namespace Capy
     class WorldEntity : public Entity 
     {
     public: 
+
+        friend class WorldHeader;
         
         //
         // DEFINES
@@ -47,19 +50,25 @@ namespace Capy
         void Tick();
         void Destroy();
 
-    private: 
-    
-        /* World file format header */
+        /* 
+            World file format header 
+            A lot of this should only be accessed by the worldentity
+        
+        */
         struct WorldHeader
         {   
             uint32_t version; 
             Vector2<int32_t> size;
+            
             char name[WORLD_NAME_LENGTH];
+        public: 
+            void SetSize(Vector2<int32_t> size) { this->size = size; };
         };
 
-        void CreateGenerateWorld(uint32_t* texture_pixels, int32_t pitch);
-        void CreateGenerateNoise();
+        WorldHeader& GetHeader() { return header; };
 
+    private: 
+    
         WorldHeader header;
 
         /* 
@@ -73,6 +82,10 @@ namespace Capy
 
         float noiseData[NOISE_STEPS];
 
+        void CreateGenerateWorld(uint32_t* texture_pixels);
+        void CreateGenerateNoise();
+
+        
 
     };
 }

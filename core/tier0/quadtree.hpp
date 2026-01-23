@@ -133,7 +133,7 @@ namespace Capy
             return root; 
         } 
 
-        QuadTree<T>()
+        QuadTree()
         {
             root = new Quad<T>();
         }

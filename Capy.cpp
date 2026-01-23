@@ -1,5 +1,6 @@
 /* "Wolfenstein 3D" styled Digital Differential Analyzer raycaster (Test Project for SDL3) */
 
+#include "util/logging.hpp"
 #include <Capy.hpp>
 #include <core/core.hpp>
 
@@ -9,8 +10,16 @@ namespace Capy
 {
     void Capy_Main(int32_t argc, char** argv)
     {
-        Logging_Init();
-        
+		logger.settings.channels = (LogChannel)(LogChannel::Debug | LogChannel::Message | LogChannel::Warning | LogChannel::Error | LogChannel::Fatal | LogChannel::SuperFatal);
+        logger.settings.destination = (LogDestination)(LogDestination::File | LogDestination::Printf);
+        logger.settings.keepOldLogs = false;
+#ifdef RELEASE // don't need to ifdef debug because it gets logged
+        logger.settings.destination = (LogDestination)(LogDestination::File);
+#endif
+
+        if (!Logging_Init())
+            std::cout << "Catastrophic non-fatal error: SSLS Logger Initialisation FAILED (0xDEADDEAD). You won't get any logging!\n" << std::endl;
+
         Game_Init();
 
         while (game.running)
@@ -21,12 +30,12 @@ namespace Capy
             /* Now, pump the game's event queue */
             Game_PumpEvents();
 
-            if (time_now > (game.last_tick_time + (NS_PER_SECOND / game.tickrate)))
+            if (time_now > (game.lastTickTime + (NS_PER_SECOND / game.tickrate)))
             {
                 /* Update the world state and actually *HANDLE* those events */
                 Game_Tick();
                 //std::cout << "Last tick time: " << (float(time_now / 1000000.0f)) - (float(game.last_tick_time / 1000000.0f)) << "ms" << std::endl;
-                game.last_tick_time = time_now;
+                game.lastTickTime = time_now;
             }
 
             SDL_RenderClear(game.renderer);

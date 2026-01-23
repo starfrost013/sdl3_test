@@ -21,7 +21,7 @@ namespace Capy
     /* Game information that changes on level change */
     struct GameInfo 
     {
-        uint32_t level_id; 
+        uint32_t tiemr;
     };
 
     #define NS_PER_SECOND 1000000000
@@ -29,19 +29,12 @@ namespace Capy
     struct Game
     {
         SDL_Window* window;         // SDL Window
-
         SDL_Renderer* renderer;     // SDL Renderer
-
-        SDL_Texture* render_target;  // Texture that gets blited to the display
-
+        SDL_Texture* renderTarget;  // Texture that gets blited to the display
         uint32_t tickrate;          // The game's tickrate
-
-        uint64_t last_tick_time;    // last frame time in nanoseconds (returned by SDL_GetTicksNS)
-
+        uint64_t lastTickTime;    // last frame time in nanoseconds (returned by SDL_GetTicksNS)
         GameInfo info;              // Level-specific game information
-
         GameSettings settings;      // Game settings
-
         bool running;               // Determines if the game is running.
     };
 
