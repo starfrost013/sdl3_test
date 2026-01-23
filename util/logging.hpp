@@ -6,7 +6,7 @@
 #include <iostream>
 
 //
-// Logging system (Version 4.4) - everything before 4.3 is retroactive
+// Logging system (Version 4.5) - everything before 4.3 is retroactive
 // 
 // Oct 2023 (1.0): 				Wrote it
 // Jan 2024 (2.0): 				Fixed it...and added log_channel::Debug.

@@ -1,3 +1,5 @@
+// entity_world.cpp: World generation code
+
 #include <core/core.hpp>
 #include <data/entities/entity.hpp>
 #include <data/entities/entity_world.hpp>
@@ -5,6 +7,13 @@
 
 namespace Capy
 { 
+    typedef std::unordered_map<WorldTile*, uint8_t> TileToIndexMap;
+    typedef std::unordered_map<uint8_t, WorldTile*> IndexToTileMap;
+
+
+    //
+    // TILE DEFINITIONS
+    //
     WorldTile WorldTileAir = { .colourR = 0, .colourG = 0, .colourB = 0, .colourA = 0, 
         .texture_path = nullptr, .name = "Air [No render]", .emitsLight = false, };
     WorldTile WorldTileGrass = { .colourR = 20, .colourG = 170, .colourB = 50, .colourA = 255, 
@@ -18,25 +27,29 @@ namespace Capy
     WorldTile WorldTileGlass = { .colourR = 241, .colourG = 243, .colourB = 242, .colourA = 127, 
         .texture_path = nullptr, .name = "Glass", .emitsLight = false, };
     WorldTile WorldTileCrystal = { .colourR = 240, .colourG = 186, .colourB = 255, .colourA = 255, 
-        .texture_path = nullptr, .name = "Crystal Meth", .emitsLight = false,  };
+        .texture_path = nullptr, .name = "Crystal Meth", .emitsLight = false, };
     WorldTile WorldTileWater = { .colourR = 4, .colourG = 24, .colourB = 155, .colourA = 127, 
-        .texture_path = nullptr, .name = "Water", .emitsLight = false,  };
+        .texture_path = nullptr, .name = "Water", .emitsLight = false, };
 
     /* 
         for each of maintenance these are separate lists.
-        search is faster than using an array, and these are the "wrong way around" so the level generation code cna use the pointers to find the indices
-    */
-    std::unordered_map<WorldTile*, uint8_t> tileIndices = 
-    {
-        { &WorldTileAir, 0 },
-        { &WorldTileGrass, 1 },
-        { &WorldTileStone, 2 },
-        { &WorldTileLava, 3 },
+        search is faster than using an array
+        
+        it would make level generation slightly faster to have this the "wrong way around" so the level generation code cna use the pointers to find the indices,
+        but rendering would be slower - and level generation is only done once.
 
-        { &WorldTileSand, 4 },
-        { &WorldTileGlass, 5 },
-        { &WorldTileCrystal, 6 },
-        { &WorldTileWater, 7 },
+        having two lists was rejected due to data duplication issues
+    */
+    IndexToTileMap tileIndices = 
+    {
+        { 0, &WorldTileAir,  },
+        { 1, &WorldTileGrass,  },
+        { 2, &WorldTileStone,  },
+        { 3, &WorldTileLava,  },
+        { 4, &WorldTileSand,  },
+        { 5, &WorldTileGlass,  },
+        { 6, &WorldTileCrystal,  },
+        { 7, &WorldTileWater,  },
     };
 
 
@@ -62,12 +75,27 @@ namespace Capy
 
     void WorldEntity::CreateGenerateWorld(uint32_t* texturePixels)
     {
+
         if (header.size.x == 0
         || header.size.y == 0)
         {
             Logging_LogChannel("Tried to create a world with a size of 0 in at least one dimension.", LogChannel::Fatal);
             return;
         }
+
+        /* 
+            optimisation:
+            
+            it would be slow to search through the whole list of indicies every time but we don't want to dupliate the data - it makes it easier to create bugs
+            instead we can build a temporary std::unordered_map of pointers to indices
+
+            this basically flips the map
+        */
+
+        TileToIndexMap pointersToIndicesMap;
+
+        for (IndexToTileMap::const_iterator it = tileIndices.begin(); it != tileIndices.end(); ++it)
+            pointersToIndicesMap.insert({ it->second, it->first });
 
         uint32_t mapSizeBytes = header.size.x * header.size.y;
 
@@ -222,7 +250,7 @@ namespace Capy
                             | ((finalColourG & 0xFF) << 8)
                             | ((finalColourB));
 
-                        world[index] = tileIndices[currentTile];
+                        world[index] = pointersToIndicesMap[currentTile];
                     }
                 }
             }
