@@ -7,9 +7,11 @@
 
 namespace Capy
 { 
+    //
+    // Typedefs to prevent the code looking like the average C++ error message.
+    //
     typedef std::unordered_map<WorldTile*, uint8_t> TileToIndexMap;
     typedef std::unordered_map<uint8_t, WorldTile*> IndexToTileMap;
-
 
     //
     // TILE DEFINITIONS
@@ -42,24 +44,24 @@ namespace Capy
     */
     IndexToTileMap tileIndices = 
     {
-        { 0, &WorldTileAir,  },
-        { 1, &WorldTileGrass,  },
-        { 2, &WorldTileStone,  },
-        { 3, &WorldTileLava,  },
-        { 4, &WorldTileSand,  },
-        { 5, &WorldTileGlass,  },
-        { 6, &WorldTileCrystal,  },
-        { 7, &WorldTileWater,  },
+        { 0, &WorldTileAir, },
+        { 1, &WorldTileGrass, },
+        { 2, &WorldTileStone, },
+        { 3, &WorldTileLava, },
+        { 4, &WorldTileSand, },
+        { 5, &WorldTileGlass, },
+        { 6, &WorldTileCrystal, },
+        { 7, &WorldTileWater, },
     };
 
 
     // THESE ARE IN COORDINATES
     std::unordered_map<uint32_t, WorldTile*> heightData = 
     {
-        { HEIGHT_IN_BLOCKS(0), &WorldTileAir },
-        { HEIGHT_IN_BLOCKS(16), &WorldTileGrass },
-        { HEIGHT_IN_BLOCKS(28), &WorldTileStone },
-        { HEIGHT_IN_BLOCKS(64), &WorldTileLava },
+        { 0, &WorldTileAir },
+        { 16, &WorldTileGrass },
+        { 28, &WorldTileStone },
+        { 64, &WorldTileLava },
     };
 
     void WorldEntity::CreateGenerateNoise()
@@ -73,7 +75,7 @@ namespace Capy
         }
     }
 
-    void WorldEntity::CreateGenerateWorld(uint32_t* texturePixels)
+    void WorldEntity::CreateGenerateWorld()
     {
 
         if (header.size.x == 0
@@ -106,11 +108,8 @@ namespace Capy
         world = new uint8_t[mapSizeBytes];
 
         // 32bpp so 1 index = 4 bytes
-        uint32_t firstGroundY = 0;
-        uint32_t lastLightBorderY = 0; 
-        
-        uint32_t data = 0;
-
+        uint32_t firstGroundY = 0, data = 0;        
+    
         WorldTile* currentTile = heightData[0];
 
         Logging_LogChannel("[Phase 3] Generating terrain layers...", LogChannel::Debug);
@@ -142,9 +141,6 @@ namespace Capy
                 if (currentTile != &WorldTileAir
                 && firstGroundY == 0)
                     firstGroundY = y;
-
-                if (currentTile->emitsLight)
-                    lastLightBorderY = y;
             }
         }
 
@@ -155,7 +151,7 @@ namespace Capy
         //reset currenttile so it can be selected again...we don't need to create the hashtable entries again so it should bef aster
         currentTile = heightData[0];
 
-        for (uint32_t y = 0; y < header.size.y; y += TILE_SIZE_Y)
+        for (uint32_t y = 0; y < header.size.y; y++)
         {
             // this seems like an expensive operation but it's only done at creation time.
             // invalid elements construct a nullptr in STL
@@ -172,7 +168,7 @@ namespace Capy
                 CreateGenerateNoise();
             }
 
-            for (uint32_t x = 0; x < header.size.x; x += TILE_SIZE_X)
+            for (uint32_t x = 0; x < header.size.x; x++)
             {
                 //
                 // NOISE
@@ -212,47 +208,9 @@ namespace Capy
                 if (adjustedY < 0)
                     adjustedY = 0;
 
-                // vary colours per tile so it looks cooler
-                int32_t finalColourR = currentTile->colourR + rand() % 12;
-                int32_t finalColourG = currentTile->colourG + rand() % 12;
-                int32_t finalColourB = currentTile->colourB + rand() % 12;
+                uint32_t index = (y * header.size.x) + x;
 
-                int32_t subtractFactor = firstGroundY;
-
-                if (currentTile->emitsLight)
-                    subtractFactor = lastLightBorderY;
-                    
-                // always faster to bitshift
-                finalColourR -= ((adjustedY - subtractFactor) >> 1);
-                finalColourG -= ((adjustedY - subtractFactor) >> 1);
-                finalColourB -= ((adjustedY - subtractFactor) >> 1);
-
-                // clamp colours
-                if (finalColourR > 255) finalColourR = 255; 
-                if (finalColourG > 255) finalColourG = 255;
-                if (finalColourB > 255) finalColourB = 255;
-
-                // Noise introduction made pixels sometimes show up above the colour. So let's just ignore it if it's below 0
-                if (finalColourR < 0) finalColourR = currentTile->colourR; 
-                if (finalColourG < 0) finalColourG = currentTile->colourG;
-                if (finalColourB < 0) finalColourB = currentTile->colourB;
-            
-                // draw tiles
-                for (uint32_t yy = 0; yy < TILE_SIZE_Y; yy++)
-                {
-                    for (uint32_t xx = 0; xx < TILE_SIZE_X; xx++)
-                    {
-                        // >> 2 because 32bpp
-                        uint32_t index = ((adjustedY + yy) + (x + xx));
-
-                        uint32_t value = ((currentTile->colourA & 0xFF) << 24)
-                            | ((finalColourR & 0xFF) << 16) 
-                            | ((finalColourG & 0xFF) << 8)
-                            | ((finalColourB));
-
-                        world[index] = pointersToIndicesMap[currentTile];
-                    }
-                }
+                world[index] = pointersToIndicesMap[currentTile];
             }
 
             // reset step counter
@@ -298,22 +256,11 @@ namespace Capy
     {
         Logging_LogChannel("World Generation:", LogChannel::Debug);
 
-        // mock 'sky' colour 
-        SDL_SetRenderDrawColor(game.renderer, 30, 50, 180, 255);
-
-        uint32_t* texturePixels;  
-        uint32_t index; 
-        int32_t pitch; 
-
-        SDL_Rect new_rect = { 0, 0, (int32_t)game.settings.screenX, (int32_t)game.settings.screenY };
-
-        SDL_LockTexture(game.renderTarget, &new_rect, (void**)&texturePixels, &pitch);
 
         CreateGenerateNoise();
-        CreateGenerateWorld(texturePixels);
+        CreateGenerateWorld();
 
         // go
-        SDL_UnlockTexture(game.renderTarget);
     }
 
     // Called during level loading
@@ -324,9 +271,95 @@ namespace Capy
 
     void WorldEntity::Render()
     {
-        // world generation test code
+        uint32_t* texturePixels;  
+        uint32_t index; 
+        int32_t pitch; 
 
+        SDL_Rect newRect = { 0, 0, (int32_t)game.settings.screenX, (int32_t)game.settings.screenY };
 
+        // mock 'sky' colour 
+        SDL_SetRenderDrawColor(game.renderer, 30, 50, 180, 255);
+
+        /* Todo: DETECT world change */
+
+        SDL_LockTexture(game.renderTarget, &newRect, (void**)&texturePixels, &pitch);
+
+         // 32bpp so 1 index = 4 bytes
+        uint32_t firstGroundY = 0;
+        uint32_t lastLightBorderY = 0; 
+
+        WorldTile* currentTile = heightData[0];
+        
+        for (uint32_t y = 0; y <= game.settings.screenY; y += TILE_SIZE_Y)
+        {
+            // blit to texture
+
+            for (uint32_t x = 0; x <= game.settings.screenX; x += TILE_SIZE_X)
+            {
+                uint32_t xTile = x / TILE_SIZE_X;
+                uint32_t yTile = y / TILE_SIZE_Y;
+
+                if (xTile >= header.size.x
+                || yTile >= header.size.y)
+                {
+                    goto done;
+                }
+
+                uint32_t worldIndex = (yTile * header.size.x) + xTile;
+
+                uint8_t index = world[worldIndex];
+
+                // don't draw out of bounds as random 'tiles' just in case - might not be the fastest code
+                if (index > (tileIndices.size()))
+                    return;
+
+                WorldTile* currentTile = tileIndices[index];
+
+                // vary colours per tile so it looks cooler
+                int32_t finalColourR = currentTile->colourR + rand() % 12;
+                int32_t finalColourG = currentTile->colourG + rand() % 12;
+                int32_t finalColourB = currentTile->colourB + rand() % 12;
+
+                int32_t subtractFactor = firstGroundY;
+
+                if (currentTile->emitsLight)
+                    subtractFactor = lastLightBorderY;
+                    
+                // always faster to bitshift
+                finalColourR -= (subtractFactor) >> 1;
+                finalColourG -= (subtractFactor) >> 1;
+                finalColourB -= (subtractFactor) >> 1;
+
+                // clamp colours
+                if (finalColourR > 255) finalColourR = 255; 
+                if (finalColourG > 255) finalColourG = 255;
+                if (finalColourB > 255) finalColourB = 255;
+
+                // Noise introduction made pixels sometimes show up above the colour. So let's just ignore it if it's below 0
+                if (finalColourR < 0) finalColourR = currentTile->colourR; 
+                if (finalColourG < 0) finalColourG = currentTile->colourG;
+                if (finalColourB < 0) finalColourB = currentTile->colourB;
+
+                // draw tiles
+                for (uint32_t yy = 0; yy < TILE_SIZE_Y; yy++)
+                {
+                    for (uint32_t xx = 0; xx < TILE_SIZE_X; xx++)
+                    {
+                        uint32_t value = ((currentTile->colourA & 0xFF) << 24)
+                            | ((finalColourR & 0xFF) << 16) 
+                            | ((finalColourG & 0xFF) << 8)
+                            | ((finalColourB));
+
+                        uint32_t textureLocation = (((y + yy) * (game.settings.screenY)) + (x + xx)) >> 2;
+
+                        texturePixels[textureLocation] = value;
+                    }
+                }
+            }
+        }
+
+done:
+        SDL_UnlockTexture(game.renderTarget);
         SDL_RenderTexture(game.renderer, game.renderTarget, NULL, NULL);
     }
 

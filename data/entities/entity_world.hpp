@@ -35,8 +35,6 @@ namespace Capy
         //
         // DEFINES
         //
-        #define WIDTH_IN_BLOCKS(x)  (x*TILE_SIZE_X)
-        #define HEIGHT_IN_BLOCKS(x) (x*TILE_SIZE_Y)
         #define TILE_SIZE_X         8
         #define TILE_SIZE_Y         8
         
@@ -82,7 +80,7 @@ namespace Capy
 
         float noiseData[NOISE_STEPS];
 
-        void CreateGenerateWorld(uint32_t* texture_pixels);
+        void CreateGenerateWorld();
         void CreateGenerateNoise();
 
         
