@@ -27,6 +27,7 @@ add_executable (Capy
 include_directories(".")
 # Required for glad for now
 include_directories(${CMAKE_SOURCE_DIR}"/external/sdl3/x86_64-w64-mingw32/include")
+include_directories(${CMAKE_SOURCE_DIR}"/external/sdl3_net/include")
 
 # Libraries and copiler specific stuff
 
@@ -51,4 +52,5 @@ endif()
 #todo: linux
 if (WIN32)
     file(COPY ${CMAKE_SOURCE_DIR}/external/sdl3/x86_64-w64-mingw32/bin/SDL3.dll DESTINATION ${CMAKE_BINARY_DIR})
+    file(COPY ${CMAKE_SOURCE_DIR}/external/sdl3_net/SDL3_net.dll DESTINATION ${CMAKE_BINARY_DIR})
 endif()

@@ -71,7 +71,7 @@ namespace Capy
 
         for (uint32_t i = 0; i < NOISE_STEPS; i++)
         {
-            noiseData[i] = (float)(Util_RandomSingle() * NOISE_MAX_VARIANCE); 
+            noiseData[i] = (float)(Util_RandomSingle() * NOISE_MAX_VARIANCE) / TILE_SIZE_Y; 
         }
     }
 
@@ -208,7 +208,7 @@ namespace Capy
                 if (adjustedY < 0)
                     adjustedY = 0;
 
-                uint32_t index = (y * header.size.x) + x;
+                uint32_t index = (adjustedY * header.size.x) + x;
 
                 world[index] = pointersToIndicesMap[currentTile];
             }
@@ -290,11 +290,11 @@ namespace Capy
 
         WorldTile* currentTile = heightData[0];
         
-        for (uint32_t y = 0; y <= game.settings.screenY; y += TILE_SIZE_Y)
+        for (uint32_t y = 0; y < game.settings.screenY; y += TILE_SIZE_Y)
         {
             // blit to texture
 
-            for (uint32_t x = 0; x <= game.settings.screenX; x += TILE_SIZE_X)
+            for (uint32_t x = 0; x < game.settings.screenX; x += TILE_SIZE_X)
             {
                 uint32_t xTile = x / TILE_SIZE_X;
                 uint32_t yTile = y / TILE_SIZE_Y;
@@ -316,6 +316,7 @@ namespace Capy
                 WorldTile* currentTile = tileIndices[index];
 
                 // vary colours per tile so it looks cooler
+                // todo: make this not run on every frame
                 int32_t finalColourR = currentTile->colourR + rand() % 12;
                 int32_t finalColourG = currentTile->colourG + rand() % 12;
                 int32_t finalColourB = currentTile->colourB + rand() % 12;
@@ -350,7 +351,7 @@ namespace Capy
                             | ((finalColourG & 0xFF) << 8)
                             | ((finalColourB));
 
-                        uint32_t textureLocation = (((y + yy) * (game.settings.screenY)) + (x + xx)) >> 2;
+                        uint32_t textureLocation = (((y + yy) * pitch) + ((x + xx) << 2)) >> 2;
 
                         texturePixels[textureLocation] = value;
                     }
