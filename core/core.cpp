@@ -61,10 +61,10 @@ namespace Capy
             {
                 /* TEMP code */
                 case SDL_EVENT_KEY_UP:
-                    key_state[next_event.key.scancode] = false; 
+                    keyStates[next_event.key.scancode] = false; 
                     break; 
                 case SDL_EVENT_KEY_DOWN:
-                    key_state[next_event.key.scancode] = true;
+                    keyStates[next_event.key.scancode] = true;
                     break; 
                 case SDL_EVENT_QUIT:
                     game.running = false; 

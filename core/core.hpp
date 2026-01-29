@@ -5,6 +5,9 @@
 
 namespace Capy
 {
+    #define NS_PER_SECOND               1000000000
+    #define MAX_STRING_GENERIC          256     // Generic max string length
+
     /* Game states */
     enum GameState 
     {
@@ -21,10 +24,9 @@ namespace Capy
     /* Game information that changes on level change */
     struct GameInfo 
     {
-        uint32_t tiemr;
+        uint32_t timer;
     };
 
-    #define NS_PER_SECOND 1000000000
 
     struct Game
     {
@@ -32,7 +34,7 @@ namespace Capy
         SDL_Renderer* renderer;     // SDL Renderer
         SDL_Texture* renderTarget;  // Texture that gets blited to the display
         uint32_t tickrate;          // The game's tickrate
-        uint64_t lastTickTime;    // last frame time in nanoseconds (returned by SDL_GetTicksNS)
+        uint64_t lastTickTime;      // last frame time in nanoseconds (returned by SDL_GetTicksNS)
         GameInfo info;              // Level-specific game information
         GameSettings settings;      // Game settings
         bool running;               // Determines if the game is running.
@@ -41,14 +43,14 @@ namespace Capy
     extern Game game; 
 
     // Core functionality
-    bool Game_Init();
-    void Game_PumpEvents();
+    bool Game_Init();               // Run on init
+    void Game_PumpEvents();         // Pump events for SDL
     void Game_Tick();               // Run each tick
-    void Game_Frame();
-    bool Game_Shutdown();
+    void Game_Frame();              // Run each frame
+    bool Game_Shutdown();           // RUn on shutdown
 
     // scancodes are a terrible idea
-    extern bool key_state[];
+    extern bool keyStates[];
 
     bool Input_KeyIsDown(uint32_t scancode);
 }

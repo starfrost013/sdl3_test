@@ -9,11 +9,11 @@ namespace Capy
 {
     /* A pretty basic input system */
 
-    bool key_state[SDL_SCANCODE_COUNT];
+    bool keyStates[SDL_SCANCODE_COUNT];
 
     bool Input_KeyIsDown(uint32_t scancode)
     {
-        return key_state[scancode];
+        return keyStates[scancode];
     }
 
 }
