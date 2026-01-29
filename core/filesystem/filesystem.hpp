@@ -9,12 +9,16 @@
 namespace Capy
 {
     class FilesystemSettings
-    {
+    {        
+        friend class Filesystem;
+
         char baseDirectory[MAX_STRING_GENERIC];
     };
 
     class FilesystemFile
     {
+        friend class Filesystem;
+
         const char* path;
         bool open;
         std::fstream file;
@@ -22,9 +26,6 @@ namespace Capy
 
     class Filesystem
     {
-        friend FilesystemFile;
-        friend FilesystemSettings;
-
         static FilesystemFile* Open(const char* path);
         static void Close(FilesystemFile* ff);
     };

@@ -13,6 +13,8 @@ add_executable (Capy
 "core/core.cpp"
 "core/core_input.cpp"
 
+"core/filesystem/filesystem.cpp"
+
 # Entity
 "data/entities/entity_player.cpp"
 "data/entities/entity_world.cpp"
