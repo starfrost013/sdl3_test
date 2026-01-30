@@ -4,6 +4,7 @@ cmake_minimum_required (VERSION 3.10)
 
 project("Capy")
 
+
 # Add source to this project's executable.
 add_executable (Capy 
 
@@ -25,6 +26,8 @@ add_executable (Capy
 "util/logging.cpp"
 )
 
+add_compile_options(Capy -static-libstdc++ -static-libgcc)
+
 # Base include directories
 include_directories(".")
 # Required for glad for now
@@ -38,7 +41,6 @@ add_library(sdl3 STATIC IMPORTED)
 set_target_properties(sdl3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/external/sdl3/x86_64-w64-mingw32/lib/libSDL3.dll.a)
 target_link_libraries(Capy sdl3)
 
-
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   target_compile_definitions(Capy PRIVATE DEBUG)
 elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
@@ -46,10 +48,10 @@ elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
   set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
 endif()
 
-
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Capy PROPERTY CXX_STANDARD 20)
 endif()
+
 
 #todo: linux
 if (WIN32)
