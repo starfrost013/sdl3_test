@@ -14,6 +14,9 @@ add_executable (Capy
 "core/core.cpp"
 "core/core_input.cpp"
 
+# Core - Convar
+"core/cvar/cvar.cpp"
+
 "core/filesystem/filesystem.cpp"
 
 # Entity

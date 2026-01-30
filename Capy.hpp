@@ -7,6 +7,7 @@
 // Core 
 #include <core/tier0/quadtree.hpp>
 #include <core/tier0/vector2.hpp>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <unordered_map>
