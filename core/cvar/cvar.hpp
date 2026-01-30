@@ -1,5 +1,5 @@
 #pragma once
-#include <common/common.hpp>
+#include <core/core.hpp>
 
 // 
 // Cvar.hpp: Defines functions for convars.

@@ -1,4 +1,3 @@
-#include <core/core.hpp>
 #include <core/cvar/cvar.hpp>
 
 namespace Capy
