@@ -26,29 +26,29 @@ namespace Capy
 
 	void Util_ConsoleSetForegroundColor(ConsoleColor color)
 	{
-		int32_t color_final = 30 + color;
+		int32_t colorFinal = 30 + color;
 
 		if (color >= ConsoleColor::FirstBright) 
-			color_final = 90 + (color & ConsoleColor::FirstBright - 1);
+			colorFinal = 90 + (color & ConsoleColor::FirstBright - 1);
 
 		// 10 (max) + 1 + 4 + 1 for safety
 		char finalString[CONSOLE_COLOR_BUFFER_SIZE] = { 0 };
 
-		snprintf(finalString, CONSOLE_COLOR_BUFFER_SIZE, "%s%dm", CONSOLE_TERMINAL_COMMAND_PREFIX, color_final);
+		snprintf(finalString, CONSOLE_COLOR_BUFFER_SIZE, "%s%dm", CONSOLE_TERMINAL_COMMAND_PREFIX, colorFinal);
 		printf("%s", finalString);
 	}
 
 	void Util_ConsoleSetBackgroundColor(ConsoleColor color)
 	{
-		int32_t color_final = 40 + color;
+		int32_t colorFinal = 40 + color;
 
 		if (color >= ConsoleColor::FirstBright) 
-			color_final = 100 + (color & ConsoleColor::FirstBright - 1);
+			colorFinal = 100 + (color & ConsoleColor::FirstBright - 1);
 
 		// 10 (max) + 1 + 4 + 1 for safety
 		char finalString[CONSOLE_COLOR_BUFFER_SIZE] = { 0 };
 
-		snprintf(finalString, CONSOLE_COLOR_BUFFER_SIZE, "%s%dm", CONSOLE_TERMINAL_COMMAND_PREFIX, color_final);
+		snprintf(finalString, CONSOLE_COLOR_BUFFER_SIZE, "%s%dm", CONSOLE_TERMINAL_COMMAND_PREFIX, colorFinal);
 		printf("%s", finalString);
 	}
 
