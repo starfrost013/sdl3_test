@@ -6,4 +6,9 @@ namespace Capy
     {
         
     }
+
+    void Server::Shutdown()
+    {
+        
+    }
 }

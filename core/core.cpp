@@ -17,6 +17,16 @@ namespace Capy
 
     bool Game_Init()
     {
+        logger.settings.channels = (LogChannel)(LogChannel::Debug | LogChannel::Message | LogChannel::Warning | LogChannel::Error | LogChannel::Fatal | LogChannel::SuperFatal);
+        logger.settings.destination = (LogDestination)(LogDestination::File | LogDestination::Printf);
+        logger.settings.keepOldLogs = false;
+#ifdef RELEASE // don't need to ifdef debug because it gets logged
+        logger.settings.destination = (LogDestination)(LogDestination::File);
+#endif
+
+        if (!Logging_Init())
+            std::cout << "Catastrophic non-fatal error: SSLS Logger Initialisation FAILED (0xDEADDEAD). You won't get any logging!\n" << std::endl;            
+
         Logging_LogChannel("Initialising SDL...", LogChannel::Message);
 
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS))
@@ -76,20 +86,6 @@ namespace Capy
 
     void Game_Tick()
     {
-        /* TODO: Move to entity event */
-
-        bool wDown = Input_KeyIsDown(SDL_SCANCODE_W);
-        bool aDown = Input_KeyIsDown(SDL_SCANCODE_A);
-        bool sDown = Input_KeyIsDown(SDL_SCANCODE_S);
-        bool dDown = Input_KeyIsDown(SDL_SCANCODE_D);
-        /* 
-            move the player around based on their movement speed
-            test each axis individually so we can slide along walls 
-        */
-
-        uint32_t collisionIndex = 0;
-        bool movementAllowedX = true; //used for debugging 
-        bool movementAllowedY = true; 
     }
     
     void Game_Frame()

@@ -17,6 +17,11 @@ namespace Capy
             CLIENT_SHUTDOWN = 6,
         };
 
+    public: 
+        
+        void Init() override; 
+        void Shutdown() override; 
+        
         ClientState state;
     };
 }

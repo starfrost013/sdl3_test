@@ -10,15 +10,6 @@ namespace Capy
 {
     void Capy_Main(int32_t argc, char** argv)
     {
-		logger.settings.channels = (LogChannel)(LogChannel::Debug | LogChannel::Message | LogChannel::Warning | LogChannel::Error | LogChannel::Fatal | LogChannel::SuperFatal);
-        logger.settings.destination = (LogDestination)(LogDestination::File | LogDestination::Printf);
-        logger.settings.keepOldLogs = false;
-#ifdef RELEASE // don't need to ifdef debug because it gets logged
-        logger.settings.destination = (LogDestination)(LogDestination::File);
-#endif
-
-        if (!Logging_Init())
-            std::cout << "Catastrophic non-fatal error: SSLS Logger Initialisation FAILED (0xDEADDEAD). You won't get any logging!\n" << std::endl;
 
         Game_Init();
 

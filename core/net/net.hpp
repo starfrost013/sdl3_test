@@ -4,7 +4,6 @@
 
 #pragma once
 #include <SDL3_net/SDL_net.h>
-#include <core/net/netmodebase.hpp>
 
 /* 
     Network message 
@@ -28,16 +27,31 @@ namespace Capy
     struct NetMessage
     {
         uint32_t magic;
+        uint16_t bufCurrent;            //64k should be fine
         uint8_t messageType; 
         uint8_t* messageData;
+
+        template <typename T>
+        T Read()
+        {
+
+        }
     };
 
     // network mode
-    enum NetMode
+    enum NetType
     {
         NETMODE_CLIENT = 0,
         NETMODE_SERVER_LISTEN = 1,
         NETMODE_SERVER_DEDICATED = 2,
+    };
+
+    /* Base for all network modes */
+    class NetMode
+    {
+        public:
+            virtual void Init() { };
+            virtual void Shutdown() { };
     };
 
     int8_t Net_ReadS8(NetMessage* msg);

@@ -17,6 +17,15 @@ add_executable (Capy
 # Core - Convar
 "core/cvar/cvar.cpp"
 
+# Core - Network
+"core/net/net_core.cpp"
+
+# Core - Server
+"core/net/server/server_core.cpp"
+
+# Core - Client
+"core/net/client/client_core.cpp"
+
 "core/filesystem/filesystem.cpp"
 
 # Entity

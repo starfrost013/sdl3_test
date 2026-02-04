@@ -4,7 +4,7 @@
 
 namespace Capy
 {
-    class Server 
+    class Server : NetMode
     {
         // STRUCTURES AND ENUMS
 
@@ -22,6 +22,9 @@ namespace Capy
     public:
         // METHODS
 
+        void Init() override; 
+        void Shutdown() override; 
+        
         ServerState GetState();
         void SetState(ServerState state);
 

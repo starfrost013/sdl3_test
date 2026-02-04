@@ -3,6 +3,9 @@
 #include "SDL3/SDL_scancode.h"
 #include <Capy.hpp>
 
+#include <core/net/net.hpp>
+#include <core/cvar/cvar.hpp>
+
 namespace Capy
 {
     #define NS_PER_SECOND               1000000000
@@ -27,7 +30,6 @@ namespace Capy
         uint32_t timer;
     };
 
-
     struct Game
     {
         SDL_Window* window;         // SDL Window
@@ -37,6 +39,7 @@ namespace Capy
         uint64_t lastTickTime;      // last frame time in nanoseconds (returned by SDL_GetTicksNS)
         GameInfo info;              // Level-specific game information
         GameSettings settings;      // Game settings
+        NetMode netMode;
         bool running;               // Determines if the game is running.
     };
 
