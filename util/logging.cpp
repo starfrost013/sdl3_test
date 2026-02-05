@@ -7,9 +7,10 @@
 
 #include "logging.hpp"
 
-namespace Capy
+#ifdef __cplusplus
+namespace USER_NAMESPACE
 {
-	
+#endif
 	// Defines 
 	#define	LOGGING_MAX_LENGTH_TEXT			1024												// Maximum length of text being logged via the logger.
 	#define LOGGING_MAX_LENGTH_DATE			32													// Length of the string containing the current date.
@@ -22,7 +23,6 @@ namespace Capy
 
 	// various buffer size demands
 	#define CONSOLE_TERMINAL_COMMAND_PREFIX "\x1B["
-	#define CONSOLE_COLOR_BUFFER_SIZE		24		// maded a bit bigger for safety
 
 	void Util_ConsoleSetForegroundColor(ConsoleColor color)
 	{
@@ -31,11 +31,7 @@ namespace Capy
 		if (color >= ConsoleColor::FirstBright) 
 			colorFinal = 90 + (color & ConsoleColor::FirstBright - 1);
 
-		// 10 (max) + 1 + 4 + 1 for safety
-		char finalString[CONSOLE_COLOR_BUFFER_SIZE] = { 0 };
-
-		snprintf(finalString, CONSOLE_COLOR_BUFFER_SIZE, "%s%dm", CONSOLE_TERMINAL_COMMAND_PREFIX, colorFinal);
-		printf("%s", finalString);
+		printf("%s%dm", CONSOLE_TERMINAL_COMMAND_PREFIX, colorFinal);
 	}
 
 	void Util_ConsoleSetBackgroundColor(ConsoleColor color)
@@ -45,11 +41,7 @@ namespace Capy
 		if (color >= ConsoleColor::FirstBright) 
 			colorFinal = 100 + (color & ConsoleColor::FirstBright - 1);
 
-		// 10 (max) + 1 + 4 + 1 for safety
-		char finalString[CONSOLE_COLOR_BUFFER_SIZE] = { 0 };
-
-		snprintf(finalString, CONSOLE_COLOR_BUFFER_SIZE, "%s%dm", CONSOLE_TERMINAL_COMMAND_PREFIX, colorFinal);
-		printf("%s", finalString);
+		printf("%s%dm", CONSOLE_TERMINAL_COMMAND_PREFIX, colorFinal);
 	}
 
 	void Util_ConsoleResetForegroundColor()
@@ -141,10 +133,9 @@ namespace Capy
 		if (!(logger.settings.channels & channel))
 			return;
 
-	// if solely printing debug channel, return on release build
+	// remove debug channel on release build
 	#ifdef RELEASE
-		if (channel == LogChannel::Debug)
-			return;
+		channel &= ~(LogChannel::Debug);
 	#endif
 
 		if (strlen(text) > LOGGING_MAX_LENGTH_TEXT)
@@ -156,13 +147,22 @@ namespace Capy
 		char dateBuffer[LOGGING_MAX_LENGTH_DATE] = {0};
 		char logStringBuffer[LOGGING_MAX_LENGTH_TOTAL] = {0};
 
+	#ifdef __cplusplus
 		auto now = std::chrono::system_clock::now();
-		std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
-		snprintf(dateBuffer, LOGGING_MAX_LENGTH_DATE, "%s", std::ctime(&now_time_t));
+		std::time_t nowTimeT = std::chrono::system_clock::to_time_t(now);
+	#else
+		time_t time;
+		struct tm* timeInfo;
+
+		time(&time);
+		timeInfo = localtime(&time);
+		time_t nowTimeT = asctime(timeInfo);
+	#endif
+		snprintf(dateBuffer, LOGGING_MAX_LENGTH_DATE, "%s", std::ctime(&nowTimeT));
 
 		// lop off the last character so it doesn't have a new line
-		size_t date_buffer_length = strlen(dateBuffer);
-		dateBuffer[date_buffer_length - 1] = '\0';
+		size_t dateBufferLength = strlen(dateBuffer);
+		dateBuffer[dateBufferLength - 1] = '\0';
 
 		const char* prefix = "[";
 		const char* suffixDate = "]: ";
@@ -224,7 +224,6 @@ namespace Capy
 			{
 				logger.settings.fatalFunction();
 			}
-				
 		}
 
 		if (logger.settings.destination & LogDestination::File)
@@ -232,10 +231,16 @@ namespace Capy
 
 		if (channel & LogChannel::SuperFatal)
 		{
-			std::cout << "MEMORY COMPLETELY HOSED. NOT SAFE TO CLEANLY SHUT DOWN - LET'S GET THE HELL OUT OF HERE!!!" << std::endl;
+			printf("MEMORY COMPLETELY HOSED. NOT SAFE TO CLEANLY SHUT DOWN - LET'S GET THE HELL OUT OF HERE!!!\n");
+#ifdef __cplusplus
 			std::terminate();
+#else
+			abort();
+#endif
 		}
 
 		va_end(args);
 	}
+#ifdef __cplusplus
 }
+#endif

@@ -30,16 +30,32 @@
 //								- Use camelCase everywhere
 //								- Renamed LogSettings::source to LogSettings::destination
 //								- Call std::terminate on superfatals instead of abort
+//								- Add sign-on message
 //								- Add suppressSignonMessage setting to suppress sign-on message (default false)
 //								- Print message if the logger wasn't initialised properly. It doesn't get called if the logger failed to initialise
+// February 4, 2026 (4.6):
+//								- Add C support back (untested!)
+//								- Don't use buffer for setting background/foreground colours (inefficient, should be faster)
+//								- Remove whitespace
+//								- Fix lingering space_taste
+//								- Allow the user to specify the namespace using the USER_NAMESPACE define
 
 // This should be updated each time a feature gets added to the logging system.
-#define STARFROSTLOG_VERSION 	"Starfrost Shared Logging System 4.5 (January 22, 2026)"
+#define STARFROSTLOG_VERSION 	"Starfrost Shared Logging System 4.6 (February 4, 2026)"
 
-namespace Capy
+#ifdef __cplusplus
+
+#define USER_NAMESPACE			Capy		// the namespace you want to use in your app
+
+namespace USER_NAMESPACE
 {
+#endif
 	// Enumerate console colours
+#ifdef __cplusplus
 	enum ConsoleColor
+#else
+	typedef enum console_color_e
+#endif
 	{
 		Black = 0,
 		Red = 1,
@@ -61,43 +77,60 @@ namespace Capy
 		BrightMagenta = 13,
 		BrightCyan = 14,
 		BrightWhite = 15,
+#ifdef __cplusplus
 	};
+#else
+	} ConsoleColor; 
+#endif
 
 	// Enumerates logging channels. This is a set of flags, so the user can enable anything they want.
+#ifdef __cplusplus
 	enum LogChannel
+#else
+	typedef enum log_channel_e 
+#endif
 	{
 		// Prints only on debug builds.
 		Debug = 1,
-
 		// Prints advisory messages.
 		Message = 2,
-
 		// Prints warnings. The user needs to know about them, but they don't impair program operation.
 		Warning = 4,
-
 		// Prints errors that impair program operation.
 		Error = 8,
-
 		// Prints fatal errors that require the program to exit.
 		Fatal = 16,
-
 		// Memory corruption detected. Even calling Common_Shutdown isn't safe. 
 		SuperFatal = 32,
-
+#ifdef __cplusplus
 	};
+#else
+	} LogChannel;
+#endif
 
 	// Enumerates available log output sources.
+#ifdef __cplusplus
 	enum LogDestination
+#else
+	typedef enum log_destination_e
+#endif
 	{
 		// Logs to standardout using vprintf.
 		Printf = 1,
-
 		// Logs to a file. (currently "latest.log")
 		File = 2,
+#ifdef __cplusplus
 	};
+#else
+	} LogDestination;
+#endif
 
 	// Struct storing log settings.
+#ifdef __cplusplus
 	struct LogSettings
+#else
+	typedef struct log_settings_s
+#endif
 	{
 		const char* fileName;						// File name to log.
 		LogChannel channels;						// Bitmask of logging channels.
@@ -106,23 +139,37 @@ namespace Capy
 		bool changed; 								// Did the log settings change? (only used on Logger_Init so it doesn't overwrite the user's settings)
 		bool suppressSignOnMessage;					// Print the sign-on message?
 		void (*fatalFunction)();					// Function callback, called on fatal error (optional)
+#ifdef __cplusplus
 	};
+#else
+	} LogSettings;
+#endif
 
-	// Struct storing the actual logger itelf.
+	// Struct storing the actual logger itself.
+#ifdef __cplusplus
 	struct Logger
+#else
+	typedef struct logger_s
+#endif
 	{
 		LogSettings settings;						// Logger settings.
 		FILE* handle;								// File handle for logging
 		bool initialised;							// Is the logger initialised?
 		bool initFailed;							// Did the logger try to initialise, but fail?
+#ifdef __cplusplus
 	};
+#else
+	} Logger;
+#endif 
 
 	bool Logging_Init();
 	void Logging_LogChannel(const char* text, LogChannel channel, ...);
 	void Logging_LogAll(const char* text, ...);
 	void Logging_Shutdown();
 
-	// Logger global object
+	// Logger object
 	extern Logger logger;
+#ifdef __cplusplus
 }
+#endif
 

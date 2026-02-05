@@ -5,6 +5,7 @@
 #include <util/logging.hpp>
 
 // Core 
+#include <core/tier0/memory/memory.hpp>
 #include <core/tier0/quadtree.hpp>
 #include <core/tier0/vector2.hpp>
 #include <cstring>

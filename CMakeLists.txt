@@ -10,6 +10,9 @@ add_executable (Capy
 
 "Capy.cpp"
 
+# Tier 0
+"core/tier0/memory/memory.cpp"
+
 # Core
 "core/core.cpp"
 "core/core_input.cpp"
@@ -38,6 +41,10 @@ add_executable (Capy
 "util/logging.cpp"
 )
 
+# Use C++23
+set_property(TARGET Capy PROPERTY CXX_STANDARD 23)
+
+# Static link
 add_compile_options(Capy -static-libstdc++ -static-libgcc)
 
 # Base include directories

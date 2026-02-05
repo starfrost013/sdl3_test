@@ -8,6 +8,7 @@
 
 namespace Capy
 {
+    
     void Capy_Main(int32_t argc, char** argv)
     {
 
