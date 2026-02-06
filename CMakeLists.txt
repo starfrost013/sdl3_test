@@ -49,16 +49,21 @@ add_compile_options(Capy -static-libstdc++ -static-libgcc)
 
 # Base include directories
 include_directories(".")
-# Required for glad for now
+
+message(${CMAKE_SOURCE_DIR})
+
 include_directories(${CMAKE_SOURCE_DIR}"/external/sdl3/x86_64-w64-mingw32/include")
 include_directories(${CMAKE_SOURCE_DIR}"/external/sdl3_net/include")
 
-# Libraries and copiler specific stuff
+# Libraries and compiler specific stuff
 
 add_library(sdl3 STATIC IMPORTED)
+add_library(sdl3_net STATIC IMPORTED)
 
 set_target_properties(sdl3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/external/sdl3/x86_64-w64-mingw32/lib/libSDL3.dll.a)
 target_link_libraries(Capy sdl3)
+set_target_properties(sdl3_net PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/external/sdl3_net/libSDL3_net.dll.a)
+target_link_libraries(Capy sdl3_net)
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   target_compile_definitions(Capy PRIVATE DEBUG)
