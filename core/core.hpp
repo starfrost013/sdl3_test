@@ -11,6 +11,13 @@ namespace Capy
     #define NS_PER_SECOND               1000000000
     #define MAX_STRING_GENERIC          256     // Generic max string length
 
+    /* Game target platform */
+    enum GameTargetPlatform
+    {
+        OS_WIN64 = 0,                   // 64-bit Microsoft Windows
+        OS_LINUX64 = 1,                 // 64-bit Linux
+    };
+
     /* Game states */
     enum GameState 
     {
@@ -28,6 +35,7 @@ namespace Capy
     struct GameInfo 
     {
         uint32_t timer;
+        GameTargetPlatform targetPlatform;  // target platform
     };
 
     struct Game

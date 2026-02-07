@@ -5,6 +5,7 @@
 #include "SDL3/SDL_init.h"
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_video.h"
+#include "util/logging.hpp"
 #include <core/core.hpp>
 #include <data/entities/entity_player.hpp>
 #include <data/entities/entity_world.hpp>
@@ -29,6 +30,13 @@ namespace Capy
 
         Logging_LogChannel("Initialising SDL...", LogChannel::Message);
 
+#ifdef __linux__
+        Logging_LogChannel("This is Linux64", LogChannel::Message);
+        game.info.targetPlatform = GameTargetPlatform::OS_LINUX64;
+#elif _WIN32
+        Logging_LogChannel("64-bit Windows binary", LogChannel::Message);
+        game.info.targetPlatform = GameTargetPlatform::OS_WIN64;
+#endif
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS))
             return false; 
 
