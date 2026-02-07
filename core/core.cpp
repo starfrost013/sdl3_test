@@ -31,7 +31,7 @@ namespace Capy
         Logging_LogChannel("Initialising SDL...", LogChannel::Message);
 
 #ifdef __linux__
-        Logging_LogChannel("This is Linux64", LogChannel::Message);
+        Logging_LogChannel("64-bit Linux binary", LogChannel::Message);
         game.info.targetPlatform = GameTargetPlatform::OS_LINUX64;
 #elif _WIN32
         Logging_LogChannel("64-bit Windows binary", LogChannel::Message);
