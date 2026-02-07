@@ -3,6 +3,7 @@
 */
 
 #pragma once
+#include <Capy.hpp>
 #include <SDL3_net/SDL_net.h>
 
 /* 
@@ -27,7 +28,7 @@ namespace Capy
     struct NetMessage
     {
         uint32_t magic;
-        uint16_t bufCurrent;            //64k should be fine
+        std::size_t seqNumber;
         uint8_t messageType; 
         uint8_t* messageData;
 
@@ -41,9 +42,9 @@ namespace Capy
     // network mode
     enum NetType
     {
-        NETMODE_CLIENT = 0,
-        NETMODE_SERVER_LISTEN = 1,
-        NETMODE_SERVER_DEDICATED = 2,
+        NETMODE_CLIENT = 0,             // Client only
+        NETMODE_SERVER_LISTEN = 1,      // Server and client
+        NETMODE_SERVER_DEDICATED = 2,   // Server only
     };
 
     /* Base for all network modes */
@@ -52,14 +53,16 @@ namespace Capy
         public:
             virtual void Init() { };
             virtual void Shutdown() { };
+
+        protected:
+            // single source of truth for UDP packet sequencing (since it can be out of order, etc.)
+            size_t seqNumber; 
     };
 
-    int8_t Net_ReadS8(NetMessage* msg);
-    int16_t Net_ReadS16(NetMessage* msg);
-    int32_t Net_ReadS32(NetMessage* msg);
-    int64_t Net_ReadS64(NetMessage* msg);
-    uint8_t Net_ReadU8(NetMessage* msg);
-    uint16_t Net_ReadU16(NetMessage* msg);
-    uint32_t Net_ReadU32(NetMessage* msg);
-    uint64_t Net_ReadU64(NetMessage* msg);
+    /* 
+        Net system init 
+        Called "CapyNet" to prevent confusion with exising system
+    */
+    void CapyNet_Init();
+    void CapyNet_Shutdown();
 }

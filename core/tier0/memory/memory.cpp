@@ -9,8 +9,6 @@
 std::size_t sysTotalRam;
 std::size_t sysNumAllocs;
 
-bool lastCallWasMalloc = false;
-
 void* operator new[](std::size_t size)
 {
     sysNumAllocs++;
@@ -34,8 +32,6 @@ void* operator new[](std::size_t size, uint32_t tag)
     sysTotalRam += size;
 
     void* ptr = malloc(size);
-
-    lastCallWasMalloc = true;
 
     if (!ptr)
         throw std::bad_alloc();

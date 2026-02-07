@@ -1,10 +1,12 @@
+// ONLY INCLUDE TIER0/CORE INCLUDES IN HERE!
+
 #pragma once 
 #include <SDL3/SDL.h>
 
-
+// Util Includes
 #include <util/logging.hpp>
 
-// Core 
+// Tier0 Includes
 #include <core/tier0/memory/memory.hpp>
 #include <core/tier0/quadtree.hpp>
 #include <core/tier0/vector2.hpp>
