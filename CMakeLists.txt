@@ -8,6 +8,7 @@ cmake_minimum_required (VERSION 3.10)
 project("Capy")
 
 add_subdirectory(external/sdl3 EXCLUDE_FROM_ALL)
+add_subdirectory(external/sdl3_net EXCLUDE_FROM_ALL)
 
 # Add source to this project's executable.
 add_executable (Capy 
@@ -66,6 +67,7 @@ include_directories(${CMAKE_SOURCE_DIR}"/external/sdl3_net/include")
 #add_library(sdl3_net STATIC IMPORTED)
 
 target_link_libraries(Capy PRIVATE SDL3::SDL3)
+target_link_libraries(Capy PRIVATE SDL3_net::SDL3_net)
 
 #set_target_properties(sdl3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/external/sdl3/x86_64-w64-mingw32/lib/libSDL3.dll.a)
 #target_link_libraries(Capy sdl3)
