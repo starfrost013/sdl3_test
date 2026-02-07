@@ -2,3 +2,6 @@
 	path = external/sdl3
 	url = https://github.com/libsdl-org/SDL
 	branch = release-3.4.x
+[submodule "external/sdl3_net"]
+	path = external/sdl3_net
+	url = https://github.com/libsdl-org/SDL_net
