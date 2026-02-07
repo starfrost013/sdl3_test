@@ -85,7 +85,6 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Capy PROPERTY CXX_STANDARD 20)
 endif()
 
-
 #todo: linux
 if (WIN32)
     #file(COPY ${CMAKE_SOURCE_DIR}/external/sdl3/x86_64-w64-mingw32/bin/SDL3.dll DESTINATION ${CMAKE_BINARY_DIR})
