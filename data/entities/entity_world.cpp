@@ -218,7 +218,7 @@ namespace Capy
             stepCurrent = stepProgress = 0;
         }  
 
-        Logging_LogChannel("[Phase 4] Terrain generation done. Generating quadmap for collision... (wip)", LogChannel::Debug, layerNumber, currentTile->name);
+        Logging_LogChannel("[Phase 4] Terrain generation done. Generating quadtree for collision... (wip)", LogChannel::Debug, layerNumber, currentTile->name);
 
         // Now the generation of the world data is done.
         // So we can generate the quadtree.
