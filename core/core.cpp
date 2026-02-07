@@ -27,9 +27,6 @@ namespace Capy
 
         if (!Logging_Init())
             std::cout << "Catastrophic non-fatal error: SSLS Logger Initialisation FAILED (0xDEADDEAD). You won't get any logging!\n" << std::endl;            
-
-        Logging_LogChannel("Initialising SDL...", LogChannel::Message);
-
 #ifdef __linux__
         Logging_LogChannel("64-bit Linux binary", LogChannel::Message);
         game.info.targetPlatform = GameTargetPlatform::OS_LINUX64;
@@ -37,6 +34,10 @@ namespace Capy
         Logging_LogChannel("64-bit Windows binary", LogChannel::Message);
         game.info.targetPlatform = GameTargetPlatform::OS_WIN64;
 #endif
+
+        Logging_LogChannel("Initialising SDL...", LogChannel::Message);
+
+
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS))
             return false; 
 
