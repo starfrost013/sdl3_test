@@ -4,7 +4,6 @@
 #include <Capy.hpp>
 
 #include <core/net/net.hpp>
-#include <core/cvar/cvar.hpp>
 
 namespace Capy
 {

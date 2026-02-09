@@ -35,6 +35,8 @@ namespace Capy
         game.info.targetPlatform = GameTargetPlatform::OS_WIN64;
 #endif
 
+        CapyNet_Init();
+
         Logging_LogChannel("Initialising SDL...", LogChannel::Message);
 
 
@@ -104,6 +106,8 @@ namespace Capy
 
     bool Game_Shutdown()
     {
+        CapyNet_Shutdown();
+        
         SDL_DestroyRenderer(game.renderer);
         SDL_DestroyWindow(game.window);
 

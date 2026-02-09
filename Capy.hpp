@@ -10,6 +10,10 @@
 #include <core/tier0/memory/memory.hpp>
 #include <core/tier0/quadtree.hpp>
 #include <core/tier0/vector2.hpp>
+
+// Cvars are useful to have everywhere
+#include <core/cvar/cvar.hpp>
+
 #include <cstring>
 #include <fstream>
 #include <iostream>

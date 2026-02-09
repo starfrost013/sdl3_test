@@ -1,5 +1,5 @@
 #pragma once
-#include <core/core.hpp>
+#include <Capy.hpp>
 
 // 
 // Cvar.hpp: Defines functions for convars.

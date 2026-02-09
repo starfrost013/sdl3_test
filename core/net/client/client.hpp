@@ -4,6 +4,8 @@
 
 namespace Capy 
 {
+    #define CLIENT_NAME_LENGTH              64
+
     class Client : NetMode
     {
         enum ClientState
@@ -18,10 +20,19 @@ namespace Capy
         };
 
     public: 
-        
+    
         void Init() override; 
         void Shutdown() override; 
         
         ClientState state;
+        
+        // If the client exists on the server (so we can use faster static allocation)
+        bool exists;
+
+    private:
+        int id;                         // client unique id
+        char name[CLIENT_NAME_LENGTH];  // client name
+
+
     };
 }
