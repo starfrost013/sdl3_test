@@ -10,6 +10,10 @@ project("Capy")
 add_subdirectory(external/sdl3 EXCLUDE_FROM_ALL)
 add_subdirectory(external/sdl3_net EXCLUDE_FROM_ALL)
 
+if (LINUX)
+    set(CMAKE_INSTALL_RPATH $ORIGIN)
+endif()
+
 # Add source to this project's executable.
 add_executable (Capy 
 
@@ -86,7 +90,19 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
 endif()
 
 #todo: linux
-if (WIN32)
-    #file(COPY ${CMAKE_SOURCE_DIR}/external/sdl3/x86_64-w64-mingw32/bin/SDL3.dll DESTINATION ${CMAKE_BINARY_DIR})
-    #file(COPY ${CMAKE_SOURCE_DIR}/external/sdl3_net/SDL3_net.dll DESTINATION ${CMAKE_BINARY_DIR})
+if (WIN32)  
+  set(CAPY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/build/output/win64)
+  install(TARGETS Capy DESTINATION ${CAPY_INSTALL_DIR}) # probably easier to duplicate for now
+elseif (LINUX)
+  set(CAPY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/build/output/linux64)
+  install(TARGETS Capy DESTINATION ${CAPY_INSTALL_DIR}) # probably easier to duplicate for now
+
+  # horrible hack for origin rpath (TEMP, we will static link everything)
+  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so.0 DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so.0.4.1 DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/libSDL3_net.so DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/libSDL3_net.so.0 DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/libSDL3_net.so.0.0.0 DESTINATION ${CAPY_INSTALL_DIR})
 endif()
+
