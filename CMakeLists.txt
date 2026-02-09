@@ -93,6 +93,11 @@ endif()
 if (WIN32)  
   set(CAPY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/build/output/win64)
   install(TARGETS Capy DESTINATION ${CAPY_INSTALL_DIR}) # probably easier to duplicate for now
+
+  # horrible until we figure out how to statically link sdl3
+  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/SDL3.dll DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/SDL3_net.dll DESTINATION ${CAPY_INSTALL_DIR})
+
 elseif (LINUX)
   set(CAPY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/build/output/linux64)
   install(TARGETS Capy DESTINATION ${CAPY_INSTALL_DIR}) # probably easier to duplicate for now
