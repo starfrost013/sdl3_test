@@ -1,6 +1,7 @@
 // entity_world.cpp: World generation code
 
-#include <core/core.hpp>
+#include <Capy.hpp>
+#include <core/game.hpp>
 #include <data/entities/entity.hpp>
 #include <data/entities/entity_world.hpp>
 #include <util/util.hpp>

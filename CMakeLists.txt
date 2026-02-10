@@ -23,8 +23,11 @@ add_executable (Capy
 "core/tier0/memory/memory.cpp"
 
 # Core
-"core/core.cpp"
-"core/core_input.cpp"
+"core/game.cpp"
+"core/game_input.cpp"
+
+# Core - command line
+"core/cmdline/cmdline.cpp"
 
 # Core - Convar
 "core/cvar/cvar.cpp"
@@ -50,12 +53,8 @@ add_executable (Capy
 "util/logging.cpp"
 )
 
-
 # Use C++23
 set_property(TARGET Capy PROPERTY CXX_STANDARD 23)
-
-# Static link
-add_compile_options(Capy -static-libstdc++ -static-libgcc)
 
 # Base include directories
 include_directories(".")
@@ -67,16 +66,8 @@ include_directories(${CMAKE_SOURCE_DIR}"/external/sdl3_net/include")
 
 # Libraries and compiler specific stuff
 
-#add_library(sdl3 STATIC IMPORTED)
-#add_library(sdl3_net STATIC IMPORTED)
-
 target_link_libraries(Capy PRIVATE SDL3::SDL3)
 target_link_libraries(Capy PRIVATE SDL3_net::SDL3_net)
-
-#set_target_properties(sdl3 PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/external/sdl3/x86_64-w64-mingw32/lib/libSDL3.dll.a)
-#target_link_libraries(Capy sdl3)
-#set_target_properties(sdl3_net PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/external/sdl3_net/libSDL3_net.dll.a)
-#target_link_libraries(Capy sdl3_net)
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   target_compile_definitions(Capy PRIVATE DEBUG)
@@ -85,9 +76,14 @@ elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
   set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
 endif()
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET Capy PROPERTY CXX_STANDARD 20)
-endif()
+
+# Static link
+#set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -static-libstdc++ -static-libgcc)
+
+# Static link
+add_compile_options(Capy -static-libstdc++ -static-libgcc)
+add_compile_options(SDL3::SDL3 -static-libstdc++ -static-libgcc)
+add_compile_options(SDL3::SDL3_net -static-libstdc++ -static-libgcc)
 
 #todo: linux
 if (WIN32)  

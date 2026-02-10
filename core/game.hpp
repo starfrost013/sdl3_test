@@ -1,14 +1,15 @@
 /* Core SDL init/shutdown code */
 #pragma once
+
 #include "SDL3/SDL_scancode.h"
 #include <Capy.hpp>
 
-#include <core/net/net.hpp>
+class Client;
+class Server;
 
 namespace Capy
 {
     #define NS_PER_SECOND               1000000000
-    #define MAX_STRING_GENERIC          256     // Generic max string length
 
     /* Game target platform */
     enum GameTargetPlatform
@@ -37,8 +38,9 @@ namespace Capy
         GameTargetPlatform targetPlatform;  // target platform
     };
 
-    struct Game
+    class Game
     {
+    public:
         SDL_Window* window;         // SDL Window
         SDL_Renderer* renderer;     // SDL Renderer
         SDL_Texture* renderTarget;  // Texture that gets blited to the display
@@ -46,14 +48,17 @@ namespace Capy
         uint64_t lastTickTime;      // last frame time in nanoseconds (returned by SDL_GetTicksNS)
         GameInfo info;              // Level-specific game information
         GameSettings settings;      // Game settings
-        NetMode netMode;
         bool running;               // Determines if the game is running.
     };
 
-    extern Game game; 
+    
+    extern Client client;           // Valid if netmode is LISTEN_SERVER or CLIENT
+    extern Server server;           // Valid if netmode is LISTEN_SERVER Or DEDICATED_SERVER
+    extern Game game;               // Always valid, stuff shared between client and server
 
     // Core functionality
-    bool Game_Init();               // Run on init
+    bool Game_Init(int32_t argc, char** argv);               // Run on init
+    void Game_Run();                // Run while game is running
     void Game_PumpEvents();         // Pump events for SDL
     void Game_Tick();               // Run each tick
     void Game_Frame();              // Run each frame

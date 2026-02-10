@@ -24,6 +24,7 @@ namespace Capy
         NET_CAST_LAST_VALID = NET_CAST_TO_ALL_CLIENTS,                    // Sentinel value
     };
 
+    // maybe these should be classes...maybe not
     enum NetMessageType
     {
         // Server to client messages 
@@ -38,7 +39,7 @@ namespace Capy
 
     //basic check that the message was received (tcp but still)
     #define NETMSG_MAGIC           0x00FF55AA
-    #define MAX_PACKET_SIZE                 512             // max reliable, may increase later
+    #define MAX_PACKET_SIZE        512      // max reliable, may increase later
 
     struct NetMessage
     {
@@ -52,7 +53,7 @@ namespace Capy
             uint8_t messageType;            // type of message
         };
 
-        NetHeader header;                   // header
+        NetHeader* header;                   // header
 
         uint8_t* messageData;               // data of message
         bool valid;                         // true if message parsed successfulyl
@@ -82,8 +83,10 @@ namespace Capy
     {
         public:
             virtual void Init() { };
+            virtual void Update() { };
 
             NetMessage GetMessage(NET_Datagram* dgram);
+            void SendMessage(NetMessage msg);
 
             virtual void Shutdown() { };
 
@@ -99,6 +102,5 @@ namespace Capy
         Called "CapyNet" to prevent confusion with exising system
     */
     void CapyNet_Init();
-    void CapyNet_OpenSocket(uint32_t port);  // UDP
     void CapyNet_Shutdown();
 }

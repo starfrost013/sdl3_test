@@ -3,7 +3,7 @@
 #include "SDL3/SDL_init.h"
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_video.h"
-#include <core/core.hpp>
+#include <Capy.hpp>
 
 namespace Capy
 {

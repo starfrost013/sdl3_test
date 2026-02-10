@@ -4,7 +4,7 @@
 
 */
 
-#include <core/core.hpp>
+#include <Capy.hpp>
 #include <filesystem>
 
 namespace Capy
@@ -14,7 +14,7 @@ namespace Capy
         friend class Filesystem;
 
         bool useBaseDirectory;
-        char baseDirectory[MAX_STRING_GENERIC];
+        char baseDirectory[STRING_MAX_GENERIC];
     };
 
     extern FilesystemSettings defaultFilesystemSettings;

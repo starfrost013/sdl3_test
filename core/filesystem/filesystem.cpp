@@ -20,7 +20,7 @@ namespace Capy
     {
         if (settings.useBaseDirectory)
         {
-            char path[MAX_STRING_GENERIC] = {0};
+            char path[STRING_MAX_GENERIC] = {0};
 
             char* lastPartOfPath = strrchr(path, std::filesystem::path::preferred_separator);
 
@@ -28,7 +28,7 @@ namespace Capy
             if (lastPartOfPath)
                 strncpy(path, lastPartOfPath, strlen(lastPartOfPath));
 
-            snprintf(path, MAX_STRING_GENERIC, "%s%s", settings.baseDirectory, lastPartOfPath);
+            snprintf(path, STRING_MAX_GENERIC, "%s%s", settings.baseDirectory, lastPartOfPath);
         }
 
         FilesystemFile* ff = new FilesystemFile;

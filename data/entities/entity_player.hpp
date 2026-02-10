@@ -1,7 +1,7 @@
 /* Player code */
 
 #include <Capy.hpp>
-#include <core/core.hpp>
+#include <Capy.hpp>
 #include <data/entities/entity.hpp>
 
 namespace Capy
