@@ -83,7 +83,8 @@ namespace Capy
     {
         public:
             virtual void Init() { };
-            virtual void Update() { };
+            virtual void Frame() { };
+            virtual void Tick() { };
 
             NetMessage GetMessage(NET_Datagram* dgram);
             void SendMessage(NetMessage msg);

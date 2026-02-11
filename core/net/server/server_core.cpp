@@ -27,7 +27,7 @@ namespace Capy
         
     }
 
-    void Server::Update()
+    void Server::Tick()
     {
         switch (state)
         {

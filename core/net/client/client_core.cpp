@@ -41,7 +41,7 @@ namespace Capy
         _state = state;
     }
 
-    void Client::Update()
+    void Client::Tick()
     {
         switch (state)
         {

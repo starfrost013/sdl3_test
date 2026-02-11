@@ -30,7 +30,7 @@ namespace Capy
 
         void Init() override; 
         void Connect(const char* addr);
-        void Update() override;
+        void Tick() override;
         void Shutdown() override; 
 
         ClientState GetState();

@@ -20,8 +20,8 @@ namespace Capy
     WorldEntity world;              // TEMP
 
     Game game;                      // Core game strcture
-    Client client;                  // The client    
-    Server server;                  // The server
+    Client* client = nullptr;       // The client    
+    Server* server = nullptr;       // The server
 
     // Temp
     bool Render_Init()
@@ -52,6 +52,14 @@ namespace Capy
         }
 
         return true; 
+    }
+
+    void Render_Shutdown()
+    {
+        SDL_DestroyRenderer(game.renderer);
+        SDL_DestroyWindow(game.window);
+
+        SDL_Quit();
     }
 
     bool Game_Init(int32_t argc, char** argv)
@@ -87,17 +95,23 @@ namespace Capy
         switch (mode)
         {
             case NETMODE_CLIENT:
-                client = Client();
+                client = new Client();
                 break;
             // TODO: Listen servers
             case NETMODE_SERVER_LISTEN:
-                client = Client();
-                server = Server(PORT_DEFAULT);
+                client = new Client();
+                server = new Server(PORT_DEFAULT);
                 break;
             case NETMODE_SERVER_DEDICATED:
-                server = Server(PORT_DEFAULT);
+                server = new Server(PORT_DEFAULT);
                 break; 
         }
+        
+        if (client)
+            client->Init();
+        
+        if (server)
+            server->Init();
         
         game.running = true; 
         game.tickrate = 60; 
@@ -122,12 +136,25 @@ namespace Capy
             Game_Tick();
             //std::cout << "Last tick time: " << (float(time_now / 1000000.0f)) - (float(game.last_tick_time / 1000000.0f)) << "ms" << std::endl;
             game.lastTickTime = time_now;
+
+            if (client)
+                client->Tick();
+                
+            if (server)
+                server->Tick();
         }
 
         SDL_RenderClear(game.renderer);
 
+        // update shared first
         Game_Frame();
 
+        if (client)
+            client->Frame();
+
+        if (server)
+            server->Frame();
+        
         // flip the buffers
         SDL_RenderPresent(game.renderer);
     }
@@ -167,11 +194,11 @@ namespace Capy
     bool Game_Shutdown()
     {
         CapyNet_Shutdown();
+        Cvar_Shutdown();
         
-        SDL_DestroyRenderer(game.renderer);
-        SDL_DestroyWindow(game.window);
+        Render_Shutdown();
 
-        SDL_Quit();
+        Logging_Shutdown();
 
         exit(0); // allow exit codes for errors?
 

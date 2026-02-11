@@ -36,7 +36,7 @@ namespace Capy
         // METHODS
 
         void Init() override; 
-        void Update() override;
+        void Tick() override;
         void Shutdown() override; 
         
         ServerState GetState();

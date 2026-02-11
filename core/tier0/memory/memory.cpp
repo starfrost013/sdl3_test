@@ -9,7 +9,7 @@
 std::size_t sysTotalRam;
 std::size_t sysNumAllocs;
 
-void* operator new[](std::size_t size)
+void* operator new(std::size_t size)
 {
     sysNumAllocs++;
     sysTotalRam += size;
@@ -20,13 +20,13 @@ void* operator new[](std::size_t size)
         throw std::bad_alloc();
     
 #ifdef DEBUG
-    Capy::Logging_LogChannel("operator new[]: Allocated %d bytes (total is now %d)", Capy::LogChannel::Debug, size, sysTotalRam);
+    Capy::Logging_LogChannel("operator new: Allocated %d bytes (total is now %d)", Capy::LogChannel::Debug, size, sysTotalRam);
 #endif
     return ptr;
 }
 
 /* test for compilation */
-void* operator new[](std::size_t size, uint32_t tag)
+void* operator new(std::size_t size, uint32_t tag)
 {
     sysNumAllocs++;
     sysTotalRam += size;
@@ -39,7 +39,7 @@ void* operator new[](std::size_t size, uint32_t tag)
     return ptr;
 }
 
-void operator delete[](void *p) _GLIBCXX_TXN_SAFE _GLIBCXX_USE_NOEXCEPT
+void operator delete(void *p) _GLIBCXX_TXN_SAFE _GLIBCXX_USE_NOEXCEPT
 {
     if (!p)
         throw std::bad_alloc();
@@ -50,7 +50,7 @@ void operator delete[](void *p) _GLIBCXX_TXN_SAFE _GLIBCXX_USE_NOEXCEPT
     sysNumAllocs--;
     sysTotalRam -= sizeof(p);
 #ifdef DEBUG
-    Capy::Logging_LogChannel("operator new[]: Freed %d bytes (total is now %d)", Capy::LogChannel::Debug, sizeof(p), sysTotalRam);
+    Capy::Logging_LogChannel("operator delete: Freed %d bytes (total is now %d)", Capy::LogChannel::Debug, sizeof(p), sysTotalRam);
 #endif
 
     free(p);

@@ -1,5 +1,5 @@
 // 
-// VOLT
+// SSLS
 // Copyright © 2023-2026 starfrost
 //
 // Logging.cpp: Handles logging for the Volt project
@@ -91,7 +91,7 @@ namespace USER_NAMESPACE
 		logger.initFailed = false;
 
 		if (!logger.settings.suppressSignOnMessage)
-			Logging_LogChannel("%s initialised", LogChannel::Debug, STARFROSTLOG_VERSION);
+			Logging_LogChannel(STARFROSTLOG_VERSION " initialised", LogChannel::Debug);
 
 		return true;
 	}

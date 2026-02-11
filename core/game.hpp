@@ -52,8 +52,8 @@ namespace Capy
     };
 
     
-    extern Client client;           // Valid if netmode is LISTEN_SERVER or CLIENT
-    extern Server server;           // Valid if netmode is LISTEN_SERVER Or DEDICATED_SERVER
+    extern Client* client;          // Valid if netmode is LISTEN_SERVER or CLIENT
+    extern Server* server;          // Valid if netmode is LISTEN_SERVER Or DEDICATED_SERVER
     extern Game game;               // Always valid, stuff shared between client and server
 
     // Core functionality

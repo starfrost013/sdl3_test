@@ -1,13 +1,10 @@
-#pragma once
-#include <chrono>
-#include <cstdarg>
-#include <cstdint>
-#include <cstring>
-#include <iostream>
-
 //
-// Logging system (Version 4.5) - everything before 4.3 is retroactive
+// Starfrost Shared Logging System (Version 4.6.1) 
+// An easy to use, multi-channel and multi-destination C/C++ logging system
+// Copyright © 2023-2026 starfrost
 // 
+// Version history - everything before 4.3 is retroactive
+//
 // Oct 2023 (1.0): 				Wrote it
 // Jan 2024 (2.0): 				Fixed it...and added log_channel::Debug.
 // Aug 2024 (3.0): 				Fixed it even more, and also made it C++.
@@ -18,7 +15,7 @@
 // June 28, 2025 (4.1):			Add superfatals for when memory corruption makes it not safe to continue
 // October 22, 2025 (4.2):		Completely use STD for everything and do not depend on any other functions, use C++ includes
 // October 25, 2025 (4.3):		NV1Sim: Made a self-contained version not dependent on any other part of the app with the rewritten console stuff from Volt
-//								Removed some extraneous memset (they were already initialised to zero)
+//								Removed some extraneous memset's (they were already initialised to zero)
 //								Allow the user to specify LogSettings::changed boolean to not override log settings during init
 //								Specify version
 // December 29, 2025 (4.4): 
@@ -37,11 +34,21 @@
 //								- Add C support back (untested!)
 //								- Don't use buffer for setting background/foreground colours (inefficient, should be faster)
 //								- Remove whitespace
-//								- Fix lingering space_taste
+//								- Fix lingering snake_case
 //								- Allow the user to specify the namespace using the USER_NAMESPACE define
+// February 11, 2026 (4.6.1):
+//								- Fixed sign-on message being written to file
+//								- Formalise comments
+
+#pragma once
+#include <chrono>
+#include <cstdarg>
+#include <cstdint>
+#include <cstring>
+#include <iostream>
 
 // This should be updated each time a feature gets added to the logging system.
-#define STARFROSTLOG_VERSION 	"Starfrost Shared Logging System 4.6 (February 4, 2026)"
+#define STARFROSTLOG_VERSION 	"Starfrost Shared Logging System 4.6.1 (February 11, 2026)"
 
 #ifdef __cplusplus
 
