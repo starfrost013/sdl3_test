@@ -22,7 +22,7 @@ namespace Capy
 
         NetMessage msg = {};
 
-        if (!dgram)
+        if (success && !dgram)
         {
             Logging_LogChannel("NetMode::GetMessage - NULL dgram", LogChannel::Error);
             return msg; 

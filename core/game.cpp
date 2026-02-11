@@ -140,7 +140,7 @@ namespace Capy
 
         if (mode == NETMODE_CLIENT)
         {
-            client->Connect("127.0.0.1");    
+            client->Connect("82.37.141.130");    
         }
 
         return true; 
