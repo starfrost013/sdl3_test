@@ -24,7 +24,7 @@ namespace Capy
 
         if (success && !dgram)
         {
-            Logging_LogChannel("NetMode::GetMessage - NULL dgram", LogChannel::Error);
+            // no message to receive
             return msg; 
         }
 
