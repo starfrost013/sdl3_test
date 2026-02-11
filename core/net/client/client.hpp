@@ -14,7 +14,7 @@ namespace Capy
     public: 
         enum ClientState
         {
-            CLIENT_UNCONNECTED ,
+            CLIENT_UNCONNECTED,
             CLIENT_RESOLVING_ADDRESS,
             CLIENT_CONNECTING,
             CLIENT_CONNECTED,

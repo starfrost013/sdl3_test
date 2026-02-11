@@ -13,8 +13,13 @@ namespace Capy
         NET_Init();
     }
 
-    NetMessage NetMode::GetMessage(NET_Datagram* dgram)
+    NetMessage NetMode::GetMessage()
     {
+        // we need to manage the lifetime of these objects
+        NET_Datagram* dgram; 
+
+        bool success = NET_ReceiveDatagram(socket, &dgram);
+
         NetMessage msg = {};
 
         if (!dgram)
@@ -69,6 +74,9 @@ namespace Capy
         msg.messageData = new uint8_t[dgram->buflen];
         memcpy(msg.messageData, &dgram->buf[sizeof(NetMessage::NetHeader)], dgram->buflen - sizeof(NetMessage::NetHeader));
 
+        /* Known Address Identification here */
+
+        NET_DestroyDatagram(dgram);
         return msg; 
     }
 
@@ -91,7 +99,7 @@ namespace Capy
         msg.header.seqNumber = seqNumber;
         msg.header.messageType = msgType;
         msg.header.castType = castType;
-        msg.header.size = sizeof(msg.messageData) - sizeof(NetMessage::NetHeader);
+        msg.header.size = size - sizeof(NetMessage::NetHeader);
         msg.valid = true;
         msg.messageData = new uint8_t[size];
         

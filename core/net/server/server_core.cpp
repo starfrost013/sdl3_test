@@ -24,13 +24,12 @@ namespace Capy
     // Run while server is in ServerState::UPDATE_RUNNING
     void Server::UpdateWhileRunning()
     {
-        NET_Datagram* dgram;
 
-        bool success = NET_ReceiveDatagram(socket, &dgram);
+        NetMessage msg = GetMessage();
 
-        if (dgram && success)
+        if (msg.valid)
         {
-            Logging_LogChannel("Got some data!!! len=%d", LogChannel::Debug, dgram->buflen);
+            Logging_LogChannel("Got some data!!! len=%d", LogChannel::Debug, msg.header.size);
         }
     }
 

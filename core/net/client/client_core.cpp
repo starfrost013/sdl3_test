@@ -32,7 +32,7 @@ namespace Capy
     {
         uint8_t dat[] = { 0x00, 0x04, 0x08, 0x0c };
 
-        SendMessage(Capy::NetMessageType::NETMSG_HELLO, serverAddress, dat, sizeof(dat)/sizeof(dat[0]), NetCast::NET_CAST_TO_SERVER);
+        SendMessage(Capy::NetMessageType::NETMSG_HELLO, serverAddress, dat, sizeof(dat) + sizeof(NetMessage::NetHeader), NetCast::NET_CAST_TO_SERVER);
     }
 
     Client::ClientState Client::GetState()

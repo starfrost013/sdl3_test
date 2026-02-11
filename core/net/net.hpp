@@ -88,7 +88,7 @@ namespace Capy
             virtual void Frame() { };
             virtual void Tick() { };
 
-            NetMessage GetMessage(NET_Datagram* dgram);
+            NetMessage GetMessage();
 
             // this is very likely to be a temporary interface for testing until we have a real packet system
             void SendMessage(NetMessageType msgType, NET_Address* address, uint8_t* data, uint32_t size, NetCast castType);
