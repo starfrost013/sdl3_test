@@ -136,7 +136,7 @@ namespace Capy
 #ifdef DEBUG
                 layerNumber++;  
 
-                // WTF? Linux Segfault ????
+                // WTF? Linux Segfault ???? -memdebug fixes it...what
                 //Logging_LogChannel("[Phase 3.%d] Generating layer for tile: %s", LogChannel::Debug, layerNumber, currentTile->name);
 #endif
 

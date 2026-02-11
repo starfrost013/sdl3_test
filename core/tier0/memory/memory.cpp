@@ -6,6 +6,8 @@
 #include "util/logging.hpp"
 #include <core/tier0/memory/memory.hpp>
 
+#include <core/cmdline/cmdline.hpp>
+
 std::size_t sysTotalRam;
 std::size_t sysNumAllocs;
 
@@ -20,7 +22,8 @@ void* operator new(std::size_t size)
         throw std::bad_alloc();
     
 #ifdef DEBUG
-    Capy::Logging_LogChannel("operator new: Allocated %d bytes (total is now %d)", Capy::LogChannel::Debug, size, sysTotalRam);
+    if (Capy::Cmdline_Check("-memdebug"))
+        Capy::Logging_LogChannel("operator new: Allocated %d bytes (total is now %d)", Capy::LogChannel::Debug, size, sysTotalRam);
 #endif
     return ptr;
 }
@@ -50,7 +53,9 @@ void operator delete(void *p) _GLIBCXX_TXN_SAFE _GLIBCXX_USE_NOEXCEPT
     sysNumAllocs--;
     sysTotalRam -= sizeof(p);
 #ifdef DEBUG
-    Capy::Logging_LogChannel("operator delete: Freed %d bytes (total is now %d)", Capy::LogChannel::Debug, sizeof(p), sysTotalRam);
+
+    if (Capy::Cmdline_Check("-memdebug"))
+        Capy::Logging_LogChannel("operator delete: Freed %d bytes (total is now %d)", Capy::LogChannel::Debug, sizeof(p), sysTotalRam);
 #endif
 
     free(p);
