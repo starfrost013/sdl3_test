@@ -77,10 +77,6 @@ elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
   set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
 endif()
 
-
-# Static link
-#set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -static-libstdc++ -static-libgcc)
-
 # Static link
 add_compile_options(Capy -static-libstdc++ -static-libgcc)
 add_compile_options(SDL3::SDL3 -static-libstdc++ -static-libgcc)
