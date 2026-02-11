@@ -102,6 +102,7 @@ namespace Capy
 
         uint32_t mapSizeBytes = header.size.x * header.size.y;
 
+        // this is messed up when logged
         Logging_LogChannel("[Phase 2] Allocating memory for map (size will be %d bytes, %d x %d tiles, %d x %d pixels)", 
             LogChannel::Debug, 
         mapSizeBytes, header.size.x, header.size.y, (header.size.x * TILE_SIZE_X), (header.size.y * TILE_SIZE_Y));
@@ -136,8 +137,8 @@ namespace Capy
 #ifdef DEBUG
                 layerNumber++;  
 
-                // WTF? Linux Segfault ???? -memdebug fixes it...what
-                //Logging_LogChannel("[Phase 3.%d] Generating layer for tile: %s", LogChannel::Debug, layerNumber, currentTile->name);
+                // WTF? Linux Segfault ???? -memdebug fixes it...what (something to do with phase2 message above i bet)
+                Logging_LogChannel("[Phase 3.%d] Generating layer for tile: %s", LogChannel::Debug, layerNumber, currentTile->name);
 #endif
 
                 if (currentTile != &WorldTileAir

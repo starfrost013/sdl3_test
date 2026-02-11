@@ -145,7 +145,7 @@ namespace USER_NAMESPACE
 		}
 
 		char dateBuffer[LOGGING_MAX_LENGTH_DATE] = {0};
-		char logStringBuffer[LOGGING_MAX_LENGTH_TOTAL] = {0};
+		char textBuffer[LOGGING_MAX_LENGTH_TOTAL] = {0};
 
 	#ifdef __cplusplus
 		auto now = std::chrono::system_clock::now();
@@ -158,6 +158,7 @@ namespace USER_NAMESPACE
 		timeInfo = localtime(&time);
 		time_t nowTimeT = asctime(timeInfo);
 	#endif
+
 		snprintf(dateBuffer, LOGGING_MAX_LENGTH_DATE, "%s", std::ctime(&nowTimeT));
 
 		// lop off the last character so it doesn't have a new line
@@ -171,27 +172,21 @@ namespace USER_NAMESPACE
 		// print separate colours
 		switch (channel)
 		{
-			case LogChannel::Message:	//shutup gcc
-				break;
-			case LogChannel::Debug:
-				prefix = "[DEBUG] [";
-				break;		
-			case LogChannel::Warning:
-				prefix = "[WARNING] [";
-				break;
-			case LogChannel::Error:
-				prefix = "[ERROR] [";
-				break;
-			case LogChannel::Fatal:
-				prefix = "[FATAL] [";
-				break;
-			case LogChannel::SuperFatal:
-				prefix = "[SUPER FATAL] [";
-				break;
+			case LogChannel::Message:		break;
+			case LogChannel::Debug:			prefix = "[DEBUG] ["; break;
+			case LogChannel::Warning:   	prefix = "[WARNING] ["; break;
+			case LogChannel::Error:     	prefix = "[ERROR] ["; break;
+			case LogChannel::Fatal:     	prefix = "[FATAL] ["; break;
+			case LogChannel::SuperFatal:	prefix = "[SUPER FATAL] ["; break;
 		}
 
-		snprintf(logStringBuffer, sizeof(logStringBuffer), 
-		"%s%s%s %s %s", prefix, dateBuffer, suffixDate, text, suffix);
+		auto offset = snprintf(textBuffer, LOGGING_MAX_LENGTH_TOTAL, "%s%s%s ", prefix, dateBuffer, suffixDate);
+		auto remaining = sizeof(textBuffer) - offset;
+
+		vsnprintf(textBuffer + offset, remaining, text, args);
+		offset = strlen(textBuffer);
+		remaining = sizeof(textBuffer) - offset;
+		snprintf(textBuffer + offset, remaining, "%s", suffix);
 
 		if (logger.settings.destination & LogDestination::Printf)
 		{
@@ -212,8 +207,7 @@ namespace USER_NAMESPACE
 					break;
 			}
 
-			vprintf(logStringBuffer, args);
-
+		 	printf("%s", textBuffer);
 			Util_ConsoleResetForegroundColor();
 
 			// If a fatal error message is logged, we're going down,
@@ -227,7 +221,7 @@ namespace USER_NAMESPACE
 		}
 
 		if (logger.settings.destination & LogDestination::File)
-			vfprintf(logger.handle, logStringBuffer, args);
+			fprintf(logger.handle, "%s", textBuffer);
 
 		if (channel & LogChannel::SuperFatal)
 		{

@@ -36,9 +36,10 @@
 //								- Remove whitespace
 //								- Fix lingering snake_case
 //								- Allow the user to specify the namespace using the USER_NAMESPACE define
-// February 11, 2026 (4.6.1):
+// February 11, 2026 (4.7):
 //								- Fixed sign-on message being written to file
 //								- Formalise comments
+//								- Only print into one buffer, and more efficient buffer use
 
 #pragma once
 #include <chrono>
@@ -48,7 +49,7 @@
 #include <iostream>
 
 // This should be updated each time a feature gets added to the logging system.
-#define STARFROSTLOG_VERSION 	"Starfrost Shared Logging System 4.6.1 (February 11, 2026)"
+#define STARFROSTLOG_VERSION 	"Starfrost Shared Logging System 4.7 (February 11, 2026)"
 
 #ifdef __cplusplus
 

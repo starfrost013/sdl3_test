@@ -95,14 +95,17 @@ namespace Capy
         switch (mode)
         {
             case NETMODE_CLIENT:
+                Logging_LogChannel("This is a client", LogChannel::Message);
                 client = new Client();
                 break;
             // TODO: Listen servers
             case NETMODE_SERVER_LISTEN:
+                Logging_LogChannel("This is a listen server", LogChannel::Message);
                 client = new Client();
                 server = new Server(PORT_DEFAULT);
                 break;
             case NETMODE_SERVER_DEDICATED:
+                Logging_LogChannel("This is a dedicated server", LogChannel::Message);
                 server = new Server(PORT_DEFAULT);
                 break; 
         }
@@ -139,7 +142,7 @@ namespace Capy
 
             if (client)
                 client->Tick();
-                
+
             if (server)
                 server->Tick();
         }
