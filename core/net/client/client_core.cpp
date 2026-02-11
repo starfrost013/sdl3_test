@@ -14,6 +14,7 @@ namespace Capy
 
     void Client::Connect(const char* addr)
     {
+        Logging_LogChannel("Client::Connect - Trying to connect to server at %s...", LogChannel::Message, addr);
         SetState(ClientState::CLIENT_RESOLVING_ADDRESS);
 
         serverAddress = NET_ResolveHostname(addr);
@@ -29,7 +30,9 @@ namespace Capy
 
     void Client::ConnectOnResolveDone()
     {
-        
+        uint8_t dat[] = { 0x00, 0x04, 0x08, 0x0c };
+
+        SendMessage(Capy::NetMessageType::NETMSG_HELLO, serverAddress, dat, sizeof(dat)/sizeof(dat[0]), NetCast::NET_CAST_TO_SERVER);
     }
 
     Client::ClientState Client::GetState()
@@ -39,7 +42,7 @@ namespace Capy
 
     void Client::SetState(ClientState _state)
     {
-        _state = state;
+        state = _state;
     }
 
     void Client::Tick()
@@ -56,7 +59,7 @@ namespace Capy
                         SetState(ClientState::CLIENT_FATAL);
                         break; 
                     case NET_SUCCESS:
-                        Logging_LogChannel("Client::Connect - Connecting...", LogChannel::Error);
+                        Logging_LogChannel("Client::Connect - Connecting...", LogChannel::Message);
                         SetState(ClientState::CLIENT_CONNECTING);
                         break;
                     default:

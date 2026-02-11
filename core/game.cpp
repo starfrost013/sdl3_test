@@ -138,6 +138,11 @@ namespace Capy
         game.running = true; 
         game.tickrate = 60; 
 
+        if (mode == NETMODE_CLIENT)
+        {
+            client->Connect("127.0.0.1");    
+        }
+
         return true; 
     }
 

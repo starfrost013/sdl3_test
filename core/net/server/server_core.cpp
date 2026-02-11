@@ -24,7 +24,14 @@ namespace Capy
     // Run while server is in ServerState::UPDATE_RUNNING
     void Server::UpdateWhileRunning()
     {
-        
+        NET_Datagram* dgram;
+
+        bool success = NET_ReceiveDatagram(socket, &dgram);
+
+        if (dgram && success)
+        {
+            Logging_LogChannel("Got some data!!! len=%d", LogChannel::Debug, dgram->buflen);
+        }
     }
 
     void Server::Tick()
