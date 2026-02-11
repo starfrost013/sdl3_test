@@ -25,9 +25,15 @@ namespace Capy
 
         /* cast start of message to header */
 
-        msg.header = (NetMessage::NetHeader*)dgram->buf;
+        if (dgram->buflen < sizeof(NetMessage::NetHeader))
+        {
+            Logging_LogChannel("NetMode::GetMessage - size must be at least %d", LogChannel::Error, sizeof(NetMessage::NetHeader));
+            return msg;
+        }
 
-        if (msg.header->magic != NETMSG_MAGIC)
+        memcpy(&msg.header, dgram->buf, sizeof(NetMessage::NetHeader));
+
+        if (msg.header.magic != NETMSG_MAGIC)
         {
             Logging_LogChannel("NetMode::GetMessage - invalid magic", LogChannel::Error);
             return msg;
@@ -35,23 +41,23 @@ namespace Capy
    
         //todo; store a buffer of messages and reorder them etc
 
-        if (msg.header->size == 0
-        || msg.header->size > MAX_PACKET_SIZE)
+        if (msg.header.size == 0
+        || msg.header.size > MAX_PACKET_SIZE)
         {
-            Logging_LogChannel("NetMode::GetMessage - invalid size %d", LogChannel::Error, msg.header->size);
+            Logging_LogChannel("NetMode::GetMessage - invalid size %d", LogChannel::Error, msg.header.size);
             return msg;
         }
 
-        if (msg.header->castType > NET_CAST_LAST_VALID)
+        if (msg.header.castType > NET_CAST_LAST_VALID)
         {
-            Logging_LogChannel("NetMode::GetMessage - invalid cast type %d", LogChannel::Error, msg.header->messageType);
+            Logging_LogChannel("NetMode::GetMessage - invalid cast type %d", LogChannel::Error, msg.header.messageType);
             return msg;
         }
 
         // check for valid message type
-        if (msg.header->messageType > NETMSG_LAST_VALID)
+        if (msg.header.messageType > NETMSG_LAST_VALID)
         {
-            Logging_LogChannel("NetMode::GetMessage - invalid msg type %d", LogChannel::Error, msg.header->messageType);
+            Logging_LogChannel("NetMode::GetMessage - invalid msg type %d", LogChannel::Error, msg.header.messageType);
             return msg;
         }
 
@@ -66,9 +72,34 @@ namespace Capy
         return msg; 
     }
 
-    void NetMode::SendMessage(NetMessage msg)
+    void NetMode::SendMessage(NetMessageType msgType, NET_Address* address, uint8_t* data, uint32_t size, NetCast castType = NET_CAST_TO_ALL_CLIENTS)
     {
+        if (!size)
+        {
+            Logging_LogChannel("NetMode::SendMessage - Size is 0, returning", LogChannel::Warning, size, MAX_PACKET_SIZE);
+            return;
+        }
+
+        if (size > MAX_PACKET_SIZE)
+        {
+            Logging_LogChannel("NetMode::SendMessage - %d is larger than max packet size %d, ignoring", LogChannel::Warning, size, MAX_PACKET_SIZE);
+            return;
+        }
+
+        NetMessage msg;
+        msg.header.magic = NETMSG_MAGIC;
+        msg.header.seqNumber = seqNumber;
+        msg.header.messageType = msgType;
+        msg.header.castType = castType;
+        msg.header.size = sizeof(msg.messageData) - sizeof(NetMessage::NetHeader);
+        msg.valid = true;
+        msg.messageData = new uint8_t[size];
         
+        memcpy(msg.messageData, data, size);
+
+        NET_SendDatagram(socket, address, port, (void*)&msg, sizeof(msg));
+
+        seqNumber++;
     }
 
     void CapyNet_Shutdown()

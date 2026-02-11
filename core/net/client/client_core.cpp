@@ -9,6 +9,7 @@ namespace Capy
         socket = NET_CreateDatagramSocket(NULL, 0);
         state = ClientState::CLIENT_UNCONNECTED;
         
+        port = PORT_DEFAULT;
     }
 
     void Client::Connect(const char* addr)

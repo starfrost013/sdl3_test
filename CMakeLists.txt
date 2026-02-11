@@ -41,6 +41,7 @@ add_executable (Capy
 # Core - Client
 "core/net/client/client_core.cpp"
 
+# Core - FS
 "core/filesystem/filesystem.cpp"
 
 # Entity

@@ -14,6 +14,8 @@
 
 namespace Capy
 {
+    #define PORT_DEFAULT                6769    // 6-7 69
+
     // net cast types
     // these are encoded into the
     enum NetCast
@@ -53,7 +55,7 @@ namespace Capy
             uint8_t messageType;            // type of message
         };
 
-        NetHeader* header;                   // header
+        NetHeader header;                   // header
 
         uint8_t* messageData;               // data of message
         bool valid;                         // true if message parsed successfulyl
@@ -87,7 +89,9 @@ namespace Capy
             virtual void Tick() { };
 
             NetMessage GetMessage(NET_Datagram* dgram);
-            void SendMessage(NetMessage msg);
+
+            // this is very likely to be a temporary interface for testing until we have a real packet system
+            void SendMessage(NetMessageType msgType, NET_Address* address, uint8_t* data, uint32_t size, NetCast castType);
 
             virtual void Shutdown() { };
 

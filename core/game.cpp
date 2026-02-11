@@ -23,7 +23,7 @@ namespace Capy
     Client* client = nullptr;       // The client    
     Server* server = nullptr;       // The server
 
-    // Temp
+    // These Render_* functions are temporary until we have a real render layer with multiple renderers
     bool Render_Init()
     {
         Logging_LogChannel("Initialising SDL...", LogChannel::Message);
@@ -52,6 +52,18 @@ namespace Capy
         }
 
         return true; 
+    }
+
+    void Render_Clear()
+    {
+        SDL_RenderClear(game.renderer);
+
+    }
+
+    void Render_Present()
+    {
+        // flip the buffers
+        SDL_RenderPresent(game.renderer);
     }
 
     void Render_Shutdown()
@@ -83,13 +95,6 @@ namespace Capy
         Cmdline_Init(argc, argv);
         CapyNet_Init();
 
-        if (!Render_Init())
-        {
-            // error will already be printed
-            Game_Shutdown();
-            return false;
-        }
-
         NetType mode = static_cast<NetType>(int(netMode->value));
 
         switch (mode)
@@ -115,18 +120,31 @@ namespace Capy
         
         if (server)
             server->Init();
-        
+
+        if (mode != NETMODE_SERVER_DEDICATED)
+        {
+            if (!Render_Init())
+            {
+                // error will already be printed
+                Game_Shutdown();
+                return false;
+            }
+
+            world.GetHeader().SetSize(Vector2(3000, 400));
+
+            world.Create();
+        }
+
         game.running = true; 
         game.tickrate = 60; 
 
-        world.GetHeader().SetSize(Vector2(3000, 400));
-
-        world.Create();
         return true; 
     }
 
     void Game_Run()
     {
+        NetType mode = static_cast<NetType>(int(netMode->value));
+
         /* Update the game world, using nanoseconds for more precision */
         uint64_t time_now = SDL_GetTicksNS();
 
@@ -139,27 +157,12 @@ namespace Capy
             Game_Tick();
             //std::cout << "Last tick time: " << (float(time_now / 1000000.0f)) - (float(game.last_tick_time / 1000000.0f)) << "ms" << std::endl;
             game.lastTickTime = time_now;
-
-            if (client)
-                client->Tick();
-
-            if (server)
-                server->Tick();
         }
 
-        SDL_RenderClear(game.renderer);
-
-        // update shared first
-        Game_Frame();
-
-        if (client)
-            client->Frame();
-
-        if (server)
-            server->Frame();
-        
-        // flip the buffers
-        SDL_RenderPresent(game.renderer);
+        if (mode != NETMODE_SERVER_DEDICATED)   
+        {
+            Game_Frame();
+        }
     }
 
     void Game_PumpEvents()
@@ -187,11 +190,27 @@ namespace Capy
 
     void Game_Tick()
     {
+        if (client)
+            client->Tick();
+
+        if (server)
+            server->Tick();
     }
     
     void Game_Frame()
-    {
+    {            
+        // update shared first
+        Render_Clear();
+
         world.Render();
+
+        if (client)
+            client->Frame();
+
+        if (server)
+            server->Frame();
+
+        Render_Present();
     }
 
     bool Game_Shutdown()

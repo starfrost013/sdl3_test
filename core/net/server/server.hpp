@@ -6,7 +6,6 @@
 namespace Capy
 {
     #define MAX_CLIENTS                 32
-    #define PORT_DEFAULT                6769    // 6-7 69
 
     class Server : public NetMode
     {
