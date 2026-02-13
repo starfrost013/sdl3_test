@@ -17,7 +17,6 @@
 
 namespace Capy
 {
-    WorldEntity world;              // TEMP
 
     Game game;                      // Core game strcture
     Client* client = nullptr;       // The client    
@@ -107,11 +106,11 @@ namespace Capy
             case NETMODE_SERVER_LISTEN:
                 Logging_LogChannel("This is a listen server", LogChannel::Message);
                 client = new Client();
-                server = new Server(PORT_DEFAULT);
+                server = new Server(netPort->value);
                 break;
             case NETMODE_SERVER_DEDICATED:
                 Logging_LogChannel("This is a dedicated server", LogChannel::Message);
-                server = new Server(PORT_DEFAULT);
+                server = new Server(netPort->value);
                 break; 
         }
         
@@ -129,10 +128,6 @@ namespace Capy
                 Game_Shutdown();
                 return false;
             }
-
-            world.GetHeader().SetSize(Vector2(3000, 400));
-
-            world.Create();
         }
 
         game.running = true; 
@@ -140,7 +135,7 @@ namespace Capy
 
         if (mode == NETMODE_CLIENT)
         {
-            client->Connect("82.37.141.130");    
+            client->Connect(netServerAddress->string);    
         }
 
         return true; 
@@ -164,10 +159,7 @@ namespace Capy
             game.lastTickTime = time_now;
         }
 
-        if (mode != NETMODE_SERVER_DEDICATED)   
-        {
-            Game_Frame();
-        }
+        Game_Frame();
     }
 
     void Game_PumpEvents()
@@ -204,18 +196,11 @@ namespace Capy
     
     void Game_Frame()
     {            
-        // update shared first
-        Render_Clear();
-
-        world.Render();
-
         if (client)
             client->Frame();
 
         if (server)
             server->Frame();
-
-        Render_Present();
     }
 
     bool Game_Shutdown()

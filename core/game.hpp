@@ -64,6 +64,11 @@ namespace Capy
     void Game_Frame();              // Run each frame
     bool Game_Shutdown();           // RUn on shutdown
 
+    // Temporary renderer
+    void Render_Clear();            
+    void Render_Present();
+    void Render_Shutdown();
+
     // scancodes are a terrible idea
     extern bool keyStates[];
 

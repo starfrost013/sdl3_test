@@ -78,17 +78,20 @@ namespace Capy
         NETMODE_SERVER_DEDICATED = 2,   // Server only
     };
     
+    // Cvars
     extern Cvar* netMode;
+    extern Cvar* netServerAddress;
+    extern Cvar* netPort;
 
     /* Base for all network modes */
     class NetMode
     {
         public:
             virtual void Init() { };
-            virtual void Frame() { };
+            virtual void Frame();
             virtual void Tick() { };
 
-            NetMessage GetMessage();
+            NetMessage* GetMessage();
 
             // this is very likely to be a temporary interface for testing until we have a real packet system
             void SendMessage(NetMessageType msgType, NET_Address* address, uint8_t* data, uint32_t size, NetCast castType);
@@ -96,10 +99,17 @@ namespace Capy
             virtual void Shutdown() { };
 
         protected:
+            void GetAllIncomingMessages();
+
             size_t seqNumber;               // single source of truth for UDP packet sequencing (since it can be out of order, etc.)
             uint16_t port;                  // port
             NET_DatagramSocket* socket;     // socket to use
 
+            // We only process packets every 1/tickrate seconds,
+            // but they could theoretically be sent faster. Therefore we have a buffer to put in
+            static const int32_t NET_BUFFER_SIZE = 64;    // Maximum number of packets in the buffer that can be serviced at any one time
+            NetMessage netBuffer[NET_BUFFER_SIZE];  
+            int32_t netBufferPtr = 0;
     };
 
     /* 

@@ -1,7 +1,11 @@
- #include <core/net/client/client.hpp>
+#include <core/net/client/client.hpp>
+#include <core/game.hpp>
+#include <data/entities/entity_world.hpp>
 
 namespace Capy
-{
+{    
+    WorldEntity world;              // TEMP
+
     void Client::Init()
     {
         Logging_LogChannel("Initialising client...", LogChannel::Message);
@@ -9,7 +13,7 @@ namespace Capy
         socket = NET_CreateDatagramSocket(NULL, 0);
         state = ClientState::CLIENT_UNCONNECTED;
         
-        port = PORT_DEFAULT;
+        port = netPort->value;
     }
 
     void Client::Connect(const char* addr)
@@ -32,7 +36,13 @@ namespace Capy
     {
         uint8_t dat[] = { 0x00, 0x04, 0x08, 0x0c };
 
+        /* temp */
+        world.GetHeader().SetSize(Vector2(3000, 400));
+
+        world.Create();
+        
         SendMessage(Capy::NetMessageType::NETMSG_HELLO, serverAddress, dat, sizeof(dat) + sizeof(NetMessage::NetHeader), NetCast::NET_CAST_TO_SERVER);
+        SetState(ClientState::CLIENT_CONNECTED);
     }
 
     Client::ClientState Client::GetState()
@@ -78,11 +88,24 @@ namespace Capy
         }
     }   
 
+    void Client::Frame()
+    {
+        switch (state)
+        {
+            case CLIENT_CONNECTED:
+                Render_Clear();
+                
+                world.Render();
+                Render_Present();
+                break;
+        }
+    }
+
     void Client::Shutdown()
     {
         Logging_LogChannel("Shutting down client...", LogChannel::Message);
-
         NET_DestroyDatagramSocket(socket);
+        Render_Shutdown();
 
         SetState(ClientState::CLIENT_DEAD);
     }

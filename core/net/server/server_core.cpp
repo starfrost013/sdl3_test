@@ -24,12 +24,12 @@ namespace Capy
     // Run while server is in ServerState::UPDATE_RUNNING
     void Server::UpdateWhileRunning()
     {
+        NetMessage* msg = GetMessage();
 
-        NetMessage msg = GetMessage();
-
-        if (msg.valid)
+        if (msg 
+            && msg->valid)
         {
-            Logging_LogChannel("Got some data!!! len=%d", LogChannel::Debug, msg.header.size);
+            Logging_LogChannel("Got some data!!! len=%d", LogChannel::Debug, msg->header.size);
         }
     }
 

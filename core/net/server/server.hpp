@@ -24,7 +24,10 @@ namespace Capy
 
         Server()
         {
-            port = PORT_DEFAULT;
+            port = netPort->value;
+
+            if (!netPort->value)
+                Cvar_Set("netPort", "6769", false);
         }
 
         Server(uint16_t _port)

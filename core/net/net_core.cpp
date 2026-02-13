@@ -4,16 +4,22 @@ namespace Capy
 {
     Cvar* netMode;
 
+    //temporary
+    Cvar* netServerAddress;
+    Cvar* netPort;
+
     void CapyNet_Init()
     {   
         Logging_LogChannel("CapyNet_Init: Initialising network...", LogChannel::Message);
 
         netMode = Cvar_Get("netMode", "0", false);
+        netServerAddress = Cvar_Get("netServerAddress", "127.0.0.1", false);
+        netPort = Cvar_Get("netPort", "6769", false);
 
         NET_Init();
     }
 
-    NetMessage NetMode::GetMessage()
+    void NetMode::GetAllIncomingMessages()
     {
         // we need to manage the lifetime of these objects
         NET_Datagram* dgram; 
@@ -25,23 +31,23 @@ namespace Capy
         if (success && !dgram)
         {
             // no message to receive
-            return msg; 
+            return; 
         }
 
         /* cast start of message to header */
 
         if (dgram->buflen < sizeof(NetMessage::NetHeader))
         {
-            Logging_LogChannel("NetMode::GetMessage - size must be at least %d", LogChannel::Error, sizeof(NetMessage::NetHeader));
-            return msg;
+            Logging_LogChannel("NetMode::GetAllIncomingMessages - size must be at least %d", LogChannel::Error, sizeof(NetMessage::NetHeader));
+            return;
         }
 
         memcpy(&msg.header, dgram->buf, sizeof(NetMessage::NetHeader));
 
         if (msg.header.magic != NETMSG_MAGIC)
         {
-            Logging_LogChannel("NetMode::GetMessage - invalid magic", LogChannel::Error);
-            return msg;
+            Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid magic", LogChannel::Error);
+            return;
         }
    
         //todo; store a buffer of messages and reorder them etc
@@ -49,21 +55,21 @@ namespace Capy
         if (msg.header.size == 0
         || msg.header.size > MAX_PACKET_SIZE)
         {
-            Logging_LogChannel("NetMode::GetMessage - invalid size %d", LogChannel::Error, msg.header.size);
-            return msg;
+            Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid size %d", LogChannel::Error, msg.header.size);
+            return;
         }
 
         if (msg.header.castType > NET_CAST_LAST_VALID)
         {
-            Logging_LogChannel("NetMode::GetMessage - invalid cast type %d", LogChannel::Error, msg.header.messageType);
-            return msg;
+            Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid cast type %d", LogChannel::Error, msg.header.messageType);
+            return;
         }
 
         // check for valid message type
         if (msg.header.messageType > NETMSG_LAST_VALID)
         {
-            Logging_LogChannel("NetMode::GetMessage - invalid msg type %d", LogChannel::Error, msg.header.messageType);
-            return msg;
+            Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid msg type %d", LogChannel::Error, msg.header.messageType);
+            return;
         }
 
         //todo: packet type
@@ -76,8 +82,29 @@ namespace Capy
 
         /* Known Address Identification here */
 
+        // add to buffer
+
+        netBufferPtr++;
+
+        netBuffer[netBufferPtr] = msg;
+
+        if (netBufferPtr >= NET_BUFFER_SIZE)
+        {
+            Logging_LogChannel("NetMode::GetMessage - NetBuffer overflow, reset", LogChannel::Warning);
+            netBufferPtr = 0; 
+        }
+
         NET_DestroyDatagram(dgram);
-        return msg; 
+        return; 
+    }
+    
+    NetMessage* NetMode::GetMessage()
+    {
+        if (!netBufferPtr)
+            return nullptr;
+
+        netBufferPtr -= 1;
+        return &netBuffer[netBufferPtr + 1];
     }
 
     void NetMode::SendMessage(NetMessageType msgType, NET_Address* address, uint8_t* data, uint32_t size, NetCast castType = NET_CAST_TO_ALL_CLIENTS)
@@ -108,6 +135,12 @@ namespace Capy
         NET_SendDatagram(socket, address, port, (void*)&msg, sizeof(msg));
 
         seqNumber++;
+    }
+
+    void NetMode::Frame()
+    {
+        // try and get messages AFAP
+        GetAllIncomingMessages();
     }
 
     void CapyNet_Shutdown()
