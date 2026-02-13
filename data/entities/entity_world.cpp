@@ -8,7 +8,9 @@
 
 namespace Capy
 { 
-    //
+    #define PIXELS_TO_BLOCKS_Y(x) (x)/TILE_SIZE_Y
+
+     //
     // Typedefs to prevent the code looking like the average C++ error message.
     //
     typedef std::unordered_map<WorldTile*, uint8_t> TileToIndexMap;
@@ -287,17 +289,16 @@ namespace Capy
 
         SDL_LockTexture(game.renderTarget, &newRect, (void**)&texturePixels, &pitch);
 
-         // 32bpp so 1 index = 4 bytes
-        uint32_t firstGroundY = 0;
-        uint32_t lastLightBorderY = 0; 
 
         WorldTile* currentTile = heightData[0];
         
-        for (uint32_t y = 0; y < game.settings.screenY; y += TILE_SIZE_Y)
+        for (uint32_t x = 0; x < game.settings.screenX; x += TILE_SIZE_Y)
         {
             // blit to texture
-
-            for (uint32_t x = 0; x < game.settings.screenX; x += TILE_SIZE_X)
+            bool hitGround = false; 
+            uint32_t groundHeight = 0;
+            
+            for (uint32_t y = 0; y < game.settings.screenY; y += TILE_SIZE_X)
             {
                 uint32_t xTile = x / TILE_SIZE_X;
                 uint32_t yTile = y / TILE_SIZE_Y;
@@ -309,7 +310,6 @@ namespace Capy
                 }
 
                 uint32_t worldIndex = (yTile * header.size.x) + xTile;
-
                 uint8_t index = world[worldIndex];
 
                 // don't draw out of bounds as random 'tiles' just in case - might not be the fastest code
@@ -318,21 +318,23 @@ namespace Capy
 
                 WorldTile* currentTile = tileIndices[index];
 
+                // apply darkening colours relative to ground
+                if (currentTile == &WorldTileAir)
+                    continue; //skip air tiles
+                else
+                {
+                    if (!hitGround)
+                    {
+                        groundHeight = y;
+                        hitGround = true; 
+                    }
+                }
+ 
                 // vary colours per tile so it looks cooler
                 // todo: make this not run on every frame
-                int32_t finalColourR = currentTile->colourR + rand() % 12;
-                int32_t finalColourG = currentTile->colourG + rand() % 12;
-                int32_t finalColourB = currentTile->colourB + rand() % 12;
-
-                int32_t subtractFactor = firstGroundY;
-
-                if (currentTile->emitsLight)
-                    subtractFactor = lastLightBorderY;
-                    
-                // always faster to bitshift
-                finalColourR -= (subtractFactor) >> 1;
-                finalColourG -= (subtractFactor) >> 1;
-                finalColourB -= (subtractFactor) >> 1;
+                int32_t finalColourR = currentTile->colourR - (4 * (PIXELS_TO_BLOCKS_Y(y - groundHeight)));
+                int32_t finalColourG = currentTile->colourG - (4 * (PIXELS_TO_BLOCKS_Y(y - groundHeight)));
+                int32_t finalColourB = currentTile->colourB - (4 * (PIXELS_TO_BLOCKS_Y(y - groundHeight)));
 
                 // clamp colours
                 if (finalColourR > 255) finalColourR = 255; 
@@ -340,9 +342,9 @@ namespace Capy
                 if (finalColourB > 255) finalColourB = 255;
 
                 // Noise introduction made pixels sometimes show up above the colour. So let's just ignore it if it's below 0
-                if (finalColourR < 0) finalColourR = currentTile->colourR; 
-                if (finalColourG < 0) finalColourG = currentTile->colourG;
-                if (finalColourB < 0) finalColourB = currentTile->colourB;
+                if (finalColourR < 0) finalColourR = 0; 
+                if (finalColourG < 0) finalColourG = 0;
+                if (finalColourB < 0) finalColourB = 0;
 
                 // draw tiles
                 for (uint32_t yy = 0; yy < TILE_SIZE_Y; yy++)

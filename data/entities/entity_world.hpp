@@ -8,10 +8,10 @@ namespace Capy
     /* World tile representation */
     struct WorldTile 
     {
-        uint32_t colourR;
-        uint32_t colourG;
-        uint32_t colourB;
-        uint32_t colourA;
+        uint8_t colourR;
+        uint8_t colourG;
+        uint8_t colourB;
+        uint8_t colourA;
         const char* texture_path; 
         const char* name;
         bool emitsLight;
