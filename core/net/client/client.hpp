@@ -31,6 +31,7 @@ namespace Capy
         void Init() override; 
         void Connect(const char* addr);
         void Tick() override;
+        void TickNormal();
         void Frame() override;
         void Shutdown() override; 
 

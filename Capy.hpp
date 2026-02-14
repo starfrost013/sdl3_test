@@ -26,6 +26,7 @@ namespace Capy
 {
     #define STRING_EMPTY                ""
     #define STRING_MAX_GENERIC          256     // Generic max string length
+    #define ARRAY_SIZE(x)               sizeof(x)/sizeof(x[0])
 
     #define APP_NAME "Capybara Wars Project - CONFIDENTIAL"
     #define APP_VERSION "Pre-Alpha 5.0"

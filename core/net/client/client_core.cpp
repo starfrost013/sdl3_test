@@ -38,10 +38,13 @@ namespace Capy
 
         /* temp */
         world.GetHeader().SetSize(Vector2(3000, 400));
-
         world.Create();
         
-        SendMessage(Capy::NetMessageType::NETMSG_HELLO, serverAddress, dat, sizeof(dat) + sizeof(NetMessage::NetHeader), NetCast::NET_CAST_TO_SERVER);
+        NetMessage msg = NetMessage(NetCast::NET_CAST_TO_SERVER, Capy::NetMessageType::NETMSG_HELLO, dat, sizeof(dat));
+
+        SendMessage(msg, serverAddress);
+
+
         SetState(ClientState::CLIENT_CONNECTED);
     }
 

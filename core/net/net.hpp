@@ -40,8 +40,9 @@ namespace Capy
     };
 
     //basic check that the message was received (tcp but still)
-    #define NETMSG_MAGIC           0x00FF55AA
-    #define MAX_PACKET_SIZE        512      // max reliable, may increase later
+    #define NETMSG_MAGIC            0x00FF55AA
+    #define MAX_PACKET_SIZE         512      // max reliable, may increase later
+    #define PACKET_RESIZE_FACTOR    1.5
 
     struct NetMessage
     {
@@ -52,21 +53,98 @@ namespace Capy
             // these are not enums because they could theoretically be out of range
             uint32_t size;                  // size does not need to be 8 bytes (nobody will send 2 GB packet!)
             uint8_t castType;               // see netcast above
-            uint8_t messageType;            // type of message
+            uint8_t msgType;                // type of message
         };
 
         NetHeader header;                   // header
 
-        uint8_t* messageData;               // data of message
+        uint8_t* msgData;                   // data of message
         bool valid;                         // true if message parsed successfulyl
-        uint8_t msgPtr;                     // current location within the message
+        uint32_t reserveSize;               // buffer may be resized
+        uint8_t msgPtrRead;                 // current location within the message while reading
+        uint8_t msgPtrWrite;                // current location within the message while writing    
+
+        // Create a new NetMessage. Used for GetMessage
+        NetMessage()
+        {
+
+        }
+
+        NetMessage(NetCast castType, NetMessageType msgType, uint8_t data[], uint32_t size)
+        {
+            if (!size)
+            {
+                Logging_LogChannel("NetMode::SendMessage - Size is 0, returning", LogChannel::Warning, size, MAX_PACKET_SIZE);
+                return;
+            }
+
+            if (size > MAX_PACKET_SIZE)
+            {
+                Logging_LogChannel("NetMode::SendMessage - %d is larger than max packet size %d, ignoring", LogChannel::Warning, size, MAX_PACKET_SIZE);
+                return;
+            }
+
+            header.magic = NETMSG_MAGIC;
+            header.size = size;
+            header.castType = castType;
+            header.msgType = msgType;
+            
+            valid = true;
+            msgPtrRead = msgPtrWrite = 0;
+
+            reserveSize = size;
+
+            msgData = new uint8_t[reserveSize];
+            
+            memcpy(&msgData, data, size);
+        }
+
+        // Create a new network message with a reserve size
+        NetMessage(NetCast castType, NetMessageType msgType, uint8_t data[], uint32_t minSize, uint32_t reserveSize)
+        {
+            NetMessage(castType, msgType, data, reserveSize);
+
+            header.size = minSize;
+        }
 
         template <typename T>
         T Read()
         {
-            return (T)messageData[msgPtr];
+            return (T)msgData[msgPtrRead];
 
-            msgPtr += sizeof(T);
+            msgPtrRead += sizeof(T);
+        }
+
+        template <typename T>
+        void Write(T thing)
+        {
+            // resize by 1.5x if the size would overflow
+            while (msgPtrWrite + sizeof(thing) > size)
+            {
+                uint32_t oldSize = size;
+                size *= 1.5;
+
+                if (size >= MAX_PACKET_SIZE)
+                    goto overflow;
+
+                uint8_t newMsgData = new uint8_t[size];
+                memcpy(newMsgData, msgData, oldSize);
+
+                // delete old message data
+                delete msgData;
+                msgData = &newMsgData;
+            }
+
+            if (msgPtrWrite + sizeof(thing) >= MAX_PACKET_SIZE)
+                goto overflow;
+
+            memcpy(newMsgData[msgPtrWrite], thing, sizeof(thing));
+            msgPtrWrite += sizeof(thing);
+
+            return;
+        overflow:
+            Logging_LogChannel("NetMessage::Write - overflow (max size is %d)", MAX_PACKET_SIZE);
+            return;
         }
     };
 
@@ -94,7 +172,7 @@ namespace Capy
             NetMessage* GetMessage();
 
             // this is very likely to be a temporary interface for testing until we have a real packet system
-            void SendMessage(NetMessageType msgType, NET_Address* address, uint8_t* data, uint32_t size, NetCast castType);
+            void SendMessage(NetMessage msg, NET_Address* address);
 
             virtual void Shutdown() { };
 

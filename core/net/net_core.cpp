@@ -19,6 +19,7 @@ namespace Capy
         NET_Init();
     }
 
+    // TODO: Refactor this to ues the constructor
     void NetMode::GetAllIncomingMessages()
     {
         // we need to manage the lifetime of these objects
@@ -52,8 +53,7 @@ namespace Capy
    
         //todo; store a buffer of messages and reorder them etc
 
-        if (msg.header.size == 0
-        || msg.header.size > MAX_PACKET_SIZE)
+        if (msg.header.size > MAX_PACKET_SIZE)
         {
             Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid size %d", LogChannel::Error, msg.header.size);
             return;
@@ -61,14 +61,14 @@ namespace Capy
 
         if (msg.header.castType > NET_CAST_LAST_VALID)
         {
-            Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid cast type %d", LogChannel::Error, msg.header.messageType);
+            Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid cast type %d", LogChannel::Error, msg.header.msgType);
             return;
         }
 
         // check for valid message type
-        if (msg.header.messageType > NETMSG_LAST_VALID)
+        if (msg.header.msgType > NETMSG_LAST_VALID)
         {
-            Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid msg type %d", LogChannel::Error, msg.header.messageType);
+            Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid msg type %d", LogChannel::Error, msg.header.msgType);
             return;
         }
 
@@ -77,15 +77,19 @@ namespace Capy
         msg.valid = true;
         seqNumber++;
 
-        msg.messageData = new uint8_t[dgram->buflen];
-        memcpy(msg.messageData, &dgram->buf[sizeof(NetMessage::NetHeader)], dgram->buflen - sizeof(NetMessage::NetHeader));
+        // some are header only
+        // only obtain the amount that actually exists
+        if (msg.header.size > 0)
+        {
+            msg.msgData = new uint8_t[dgram->buflen];
+            memcpy(msg.msgData, &dgram->buf[sizeof(NetMessage::NetHeader)], dgram->buflen - sizeof(NetMessage::NetHeader));
+        }
 
         /* Known Address Identification here */
 
         // add to buffer
 
         netBufferPtr++;
-
         netBuffer[netBufferPtr] = msg;
 
         if (netBufferPtr >= NET_BUFFER_SIZE)
@@ -107,33 +111,9 @@ namespace Capy
         return &netBuffer[netBufferPtr + 1];
     }
 
-    void NetMode::SendMessage(NetMessageType msgType, NET_Address* address, uint8_t* data, uint32_t size, NetCast castType = NET_CAST_TO_ALL_CLIENTS)
+    void NetMode::SendMessage(NetMessage msg, NET_Address* address)
     {
-        if (!size)
-        {
-            Logging_LogChannel("NetMode::SendMessage - Size is 0, returning", LogChannel::Warning, size, MAX_PACKET_SIZE);
-            return;
-        }
-
-        if (size > MAX_PACKET_SIZE)
-        {
-            Logging_LogChannel("NetMode::SendMessage - %d is larger than max packet size %d, ignoring", LogChannel::Warning, size, MAX_PACKET_SIZE);
-            return;
-        }
-
-        NetMessage msg;
-        msg.header.magic = NETMSG_MAGIC;
-        msg.header.seqNumber = seqNumber;
-        msg.header.messageType = msgType;
-        msg.header.castType = castType;
-        msg.header.size = size - sizeof(NetMessage::NetHeader);
-        msg.valid = true;
-        msg.messageData = new uint8_t[size];
-        
-        memcpy(msg.messageData, data, size);
-
         NET_SendDatagram(socket, address, port, (void*)&msg, sizeof(msg));
-
         seqNumber++;
     }
 
