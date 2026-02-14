@@ -59,10 +59,9 @@ namespace Capy
         NetHeader header;                   // header
 
         uint8_t* msgData;                   // data of message
-        bool valid;                         // true if message parsed successfulyl
-        uint32_t reserveSize;               // buffer may be resized
-        uint8_t msgPtrRead;                 // current location within the message while reading
-        uint8_t msgPtrWrite;                // current location within the message while writing    
+        bool valid;                         // true if message parsed successfulyl        uint8_t msgPtrRead;                 // current location within the message while reading
+        uint32_t msgPtrRead;                // current location within the message while writing    
+        uint32_t msgPtrWrite;               // current location within the message while writing    
 
         // Create a new NetMessage. Used for GetMessage
         NetMessage()
@@ -92,19 +91,9 @@ namespace Capy
             valid = true;
             msgPtrRead = msgPtrWrite = 0;
 
-            reserveSize = size;
-
-            msgData = new uint8_t[reserveSize];
+            msgData = new uint8_t[header.size];
             
             memcpy(&msgData, data, size);
-        }
-
-        // Create a new network message with a reserve size
-        NetMessage(NetCast castType, NetMessageType msgType, uint8_t data[], uint32_t minSize, uint32_t reserveSize)
-        {
-            NetMessage(castType, msgType, data, reserveSize);
-
-            header.size = minSize;
         }
 
         template <typename T>
@@ -119,15 +108,15 @@ namespace Capy
         void Write(T thing)
         {
             // resize by 1.5x if the size would overflow
-            while (msgPtrWrite + sizeof(thing) > size)
+            while (msgPtrWrite + sizeof(thing) > header.size)
             {
-                uint32_t oldSize = size;
-                size *= 1.5;
+                uint32_t oldSize = header.size;
+                header.size *= 1.5;
 
-                if (size >= MAX_PACKET_SIZE)
+                if (header.size >= MAX_PACKET_SIZE)
                     goto overflow;
 
-                uint8_t newMsgData = new uint8_t[size];
+                uint8_t newMsgData = new uint8_t[header.size];
                 memcpy(newMsgData, msgData, oldSize);
 
                 // delete old message data
@@ -138,7 +127,7 @@ namespace Capy
             if (msgPtrWrite + sizeof(thing) >= MAX_PACKET_SIZE)
                 goto overflow;
 
-            memcpy(newMsgData[msgPtrWrite], thing, sizeof(thing));
+            memcpy(msgData[msgPtrWrite], thing, sizeof(thing));
             msgPtrWrite += sizeof(thing);
 
             return;
