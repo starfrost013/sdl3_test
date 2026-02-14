@@ -58,6 +58,12 @@ namespace Capy
         state = _state;
     }
 
+    // Run while the client is connected
+    void Client::TickConnected()
+    {
+
+    }
+
     void Client::Tick()
     {
         switch (state)
