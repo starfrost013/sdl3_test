@@ -9,6 +9,8 @@ namespace Capy
 
         socket = NET_CreateDatagramSocket(NULL, port);
         SetState(ServerState::SERVER_RUNNING);
+        Logging_LogChannel("Server initialised!", LogChannel::Message);
+
     }
             
     Server::ServerState Server::GetState()
