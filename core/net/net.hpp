@@ -29,14 +29,32 @@ namespace Capy
     // maybe these should be classes...maybe not
     enum NetMessageType
     {
-        // Server to client messages 
+        // Client to server messages - 0x0-0x7f
+        // Server to client messages - 0x80-0xff
 
-        NETMSG_HELLO = 0x0,
-        NETMSG_WORLD_DOWNLOAD = 0x1,
-        NETMSG_PING = 0x2,
-        NETMSG_PONG = 0x3,
+        NETMSG_IS_SERVER_MESSAGE = 0x80,
 
-        NETMSG_LAST_VALID = NETMSG_PONG,                    // Sentinel value
+        NETMSG_HELLO = 0x0,                                         // Client Hello & Identity
+        NETMSG_WORLD_DOWNLOAD_START = 0x2,                          // Client Request World Download
+        NETMSG_WORLD_DOWNLOAD_PACKET = 0x3,                         // Client Request World Packet
+        NETMSG_WORLD_SPAWN_ENTITY = 0x4,                            // Client Request Entity Spawn (a.k.a. Client)
+        NETMSG_WORLD_UPDATE_ENTITY = 0x5,                           // Client Request Entity Update
+        NETMSG_DISCONNECT = 0x6,                                    // Client Disconnect
+
+        NETMSG_SERVER_HELLO = NETMSG_IS_SERVER_MESSAGE | 0x0,
+        NETMSG_SERVER_HEARTBEAT = NETMSG_IS_SERVER_MESSAGE | 0x1,   // Server heartbeat (if nothing for 5 seconds, disconnect)  
+        NETMSG_UPDATE_ENTITY = NETMSG_IS_SERVER_MESSAGE | 0x2,      // Server update entity                            
+
+        NETMSG_LAST_VALID = NETMSG_UPDATE_ENTITY,                   // Sentinel value
+    };
+
+    // enumerates network hello response statuses from the server to the client
+    enum NetHelloStatus
+    {
+        HELLO_OK = 0,                                               // Go ahead and have fun
+        HELLO_DUPLICATE_USERNAME = 1,                               // Duplicate username
+        HELLO_GO_AWAY = 2,                                          // YOU HAVE BEEN IP BAAAAAAAAAAAAANED
+        HELLO_TOO_MANY = 3,                                         // Maximum client reached
     };
 
     //basic check that the message was received (tcp but still)
@@ -63,20 +81,17 @@ namespace Capy
         uint32_t msgPtrRead;                // current location within the message while writing    
         uint32_t msgPtrWrite;               // current location within the message while writing    
 
+        NET_Address* addr;                  // sender's address
+
         // Create a new NetMessage. Used for GetMessage
         NetMessage()
         {
 
         }
 
+        // Create a new NetMessage with a given message type, cast type, size and optional data
         NetMessage(NetCast castType, NetMessageType msgType, uint8_t data[], uint32_t size)
         {
-            if (!size)
-            {
-                Logging_LogChannel("NetMode::SendMessage - Size is 0, returning", LogChannel::Warning, size, MAX_PACKET_SIZE);
-                return;
-            }
-
             if (size > MAX_PACKET_SIZE)
             {
                 Logging_LogChannel("NetMode::SendMessage - %d is larger than max packet size %d, ignoring", LogChannel::Warning, size, MAX_PACKET_SIZE);
@@ -91,9 +106,16 @@ namespace Capy
             valid = true;
             msgPtrRead = msgPtrWrite = 0;
 
-            msgData = new uint8_t[header.size];
-            
-            memcpy(&msgData, data, size);
+            // packets don't have to have data
+            if (header.size > 0)
+            {
+                msgData = new uint8_t[header.size];
+                
+                // data being nullptr means don't fill with anything
+                if (data != nullptr)
+                    memcpy(&msgData, data, size);
+            }
+
         }
 
         template <typename T>
@@ -116,23 +138,23 @@ namespace Capy
                 if (header.size >= MAX_PACKET_SIZE)
                     goto overflow;
 
-                uint8_t newMsgData = new uint8_t[header.size];
+                uint8_t* newMsgData = new uint8_t[header.size];
                 memcpy(newMsgData, msgData, oldSize);
 
                 // delete old message data
                 delete msgData;
-                msgData = &newMsgData;
+                msgData = newMsgData;
             }
 
             if (msgPtrWrite + sizeof(thing) >= MAX_PACKET_SIZE)
                 goto overflow;
 
-            memcpy(msgData[msgPtrWrite], thing, sizeof(thing));
+            memcpy(&msgData[msgPtrWrite], &thing, sizeof(thing));
             msgPtrWrite += sizeof(thing);
 
             return;
         overflow:
-            Logging_LogChannel("NetMessage::Write - overflow (max size is %d)", MAX_PACKET_SIZE);
+            Logging_LogChannel("NetMessage::Write - overflow (max size is %d)", LogChannel::Error, MAX_PACKET_SIZE);
             return;
         }
     };
@@ -178,6 +200,12 @@ namespace Capy
             NetMessage netBuffer[NET_BUFFER_SIZE];  
             int32_t netBufferPtr = 0;
     };
+
+    /* Net packet factory stuff */
+
+    NetMessage NetFactory_CreateClientHelloPacket(NetCast castType);
+    NetMessage NetFactory_CreateServerHelloPacket();
+    NetMessage NetFactory_CreateDisconnectPacket(NetCast castType);
 
     /* 
         Net system init 

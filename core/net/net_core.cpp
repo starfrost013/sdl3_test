@@ -85,6 +85,11 @@ namespace Capy
             memcpy(msg.msgData, &dgram->buf[sizeof(NetMessage::NetHeader)], dgram->buflen - sizeof(NetMessage::NetHeader));
         }
 
+        msg.addr = dgram->addr;
+        
+        //temp, slightly bad design
+        NET_RefAddress(dgram->addr);
+        
         /* Known Address Identification here */
 
         // add to buffer
@@ -98,7 +103,9 @@ namespace Capy
             netBufferPtr = 0; 
         }
 
-        NET_DestroyDatagram(dgram);
+
+        
+        NET_DestroyDatagram(dgram); 
         return; 
     }
     

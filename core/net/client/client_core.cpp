@@ -4,7 +4,8 @@
 
 namespace Capy
 {    
-    WorldEntity world;              // TEMP
+    WorldEntity world;                          // TEMP
+    Cvar* playerName;
 
     void Client::Init()
     {
@@ -12,6 +13,8 @@ namespace Capy
         
         socket = NET_CreateDatagramSocket(NULL, 0);
         state = ClientState::CLIENT_UNCONNECTED;
+        
+        Cvar_Set("playerName", "Player", false);
         
         port = netPort->value;
     }
@@ -32,17 +35,47 @@ namespace Capy
 
     }
 
-    void Client::ConnectOnResolveDone()
+    void Client::ConnectOnResolveDone(NetMessage* msg)
     {
-        uint8_t dat[] = { 0x00, 0x04, 0x08, 0x0c };
-
         /* temp */
         world.GetHeader().SetSize(Vector2(3000, 400));
         world.Create();
         
-        NetMessage msg = NetMessage(NetCast::NET_CAST_TO_SERVER, Capy::NetMessageType::NETMSG_HELLO, dat, sizeof(dat));
+        switch (connectPhase)
+        {
+            case ClientConnectionPhase::CLIENT_HELLO:
+                Logging_LogChannel("Client sending hello", LogChannel::Debug);
+                SendMessage(NetFactory_CreateClientHelloPacket(NetCast::NET_CAST_TO_SERVER), serverAddress);
+                break;
+            case ClientConnectionPhase::CLIENT_HELLO_SENT: // TODO: figure out a better way of doing this than extra states
+                Logging_LogChannel("Client received hello", LogChannel::Debug);
+                if (msg)
+                {
+                    // change state
 
-        SendMessage(msg, serverAddress);
+                    NetHelloStatus result = static_cast<NetHelloStatus>(msg->Read<uint8_t>());
+
+                    switch (result)
+                    {
+                        case NetHelloStatus::HELLO_OK:
+                            connectPhase = ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD;
+                            break;
+                        case NetHelloStatus::HELLO_DUPLICATE_USERNAME:
+                            Logging_LogChannel("TODO: Duplicated username handling\n", LogChannel::Error);
+                            break;
+                        case NetHelloStatus::HELLO_GO_AWAY:
+                            Logging_LogChannel("TODO: Server said piss off\n", LogChannel::Error);
+                            break;
+                    }
+                }
+                break; 
+            case ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD:
+                
+                
+                break;
+            
+        }
+
 
 
         SetState(ClientState::CLIENT_CONNECTED);
@@ -59,9 +92,30 @@ namespace Capy
     }
 
     // Run while the client is connected
-    void Client::TickConnected()
+    void Client::TickNetwork()
     {
+        NetMessage* msg = GetMessage();    
 
+        bool dontCare = false; 
+
+        // if there's no message simply send it through to be checked for
+        // otherwise, check the message really comes from the server
+        if (msg)
+        {
+            bool dontCare = (msg->addr != serverAddress);
+            NET_UnrefAddress(msg->addr); //todo: move this to netcore layer
+        
+        }
+
+        if (dontCare)
+            return;
+
+        switch (state)
+        {
+            case CLIENT_CONNECTING:
+                ConnectOnResolveDone(msg);
+                break; 
+        }   
     }
 
     void Client::Tick()
@@ -80,25 +134,30 @@ namespace Capy
                     case NET_SUCCESS:
                         Logging_LogChannel("Client::Connect - Connecting...", LogChannel::Message);
                         SetState(ClientState::CLIENT_CONNECTING);
+                        connectPhase = ClientConnectionPhase::CLIENT_HELLO;
                         break;
                     default:
                         break;
                 }
                 break;
             case CLIENT_CONNECTING:
-                ConnectOnResolveDone();
-                break; 
+            case CLIENT_CONNECTED:
+                TickNetwork();          // usual update function
+                break;
             case CLIENT_SHUTTING_DOWN:
-            case CLIENT_FATAL: // will be treated like this later
+            case CLIENT_FATAL:          // will be treated differently later
                 Shutdown();
                 return;
             case CLIENT_DEAD:
-                return; // don't do anything at all, don't even run the code after this
+                return;                 // don't do anything at all, don't even run the code after this
         }
     }   
 
     void Client::Frame()
     {
+        //get all incoming messages
+        NetMode::Frame();
+
         switch (state)
         {
             case CLIENT_CONNECTED:

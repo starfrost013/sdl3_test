@@ -22,14 +22,21 @@ namespace Capy
     }
 
     // Run while server is in ServerState::UPDATE_RUNNING
-    void Server::UpdateWhileRunning()
+    void Server::TickNetwork()
     {
         NetMessage* msg = GetMessage();
 
         if (msg 
             && msg->valid)
         {
-            Logging_LogChannel("Got some data!!! len=%d", LogChannel::Debug, msg->header.size);
+            switch (msg->header.msgType)
+            {
+                case NetMessageType::NETMSG_HELLO:
+                    NewClient(msg);
+
+                    break; 
+            }
+
         }
     }
 
@@ -38,7 +45,7 @@ namespace Capy
         switch (state)
         {
             case ServerState::SERVER_RUNNING:
-                UpdateWhileRunning();
+                TickNetwork();
                 break;
             case ServerState::SERVER_SHUTTING_DOWN:
                 Shutdown();
@@ -51,10 +58,16 @@ namespace Capy
 
     void Server::Shutdown()
     {
-        Logging_LogChannel("Shutting down server...", LogChannel::Message);
+        for (auto client : clients)
+        {
+            // todo: send "server is shutting down..." message
+            
+            if (client != nullptr)
+                RemoveClient(client);
+        }
 
+        Logging_LogChannel("Shutting down server...", LogChannel::Message);
         NET_DestroyDatagramSocket(socket);
-        
         SetState(ServerState::SERVER_DEAD);
     }
 }

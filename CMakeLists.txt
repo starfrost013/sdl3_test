@@ -34,8 +34,10 @@ add_executable (Capy
 
 # Core - Network
 "core/net/net_core.cpp"
+"core/net/net_packetfactory.cpp"
 
 # Core - Server
+"core/net/server/server_auth.cpp"
 "core/net/server/server_core.cpp"
 
 # Core - Client

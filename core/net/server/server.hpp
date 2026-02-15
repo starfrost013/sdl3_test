@@ -11,8 +11,6 @@ namespace Capy
     {
         // STRUCTURES AND ENUMS
 
-        friend class Client;
-
     public: 
         enum ServerState
         {
@@ -46,11 +44,17 @@ namespace Capy
 
     private: 
         ServerState state; 
-         
-        uint16_t port; 
-
+        uint16_t port;
         Client* clients[MAX_CLIENTS] = {0};
+        int32_t numClients; 
+
         
-        void UpdateWhileRunning();
+        // intenral tick methods
+        void TickNetwork();
+
+        // client related methods
+        bool IsNewClient(NET_Address* address);
+        void NewClient(NetMessage* hello);
+        void RemoveClient(Client* client);
     };
 }
