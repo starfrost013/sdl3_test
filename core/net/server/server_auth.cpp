@@ -12,11 +12,11 @@ namespace Capy
             if (client != nullptr)
             {
                 if (NET_CompareAddresses(client->serverOnly.address, address))
-                    return true; 
+                    return false; 
             }
         }
 
-        return false; 
+        return true; 
     }
 
     void Server::NewClient(NetMsg* msg)
