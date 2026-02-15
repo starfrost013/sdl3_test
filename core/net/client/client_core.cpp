@@ -102,7 +102,8 @@ namespace Capy
         // otherwise, check the message really comes from the server
         if (msg)
         {
-            bool dontCare = (msg->addr != serverAddress);
+            // 0 = equal, anything else is less
+            bool dontCare = NET_CompareAddresses(msg->addr, serverAddress);
             NET_UnrefAddress(msg->addr); //todo: move this to netcore layer
         
         }

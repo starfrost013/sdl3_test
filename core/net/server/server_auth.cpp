@@ -11,7 +11,7 @@ namespace Capy
         {
             if (client != nullptr)
             {
-                if (client->serverOnly.address == address)
+                if (NET_CompareAddresses(client->serverOnly.address, address))
                     return true; 
             }
         }
