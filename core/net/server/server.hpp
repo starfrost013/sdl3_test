@@ -54,7 +54,7 @@ namespace Capy
 
         // client related methods
         bool IsNewClient(NET_Address* address);
-        void NewClient(NetMessage* hello);
+        void NewClient(NetMsg* hello);
         void RemoveClient(Client* client);
     };
 }

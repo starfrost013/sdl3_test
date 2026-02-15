@@ -18,7 +18,7 @@ namespace Capy
 
     // net cast types
     // these are encoded into the
-    enum NetCast
+    enum NetCastType
     {  
         NET_CAST_TO_SERVER = 0,                             // Message from client to server
         NET_CAST_TO_CLIENT = 1,                             // Message from server to client
@@ -27,7 +27,7 @@ namespace Capy
     };
 
     // maybe these should be classes...maybe not
-    enum NetMessageType
+    enum NetMsgType
     {
         // Client to server messages - 0x0-0x7f
         // Server to client messages - 0x80-0xff
@@ -62,7 +62,7 @@ namespace Capy
     #define MAX_PACKET_SIZE         512      // max reliable, may increase later
     #define PACKET_RESIZE_FACTOR    1.5
 
-    struct NetMessage
+    struct NetMsg
     {
         struct NetHeader
         {
@@ -83,18 +83,18 @@ namespace Capy
 
         NET_Address* addr;                  // sender's address
 
-        // Create a new NetMessage. Used for GetMessage
-        NetMessage()
+        // Create a new NetMsg. Used for GetMessage
+        NetMsg()
         {
 
         }
 
-        // Create a new NetMessage with a given message type, cast type, size and optional data
-        NetMessage(NetCast castType, NetMessageType msgType, uint8_t data[], uint32_t size)
+        // Create a new NetMsg with a given message type, cast type, size and optional data
+        NetMsg(NetCastType castType, NetMsgType msgType, uint8_t data[], uint32_t size)
         {
             if (size > MAX_PACKET_SIZE)
             {
-                Logging_LogChannel("NetMode::SendMessage - %d is larger than max packet size %d, ignoring", LogChannel::Warning, size, MAX_PACKET_SIZE);
+                Logging_LogChannel("NetMsg::NetMsg - %d is larger than max packet size %d, ignoring", LogChannel::Warning, size, MAX_PACKET_SIZE);
                 return;
             }
 
@@ -154,7 +154,7 @@ namespace Capy
 
             return;
         overflow:
-            Logging_LogChannel("NetMessage::Write - overflow (max size is %d)", LogChannel::Error, MAX_PACKET_SIZE);
+            Logging_LogChannel("NetMsg::Write - overflow (max size is %d)", LogChannel::Error, MAX_PACKET_SIZE);
             return;
         }
     };
@@ -180,10 +180,10 @@ namespace Capy
             virtual void Frame();
             virtual void Tick() { };
 
-            NetMessage* GetMessage();
+            NetMsg* GetMessage();
 
             // this is very likely to be a temporary interface for testing until we have a real packet system
-            void SendMessage(NetMessage msg, NET_Address* address);
+            void SendMessage(NetMsg msg, NET_Address* address);
 
             virtual void Shutdown() { };
 
@@ -197,15 +197,15 @@ namespace Capy
             // We only process packets every 1/tickrate seconds,
             // but they could theoretically be sent faster. Therefore we have a buffer to put in
             static const int32_t NET_BUFFER_SIZE = 64;    // Maximum number of packets in the buffer that can be serviced at any one time
-            NetMessage netBuffer[NET_BUFFER_SIZE];  
+            NetMsg netBuffer[NET_BUFFER_SIZE];  
             int32_t netBufferPtr = 0;
     };
 
     /* Net packet factory stuff */
 
-    NetMessage NetFactory_CreateClientHelloPacket(NetCast castType);
-    NetMessage NetFactory_CreateServerHelloPacket();
-    NetMessage NetFactory_CreateDisconnectPacket(NetCast castType);
+    NetMsg NetFactory_CreateClientHelloPacket(NetCastType castType);
+    NetMsg NetFactory_CreateServerHelloPacket();
+    NetMsg NetFactory_CreateDisconnectPacket(NetCastType castType);
 
     /* 
         Net system init 

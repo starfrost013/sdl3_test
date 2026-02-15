@@ -24,14 +24,14 @@ namespace Capy
     // Run while server is in ServerState::UPDATE_RUNNING
     void Server::TickNetwork()
     {
-        NetMessage* msg = GetMessage();
+        NetMsg* msg = GetMessage();
 
         if (msg 
             && msg->valid)
         {
             switch (msg->header.msgType)
             {
-                case NetMessageType::NETMSG_HELLO:
+                case NetMsgType::NETMSG_HELLO:
                     NewClient(msg);
 
                     break; 

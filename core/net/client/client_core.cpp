@@ -35,7 +35,7 @@ namespace Capy
 
     }
 
-    void Client::ConnectOnResolveDone(NetMessage* msg)
+    void Client::ConnectOnResolveDone(NetMsg* msg)
     {
         /* temp */
         world.GetHeader().SetSize(Vector2(3000, 400));
@@ -45,12 +45,18 @@ namespace Capy
         {
             case ClientConnectionPhase::CLIENT_HELLO:
                 Logging_LogChannel("Client sending hello", LogChannel::Debug);
-                SendMessage(NetFactory_CreateClientHelloPacket(NetCast::NET_CAST_TO_SERVER), serverAddress);
+                SendMessage(NetFactory_CreateClientHelloPacket(NetCastType::NET_CAST_TO_SERVER), serverAddress);
                 break;
             case ClientConnectionPhase::CLIENT_HELLO_SENT: // TODO: figure out a better way of doing this than extra states
                 Logging_LogChannel("Client received hello", LogChannel::Debug);
                 if (msg)
                 {
+                    if (msg->header.msgType != NetMsgType::NETMSG_SERVER_HELLO)
+                    {
+                        Logging_LogChannel("Client::ConnectOnResolveDone - Server sent back non-server hello!", LogChannel::Warning);
+                        return;
+                    }
+
                     // change state
 
                     NetHelloStatus result = static_cast<NetHelloStatus>(msg->Read<uint8_t>());
@@ -94,7 +100,7 @@ namespace Capy
     // Run while the client is connected
     void Client::TickNetwork()
     {
-        NetMessage* msg = GetMessage();    
+        NetMsg* msg = GetMessage();    
 
         bool dontCare = false; 
 

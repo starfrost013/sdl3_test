@@ -27,7 +27,7 @@ namespace Capy
 
         bool success = NET_ReceiveDatagram(socket, &dgram);
 
-        NetMessage msg = {};
+        NetMsg msg = {};
 
         if (success && !dgram)
         {
@@ -37,13 +37,13 @@ namespace Capy
 
         /* cast start of message to header */
 
-        if (dgram->buflen < sizeof(NetMessage::NetHeader))
+        if (dgram->buflen < sizeof(NetMsg::NetHeader))
         {
-            Logging_LogChannel("NetMode::GetAllIncomingMessages - size must be at least %d", LogChannel::Error, sizeof(NetMessage::NetHeader));
+            Logging_LogChannel("NetMode::GetAllIncomingMessages - size must be at least %d", LogChannel::Error, sizeof(NetMsg::NetHeader));
             return;
         }
 
-        memcpy(&msg.header, dgram->buf, sizeof(NetMessage::NetHeader));
+        memcpy(&msg.header, dgram->buf, sizeof(NetMsg::NetHeader));
 
         if (msg.header.magic != NETMSG_MAGIC)
         {
@@ -82,14 +82,14 @@ namespace Capy
         if (msg.header.size > 0)
         {
             msg.msgData = new uint8_t[dgram->buflen];
-            memcpy(msg.msgData, &dgram->buf[sizeof(NetMessage::NetHeader)], dgram->buflen - sizeof(NetMessage::NetHeader));
+            memcpy(msg.msgData, &dgram->buf[sizeof(NetMsg::NetHeader)], dgram->buflen - sizeof(NetMsg::NetHeader));
         }
 
         msg.addr = dgram->addr;
         
         //temp, slightly bad design
         NET_RefAddress(dgram->addr);
-        
+
         /* Known Address Identification here */
 
         // add to buffer
@@ -109,7 +109,7 @@ namespace Capy
         return; 
     }
     
-    NetMessage* NetMode::GetMessage()
+    NetMsg* NetMode::GetMessage()
     {
         if (!netBufferPtr)
             return nullptr;
@@ -118,7 +118,7 @@ namespace Capy
         return &netBuffer[netBufferPtr + 1];
     }
 
-    void NetMode::SendMessage(NetMessage msg, NET_Address* address)
+    void NetMode::SendMessage(NetMsg msg, NET_Address* address)
     {
         NET_SendDatagram(socket, address, port, (void*)&msg, sizeof(msg));
         seqNumber++;

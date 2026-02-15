@@ -66,7 +66,7 @@ namespace Capy
         // only valid if state == CLIENT_CONNECTING
         ClientConnectionPhase connectPhase;
 
-        void ConnectOnResolveDone(NetMessage* msg);
+        void ConnectOnResolveDone(NetMsg* msg);
         void TickNetwork();
 
         // STUFF BELOW HERE ONLY EXISTS ON THE SERVER'S VERSION OF THE CLIENT AND CANNOT BE DEPENDED ON

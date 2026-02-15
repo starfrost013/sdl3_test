@@ -19,7 +19,7 @@ namespace Capy
         return false; 
     }
 
-    void Server::NewClient(NetMessage* msg)
+    void Server::NewClient(NetMsg* msg)
     {
         if (!IsNewClient(msg->addr))
         {
@@ -32,7 +32,7 @@ namespace Capy
 
         Logging_LogChannel("Client is attempting to connect from IP %s...", LogChannel::Debug, ip);
 
-        NetMessage netMsg = NetFactory_CreateServerHelloPacket();
+        NetMsg netMsg = NetFactory_CreateServerHelloPacket();
         NetHelloStatus helloStatus = NetHelloStatus::HELLO_OK;
 
         if (numClients >= MAX_CLIENTS)
@@ -54,7 +54,7 @@ namespace Capy
         }
         else
         {
-            SendMessage(NetFactory_CreateDisconnectPacket(NetCast::NET_CAST_TO_CLIENT), netMsg.addr);
+            SendMessage(NetFactory_CreateDisconnectPacket(NetCastType::NET_CAST_TO_CLIENT), netMsg.addr);
         }
     }
 
