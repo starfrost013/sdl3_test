@@ -73,8 +73,28 @@ namespace Capy
         SDL_Quit();
     }
 
+    void Game_PrintBuildInfo()
+    {
+        Logging_LogChannel(APP_SIGNON_STRING, LogChannel::Message);
+
+#ifdef __linux__
+        Logging_LogChannel("64-bit Linux binary", LogChannel::Message);
+        game.info.targetPlatform = GameTargetPlatform::OS_LINUX64;
+#elif _WIN32
+        Logging_LogChannel("64-bit Windows binary", LogChannel::Message);
+        game.info.targetPlatform = GameTargetPlatform::OS_WIN64;
+#endif
+
+#ifdef DEBUG
+        Logging_LogChannel("Debug build", LogChannel::Message);
+#else
+        Logging_LogChannel("Release build", LogChannel::Message);
+#endif
+    }
+
     bool Game_Init(int32_t argc, char** argv)
     {
+
         logger.settings.channels = (LogChannel)(LogChannel::Debug | LogChannel::Message | LogChannel::Warning | LogChannel::Error | LogChannel::Fatal | LogChannel::SuperFatal);
         logger.settings.destination = (LogDestination)(LogDestination::File | LogDestination::Printf);
         logger.settings.keepOldLogs = false;
@@ -84,13 +104,9 @@ namespace Capy
 
         if (!Logging_Init())
             std::cout << "Catastrophic non-fatal error: SSLS Logger Initialisation FAILED (0xDEADDEAD). You won't get any logging!\n" << std::endl;            
-#ifdef __linux__
-        Logging_LogChannel("64-bit Linux binary", LogChannel::Message);
-        game.info.targetPlatform = GameTargetPlatform::OS_LINUX64;
-#elif _WIN32
-        Logging_LogChannel("64-bit Windows binary", LogChannel::Message);
-        game.info.targetPlatform = GameTargetPlatform::OS_WIN64;
-#endif
+
+        Game_PrintBuildInfo();
+
         Cmdline_Init(argc, argv);
         CapyNet_Init();
 

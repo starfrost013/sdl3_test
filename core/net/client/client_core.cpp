@@ -32,7 +32,11 @@ namespace Capy
             SetState(ClientState::CLIENT_FATAL);
             return; 
         }
+    }
 
+    void Client::Disconnect()
+    {
+        SendMessage(NetFactory_CreateDisconnectPacket(NetCastType::NET_CAST_TO_SERVER), serverAddress);
     }
 
     void Client::ConnectOnResolveDone(NetMsg* msg)
@@ -81,8 +85,6 @@ namespace Capy
                 break;
             
         }
-
-
 
         SetState(ClientState::CLIENT_CONNECTED);
     }
@@ -178,6 +180,12 @@ namespace Capy
 
     void Client::Shutdown()
     {
+        if (state == CLIENT_CONNECTING 
+        || state == CLIENT_CONNECTED)
+        {
+            Disconnect();
+        }
+
         Logging_LogChannel("Shutting down client...", LogChannel::Message);
         NET_DestroyDatagramSocket(socket);
         Render_Shutdown();

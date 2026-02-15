@@ -43,10 +43,9 @@ namespace Capy
             CLIENT_LETS_GO,
         };
         
-        bool connecting; // connectPhase used above (todo: can be refactored to be the same as the server)
-
         void Init() override; 
         void Connect(const char* addr);
+        void Disconnect();
         void Tick() override;
         void Frame() override; 
         void Shutdown() override; 
