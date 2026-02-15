@@ -8,9 +8,10 @@
 #include "util/logging.hpp"
 #include <Capy.hpp>
 
-#include <core/net/net.hpp>
-#include <core/net/client/client.hpp>
-#include <core/net/server/server.hpp>
+#include <core/filesystem/filesystem.hpp>
+#include <net/net.hpp>
+#include <net/client/client.hpp>
+#include <net/server/server.hpp>
 #include <core/game.hpp>
 #include <data/entities/entity_player.hpp>
 #include <data/entities/entity_world.hpp>
@@ -108,6 +109,11 @@ namespace Capy
         Game_PrintBuildInfo();
 
         Cmdline_Init(argc, argv);
+
+        FilesystemSettings settings;
+
+        settings.useBaseDirectory = true;
+        Filesystem::Init(settings);
         CapyNet_Init();
 
         NetType mode = static_cast<NetType>(int(netMode->value));

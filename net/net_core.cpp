@@ -1,4 +1,4 @@
-#include <core/net/net.hpp>
+#include <net/net.hpp>
 
 namespace Capy
 {
@@ -102,8 +102,6 @@ namespace Capy
             Logging_LogChannel("NetMode::GetMessage - NetBuffer overflow, reset", LogChannel::Warning);
             netBufferPtr = 0; 
         }
-
-
         
         NET_DestroyDatagram(dgram); 
         return; 
@@ -136,4 +134,3 @@ namespace Capy
         NET_Quit();
     }
 }
-

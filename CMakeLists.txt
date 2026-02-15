@@ -33,15 +33,15 @@ add_executable (Capy
 "core/cvar/cvar.cpp"
 
 # Core - Network
-"core/net/net_core.cpp"
-"core/net/net_packetfactory.cpp"
+"net/net_core.cpp"
+"net/net_packetfactory.cpp"
 
 # Core - Server
-"core/net/server/server_auth.cpp"
-"core/net/server/server_core.cpp"
+"net/server/server_auth.cpp"
+"net/server/server_core.cpp"
 
 # Core - Client
-"core/net/client/client_core.cpp"
+"net/client/client_core.cpp"
 
 # Core - FS
 "core/filesystem/filesystem.cpp"

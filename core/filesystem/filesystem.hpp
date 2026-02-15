@@ -9,6 +9,8 @@
 
 namespace Capy
 {
+    extern Cvar* baseDirectory; 
+
     struct FilesystemSettings
     {        
         friend class Filesystem;

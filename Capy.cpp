@@ -3,9 +3,9 @@
 #include "util/logging.hpp"
 #include <Capy.hpp>
 
-#include <core/net/net.hpp>
-#include <core/net/client/client.hpp>
-#include <core/net/server/server.hpp>
+#include <net/net.hpp>
+#include <net/client/client.hpp>
+#include <net/server/server.hpp>
 #include <core/game.hpp>
 
 #include <iostream>

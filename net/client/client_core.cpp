@@ -1,4 +1,4 @@
-#include <core/net/client/client.hpp>
+#include <net/client/client.hpp>
 #include <core/game.hpp>
 #include <data/entities/entity_world.hpp>
 

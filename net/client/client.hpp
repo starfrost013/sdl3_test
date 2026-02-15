@@ -1,7 +1,7 @@
 /* Client headers */
 
 #pragma once
-#include <core/net/net.hpp>
+#include <net/net.hpp>
 
 namespace Capy 
 {

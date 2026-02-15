@@ -2,7 +2,7 @@
     The Packet Factory: Creates packets for use
 */
 
-#include <core/net/net.hpp>
+#include <net/net.hpp>
 
 namespace Capy
 {

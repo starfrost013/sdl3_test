@@ -1,5 +1,5 @@
-#include <core/net/client/client.hpp>
-#include <core/net/server/server.hpp>
+#include <net/client/client.hpp>
+#include <net/server/server.hpp>
 
 namespace Capy
 {

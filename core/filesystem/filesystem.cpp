@@ -2,6 +2,8 @@
 
 namespace Capy
 {
+    Cvar* baseDirectory; 
+
     FilesystemSettings Filesystem::settings;
 
     /* Safe to be a global because it is only used once at initialisation time */
@@ -13,7 +15,10 @@ namespace Capy
 
     void Filesystem::Init(FilesystemSettings newSettings)
     {
+
         Filesystem::settings = newSettings;
+
+
     }
 
     FilesystemFile* Filesystem::Open(const char* path)
