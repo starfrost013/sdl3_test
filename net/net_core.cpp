@@ -37,8 +37,15 @@ namespace Capy
         NetMsg msg = {};
         memset(&msg, 0x00, sizeof(NetMsg)); // clear all pointers, etc to 0
         
-        if (success && !dgram)
+        if (!success || !dgram)
         {
+            // return value of this function apparently can be different on Windows compared to Linux.
+            // on windows, failure doesn't actually mean a fatal error, but on linux, it just returns immediately with a nullptr for a dgram!
+            // therefore we have to do this
+            #ifdef __linux__
+                if (!success)
+                    Logging_LogChannel("NET_ReceiveDatagram failed!", LogChannel::Fatal);
+            #endif
             // no message to receive
             return; 
         }
