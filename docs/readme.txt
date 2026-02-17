@@ -22,6 +22,7 @@ Notes:
 * If the server is there, you will see the world.
 
 Command line options:
+-memdebug - log all memory allocations (huge amounts of spam)
 +set - set convar.
 
 Convars that exist:

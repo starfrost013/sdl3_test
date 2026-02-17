@@ -166,7 +166,6 @@ namespace Capy
 
     bool Game_Shutdown()
     {
-
         if (client)
             client->Shutdown();
 
@@ -179,7 +178,7 @@ namespace Capy
         Logging_Shutdown();
 
         SDL_Quit();
-        
+
         exit(0); // allow exit codes for errors?
 
         return true;
