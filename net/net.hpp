@@ -55,6 +55,7 @@ namespace Capy
         HELLO_DUPLICATE_USERNAME = 1,                               // Duplicate username
         HELLO_GO_AWAY = 2,                                          // YOU HAVE BEEN IP BAAAAAAAAAAAAANED
         HELLO_TOO_MANY = 3,                                         // Maximum client reached
+        HELLO_DUPLICATE_CLIENT = 4,                                 // Duplicate client
     };
 
     //basic check that the message was received (tcp but still)

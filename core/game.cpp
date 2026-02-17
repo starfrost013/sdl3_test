@@ -166,14 +166,15 @@ namespace Capy
 
     bool Game_Shutdown()
     {
-        CapyNet_Shutdown();
-        Cvar_Shutdown();
 
         if (client)
             client->Shutdown();
 
         if (server)
             server->Shutdown();
+
+        CapyNet_Shutdown();
+        Cvar_Shutdown();
 
         Logging_Shutdown();
 

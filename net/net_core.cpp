@@ -28,7 +28,8 @@ namespace Capy
         bool success = NET_ReceiveDatagram(socket, &dgram);
 
         NetMsg msg = {};
-
+        memset(&msg, 0x00, sizeof(NetMsg)); // clear all pointers, etc to 0
+        
         if (success && !dgram)
         {
             // no message to receive

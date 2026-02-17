@@ -7,33 +7,26 @@ namespace Capy
     // TODO: Is this needed?
     bool Server::IsNewClient(NET_Address* address)
     {
-        for (Client* client : clients)
-        {
-            if (client != nullptr)
-            {
-                if (NET_CompareAddresses(client->serverOnly.address, address))
-                    return false; 
-            }
-        }
-
-        return true; 
+        return (GetMessageSender(address) == nullptr);
     }
 
+    // Log in a new client
     void Server::NewClient(NetMsg* msg)
-    {
-        if (!IsNewClient(msg->addr))
-        {
-            Logging_LogChannel("??????? Existing client sent NETMSG_HELLO ???????",  LogChannel::Warning);
-            return;
-        }
-
+    {               
         // ip for debug
         const char* ip = NET_GetAddressString(msg->addr);
-
+ 
         Logging_LogChannel("Client is attempting to connect from IP %s...", LogChannel::Debug, ip);
 
-        NetMsg serverHello = NetFactory_CreateServerHelloPacket();
         NetHelloStatus helloStatus = NetHelloStatus::HELLO_OK;
+
+        if (!IsNewClient(msg->addr))
+        {
+            Logging_LogChannel("Connection rejected: Duplicate client",  LogChannel::Warning);
+            helloStatus = NetHelloStatus::HELLO_DUPLICATE_CLIENT;
+        }
+
+        NetMsg serverHello = NetFactory_CreateServerHelloPacket();
 
         if (numClients >= MAX_CLIENTS)
         {
@@ -50,7 +43,8 @@ namespace Capy
             Client* client = new Client();
             clients[numClients] = client;
 
-            client->serverOnly.address = serverHello.addr;
+            client->serverOnly.address = msg->addr;
+            strncpy(client->serverOnly.ipStr, ip, CLIENT_IP_LENGTH);
             
             numClients++;
 
@@ -64,12 +58,14 @@ namespace Capy
 
     void Server::RemoveClient(Client* client)
     {
+        if (!numClients)
+            return;
+
         NET_UnrefAddress(client->serverOnly.address); 
         delete client;
 
-        clients[numClients] = nullptr;
+        clients[numClients - 1] = nullptr;
 
-        if (numClients != 0)
-            numClients--;
+        numClients--;
     }
 }

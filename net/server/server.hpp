@@ -51,10 +51,12 @@ namespace Capy
         
         // intenral tick methods
         void TickNetwork();
+        void TickNetwork_ConnectedClientMessage(Client* client, NetMsg* msg);
 
         // client related methods
         bool IsNewClient(NET_Address* address);
         void NewClient(NetMsg* hello);
         void RemoveClient(Client* client);
+        Client* GetMessageSender(NET_Address* address);
     };
 }

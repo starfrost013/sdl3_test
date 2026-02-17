@@ -72,18 +72,23 @@ namespace Capy
 
                     NetHelloStatus result = static_cast<NetHelloStatus>(msg->Read<uint8_t>());
 
-                    switch (result)
+                    bool success = (result == NetHelloStatus::HELLO_OK);
+
+                    if (success)
+                        connectPhase = ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD;
+                    else
                     {
-                        case NetHelloStatus::HELLO_OK:
-                            connectPhase = ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD;
-                            break;
-                        case NetHelloStatus::HELLO_DUPLICATE_USERNAME:
-                            Logging_LogChannel("TODO: Duplicated username handling\n", LogChannel::Error);
-                            break;
-                        case NetHelloStatus::HELLO_GO_AWAY:
-                            Logging_LogChannel("TODO: Server said piss off\n", LogChannel::Error);
-                            break;
+                        const char* errMsg = "TODO: Duplicated username handling\n";
+
+                        if (result == NetHelloStatus::HELLO_DUPLICATE_CLIENT)
+                            errMsg = "This device is already connected!";
+                        else if (result == NetHelloStatus::HELLO_GO_AWAY)
+                            errMsg = "Piss Off";
+
+                        Logging_LogChannel(errMsg, LogChannel::Error);
+                        SetState(ClientState::CLIENT_UNCONNECTED);
                     }
+
                 }
                 break; 
             case ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD:
@@ -187,7 +192,6 @@ namespace Capy
 
     void Client::Shutdown()
     {
-        
         if (state == CLIENT_CONNECTING 
         || state == CLIENT_CONNECTED)
         {

@@ -6,6 +6,7 @@
 namespace Capy 
 {
     #define CLIENT_NAME_LENGTH              64
+    #define CLIENT_IP_LENGTH                32
 
     //
     // Temporary Cvars
@@ -72,6 +73,7 @@ namespace Capy
         struct ServerOnlyClientInfo
         {
             NET_Address* address; 
+            char ipStr[CLIENT_IP_LENGTH];
         }; 
 
         ServerOnlyClientInfo serverOnly;
