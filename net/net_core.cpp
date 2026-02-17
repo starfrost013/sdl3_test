@@ -7,6 +7,7 @@ namespace Capy
     //temporary
     Cvar* netServerAddress;
     Cvar* netPort;
+    Cvar* netMaxPlayers;
 
     void CapyNet_Init()
     {   
@@ -15,6 +16,15 @@ namespace Capy
         netMode = Cvar_Get("netMode", "0", false);
         netServerAddress = Cvar_Get("netServerAddress", "127.0.0.1", false);
         netPort = Cvar_Get("netPort", "6769", false);
+        netMaxPlayers = Cvar_Get("netMaxPlayers", "32", false);
+
+        if (netMaxPlayers->value == 0)
+            Cvar_Set("netMaxPlayers", "32", false);
+        else if (netMaxPlayers->value > MAX_CLIENTS)
+            Cvar_Set("netMaxPlayers", "32", false);
+
+
+        
 
         NET_Init();
     }

@@ -28,7 +28,7 @@ namespace Capy
 
         NetMsg serverHello = NetFactory_CreateServerHelloPacket();
 
-        if (numClients >= MAX_CLIENTS)
+        if (numClients >= netMaxPlayers->value)
         {
             Logging_LogChannel("%s: Connection rejected: Too many clients!", LogChannel::Debug, ip);
             helloStatus = NetHelloStatus::HELLO_TOO_MANY;

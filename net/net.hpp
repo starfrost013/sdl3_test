@@ -15,6 +15,7 @@
 namespace Capy
 {
     #define PORT_DEFAULT                6769    // 6-7 69
+    #define MAX_CLIENTS                 32
 
     // net cast types
     // these are encoded into the
@@ -172,6 +173,7 @@ namespace Capy
     extern Cvar* netMode;
     extern Cvar* netServerAddress;
     extern Cvar* netPort;
+    extern Cvar* netMaxPlayers; 
 
     /* Base for all network modes */
     class NetMode
