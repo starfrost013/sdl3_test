@@ -1,7 +1,7 @@
-#include <net/client/client.hpp>
 #include <core/game.hpp>
+#include <core/render/render.hpp>
 #include <data/entities/entity_world.hpp>
-
+#include <net/client/client.hpp>
 namespace Capy
 {    
     WorldEntity world;                          // TEMP
@@ -11,6 +11,13 @@ namespace Capy
     {
         Logging_LogChannel("Initialising client...", LogChannel::Message);
         
+        if (!Render_Init())
+        {
+            // error will already be printed
+            Game_Shutdown();
+            return;
+        }
+
         socket = NET_CreateDatagramSocket(NULL, 0);
         state = ClientState::CLIENT_UNCONNECTED;
         
@@ -180,11 +187,14 @@ namespace Capy
 
     void Client::Shutdown()
     {
+        
         if (state == CLIENT_CONNECTING 
         || state == CLIENT_CONNECTED)
         {
             Disconnect();
         }
+        
+        Render_Shutdown();
 
         Logging_LogChannel("Shutting down client...", LogChannel::Message);
         NET_DestroyDatagramSocket(socket);

@@ -32,19 +32,22 @@ add_executable (Capy
 # Core - Convar
 "core/cvar/cvar.cpp"
 
-# Core - Network
+# Core - FS
+"core/filesystem/filesystem.cpp"
+
+# Core - Render
+"core/render/render.cpp"
+
+# Net - Core
 "net/net_core.cpp"
 "net/net_packetfactory.cpp"
 
-# Core - Server
+# Net - Server
 "net/server/server_auth.cpp"
 "net/server/server_core.cpp"
 
-# Core - Client
+# Net - Client
 "net/client/client_core.cpp"
-
-# Core - FS
-"core/filesystem/filesystem.cpp"
 
 # Entity
 "data/entities/entity_player.cpp"
