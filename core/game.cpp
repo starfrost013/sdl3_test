@@ -178,6 +178,8 @@ namespace Capy
 
         Logging_Shutdown();
 
+        SDL_Quit();
+        
         exit(0); // allow exit codes for errors?
 
         return true;

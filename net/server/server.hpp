@@ -5,7 +5,6 @@
 
 namespace Capy
 {
-    #define MAX_CLIENTS                 32
 
     class Server : public NetMode
     {

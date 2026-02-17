@@ -10,8 +10,24 @@
  / .___/    /_/        \___/                \__,_/    /_/    / .___/    /_/ /_/     \__,_/          |___/     \___/    /_/     
 /_/                                                         /_/                                                                
 
-Pre-Alpha Version 5.0
+Pre-Alpha 5.0
 February 2026
 README
+
+Capybara Wars is a 2d sidescrolling destruction, building, mining and team game...with capybaras. Inspired by Worms, Minecraft, and Fortnite it is "somewhere near the medium-high range of fun you can have online". This is an extremely, unbelievably early network test build with very little to do.
+
+Notes:
+
+* There are no controls.
+* If the server is there, you will see the world.
+
+Command line options:
++set - set convar.
+
+Convars that exist:
+    - netMaxPlayers - max players (must be 1-32, default is 32) 
+    - netMode - network mode (0 = client, 1 = listen server - doesn't work yet, 2 = dedicated server)
+    - netPort - port
+    - netServerAddress - server address
 
 
