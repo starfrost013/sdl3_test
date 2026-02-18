@@ -59,10 +59,8 @@ namespace Capy
 
         Cmdline_Init(argc, argv);
 
-        FilesystemSettings settings;
-
-        settings.useBaseDirectory = true;
-        Filesystem::Init(settings);
+        Filesystem::Init();
+        
         CapyNet_Init();
 
         NetType mode = static_cast<NetType>(int(netMode->value));

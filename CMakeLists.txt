@@ -52,6 +52,7 @@ add_executable (Capy
 # Entity
 "data/entities/entity_player.cpp"
 "data/entities/entity_world.cpp"
+"data/entities/entity_world_save.cpp"
 
 "data/levels/level.cpp"
 

@@ -1,6 +1,8 @@
 /* A basic 2D vector */
 #pragma once
 
+#include <iostream>
+
 namespace Capy
 {
     template <typename T>
@@ -51,5 +53,26 @@ namespace Capy
             v.y = y / other.y;
             return v;
         }
+
     };
+
+    // Write out a Vector2 to a stream.
+    template <typename T>
+    std::ostream& operator<<(std::ostream& os, const Vector2<T>& v)
+    {
+        os << v.x;
+        os << v.y;
+        
+        return os; 
+    }
+
+    // Read in a Vector2 from a stream. 
+    template <typename T>
+    std::istream& operator>>(std::istream& is, Vector2<T>& v)
+    {
+        is >> v.x;
+        is >> v.y;
+        
+        return is; 
+    }
 }

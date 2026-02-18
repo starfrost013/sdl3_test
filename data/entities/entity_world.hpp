@@ -1,9 +1,11 @@
-#include "core/tier0/quadtree.hpp"
+#include <Capy.hpp>
 #include <data/entities/entity.hpp>
 
 namespace Capy
 {
     #define WORLD_NAME_LENGTH           48
+    #define WORLD_FILE_FORMAT_VERSION   1
+    #define WORLD_DEFAULT_FILENAME      "worlds/World.capy"
 
     /* World tile representation */
     struct WorldTile 
@@ -43,7 +45,8 @@ namespace Capy
         #define NOISE_MAX_VARIANCE  72       
 
         void Create();
-        void Deserialise();
+        bool Serialise(const char* fileName);
+        bool Deserialise(const char* fileName);
         void Render(); 
         void Tick();
         void Destroy();
@@ -55,7 +58,7 @@ namespace Capy
         */
         struct WorldHeader
         {   
-            uint32_t version; 
+            uint16_t version; 
             Vector2<int32_t> size;
             
             char name[WORLD_NAME_LENGTH];
@@ -66,7 +69,7 @@ namespace Capy
         WorldHeader& GetHeader() { return header; };
 
     private: 
-    
+
         WorldHeader header;
 
         /* 
@@ -77,11 +80,16 @@ namespace Capy
         */
         uint8_t* world;
         QuadTree<uint8_t*> collision;
+        FilesystemFile* file; 
 
         float noiseData[NOISE_STEPS];
 
+        bool OpenWorldFile(const char* fileName);      // open a world file
+        void CloseWorldFile();
+        
         void CreateGenerateWorld();
         void CreateGenerateNoise();
+        void CreateGenerateQuadtree();
 
         
 
