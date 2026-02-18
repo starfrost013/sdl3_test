@@ -49,7 +49,7 @@ namespace Capy
     void Client::ConnectOnResolveDone(NetMsg* msg)
     {
         /* temp */
-        world.GetHeader().SetSize(Vector2(3000, 400));
+        world.SetSize(Vector2(3000, 400));
         world.Create();
         
         switch (connectPhase)

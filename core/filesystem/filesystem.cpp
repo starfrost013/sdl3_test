@@ -7,28 +7,44 @@ namespace Capy
 
     void Filesystem::Init()
     {
-        fsBasedir = Cvar_Get("fsBasedir", "./assets", false);
+        fsBasedir = Cvar_Get("fsBasedir", "./", false);
+
         Logging_LogChannel("fsBasedir is %s", LogChannel::Debug, fsBasedir->string);
+
+        if (!std::filesystem::exists(fsBasedir->string))
+        {
+            Logging_LogChannel("Creating the basedir, as it doesn't exist! (You probably won't have many assets...)", LogChannel::Debug);
+            std::filesystem::create_directory(fsBasedir->string);
+        }
+
     }
 
-    FilesystemFile* Filesystem::Open(const char* path)
+    FilesystemFile* Filesystem::Open(const char* path, FilesystemFileMode mode)
     {
         char finalPathBuf[STRING_MAX_GENERIC] = {0};
 
-        // lol this is such a screwed up language
-        char* lastPartOfPath = strrchr((char*)finalPathBuf, std::filesystem::path::preferred_separator);
-
-        // get rid of the directory path if we don't need it
-        if (lastPartOfPath)
-            strncpy(finalPathBuf, lastPartOfPath, strlen(lastPartOfPath));
-
-        snprintf(finalPathBuf, STRING_MAX_GENERIC, "%s%s", fsBasedir->string, lastPartOfPath);
+        snprintf(finalPathBuf, STRING_MAX_GENERIC, "%s%s", fsBasedir->string, path);
 
         FilesystemFile* ff = new FilesystemFile;
-
+        
         // just trunc the file
         // we already have the version from deserialisation
-        ff->stream.open(finalPathBuf, std::ios_base::in | std::ios_base::out | std::ios_base::trunc);
+
+        auto iosMode = std::ios_base::in | std::ios_base::out | std::ios_base::trunc;
+
+        if (mode & FILE_BINARY)
+            iosMode |= std::ios_base::binary;
+        
+        ff->stream.open(finalPathBuf, iosMode);
+
+        if (ff->stream.bad())
+        {
+            delete ff; 
+            return nullptr;
+        }
+
+        strncpy(ff->path, finalPathBuf, MAX_PATH);
+
         ff->open = true;
 
         return ff;

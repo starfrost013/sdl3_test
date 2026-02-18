@@ -15,9 +15,9 @@ namespace Capy
         if (!file)
         {
             if (tryCreate)
-                file = Filesystem::Open(fileName);
+                file = Filesystem::Open(fileName, FilesystemFileMode::FILE_BINARY);
             
-            // if it still didn't open then we have an issue (or tryCreate i sfalse)
+            // if it still didn't open then we have an issue (or tryCreate is false)
             if (!file)
             {
                 Logging_LogChannel("Failed to open world file at %s!", LogChannel::Error, fileName);
@@ -42,24 +42,24 @@ namespace Capy
             return false;
 
         // set a default world name
-        if (!header.name)   
+        if (!header.name
+        || !strlen(header.name)) // empty string name also counts   
             strncpy(header.name, fileName, WORLD_NAME_LENGTH);
 
-        file->stream << header.name;
-        file->stream << header.size;
-        file->stream << WORLD_FILE_FORMAT_VERSION;
+        file->stream.write(reinterpret_cast<char*>(&header), sizeof(header));
         
         auto finalSize = header.size.x * header.size.y; // really need to create a property that automates ths
 
         file->stream.write((char*)world, finalSize);
         
+        file->stream.close();
         return true; 
     }
 
     // Called during level loading
     bool WorldEntity::Deserialise(const char* fileName = WORLD_DEFAULT_FILENAME)
     {        
-        Logging_LogChannel("Deserialising level at %s", LogChannel::Debug, fileName);
+        Logging_LogChannel("Deserialising level from %s", LogChannel::Debug, fileName);
 
         bool success = false; 
         auto size = 0;
@@ -68,9 +68,7 @@ namespace Capy
         if (!OpenWorldFile(fileName, false))
             goto done;
 
-        file->stream >> header.name;
-        file->stream >> header.size;
-        file->stream >> header.version;
+        file->stream.read(reinterpret_cast<char*>(&header), sizeof(header));
 
         size = header.size.x * header.size.y;
 

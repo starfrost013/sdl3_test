@@ -222,13 +222,14 @@ namespace Capy
             stepCurrent = stepProgress = 0;
         }  
 
-        Logging_LogChannel("[Phase 4] Terrain generation done. Generating quadtree for collision... (wip)", LogChannel::Debug, layerNumber, currentTile->name);
-        CreateGenerateQuadtree();
+
     }
     
     void WorldEntity::CreateGenerateQuadtree()
     {
-         // Now the generation of the world data is done.
+        Logging_LogChannel("[Phase 4] Terrain generation done. Generating quadtree for collision... (wip)", LogChannel::Debug);
+
+        // Now the generation of the world data is done.
         // So we can generate the quadtree.
 
         // generate root quadtile children
@@ -259,7 +260,6 @@ namespace Capy
             if (currentQuadScaleY > TILE_SIZE_Y)
                 currentQuadScaleY >>= 1;
         }
-
         /*
        
     */
@@ -273,10 +273,9 @@ namespace Capy
 
         CreateGenerateNoise();
         CreateGenerateWorld();
-
+        CreateGenerateQuadtree();
         // go
     }
-
 
 
     void WorldEntity::Render()

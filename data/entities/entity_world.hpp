@@ -3,9 +3,10 @@
 
 namespace Capy
 {
-    #define WORLD_NAME_LENGTH           48
-    #define WORLD_FILE_FORMAT_VERSION   1
-    #define WORLD_DEFAULT_FILENAME      "worlds/World.capy"
+    #define WORLD_NAME_LENGTH           48                          // name length
+    #define WORLD_HEADER_MAGIC          0x59504143                  // header magic
+    #define WORLD_FILE_FORMAT_VERSION   1                           // file format version number
+    #define WORLD_DEFAULT_FILENAME      "worlds/World.capy"         // file default name
 
     /* World tile representation */
     struct WorldTile 
@@ -54,20 +55,22 @@ namespace Capy
         /* 
             World file format header 
             A lot of this should only be accessed by the worldentity
+
+            POD ONLY!
         
         */
         struct WorldHeader
         {   
-            uint16_t version; 
+            uint32_t magic = WORLD_HEADER_MAGIC; 
+            uint16_t version = WORLD_FILE_FORMAT_VERSION; 
             Vector2<int32_t> size;
             
             char name[WORLD_NAME_LENGTH];
-        public: 
-            void SetSize(Vector2<int32_t> size) { this->size = size; };
         };
 
         WorldHeader& GetHeader() { return header; };
-
+        void SetSize(Vector2<int32_t> size) { this->header.size = size; };
+        
     private: 
 
         WorldHeader header;
