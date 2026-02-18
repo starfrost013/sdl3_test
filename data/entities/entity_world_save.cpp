@@ -14,7 +14,7 @@ namespace Capy
         // create the file if it does not exist
         if (!file)
         {
-            if (!tryCreate)
+            if (tryCreate)
                 file = Filesystem::Open(fileName);
             
             // if it still didn't open then we have an issue (or tryCreate i sfalse)
