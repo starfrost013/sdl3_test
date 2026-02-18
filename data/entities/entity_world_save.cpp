@@ -47,12 +47,12 @@ namespace Capy
             strncpy(header.name, fileName, WORLD_NAME_LENGTH);
 
         file->stream.write(reinterpret_cast<char*>(&header), sizeof(header));
-        
+
         auto finalSize = header.size.x * header.size.y; // really need to create a property that automates ths
 
         file->stream.write((char*)world, finalSize);
         
-        file->stream.close();
+        CloseWorldFile();
         return true; 
     }
 

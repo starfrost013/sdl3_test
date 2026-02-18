@@ -146,6 +146,7 @@ namespace Capy
     void CapyNet_Shutdown()
     {
         Logging_LogChannel("CapyNet_Shutdown: Shutting down network...", LogChannel::Message);
-        NET_Quit();
+        // This randomly freezes (bug in SDL_Net ?)
+        //NET_Quit();
     }
 }
