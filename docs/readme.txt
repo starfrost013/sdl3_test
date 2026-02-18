@@ -10,22 +10,24 @@
  / .___/    /_/        \___/                \__,_/    /_/    / .___/    /_/ /_/     \__,_/          |___/     \___/    /_/     
 /_/                                                         /_/                                                                
 
-Pre-Alpha 5.0
+Pre-Alpha 6.0
 February 2026
 README
 
-Capybara Wars is a 2d sidescrolling destruction, building, mining and team game...with capybaras. Inspired by Worms, Minecraft, and Fortnite it is "somewhere near the medium-high range of fun you can have online". This is an extremely, unbelievably early network test build with very little to do.
+Capybara Wars is a 2d sidescrolling destruction, building, mining and team game...with capybaras. Inspired by Worms, Minecraft, and Fortnite it is "somewhere near the medium-high range of fun you can have online". This is an extremely, unbelievably early network test build with very little to do. 
 
 Notes:
 
 * There are no controls.
 * If the server is there, you will see the world.
+* "Win64" contains a Windows binary using (MinGW-w64 GCC 15.2.0 Windows 11 24H2), "Linux64" contains a Linux binary (GCC 13.3.0, Mint 22.3). The experience should be identical.
 
 Command line options:
 -memdebug - log all memory allocations (huge amounts of spam)
 +set - set convar.
 
 Convars that exist:
+    - fsBasedir - base directory for filesystem operations
     - netMaxPlayers - max players (must be 1-32, default is 32) 
     - netMode - network mode (0 = client, 1 = listen server - doesn't work yet, 2 = dedicated server)
     - netPort - port

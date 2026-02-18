@@ -9,14 +9,20 @@
 namespace Capy
 {
     // Open the world file (returns true if it succeeded or is already open, returns false if it failed)
-    bool WorldEntity::OpenWorldFile(const char* fileName = WORLD_DEFAULT_FILENAME)
+    bool WorldEntity::OpenWorldFile(const char* fileName = WORLD_DEFAULT_FILENAME, bool tryCreate = true)
     {
-        // open the file if it does not exist
+        // create the file if it does not exist
         if (!file)
         {
-            file = Filesystem::Open(fileName);
-            Logging_LogChannel("Failed to open world file at %s!", LogChannel::Error, fileName);
-            return false; 
+            if (!tryCreate)
+                file = Filesystem::Open(fileName);
+            
+            // if it still didn't open then we have an issue (or tryCreate i sfalse)
+            if (!file)
+            {
+                Logging_LogChannel("Failed to open world file at %s!", LogChannel::Error, fileName);
+                return false; 
+            }
         }
 
         return true; 
@@ -30,9 +36,9 @@ namespace Capy
     // Save level
     bool WorldEntity::Serialise(const char* fileName = WORLD_DEFAULT_FILENAME)
     {        
-        Logging_LogChannel("Serialising level at %s", LogChannel::Debug, fileName);
+        Logging_LogChannel("Serialising level to %s", LogChannel::Debug, fileName);
 
-        if (!OpenWorldFile())
+        if (!OpenWorldFile(fileName))
             return false;
 
         // set a default world name
@@ -59,7 +65,7 @@ namespace Capy
         auto size = 0;
 
         // try and open the world file
-        if (!OpenWorldFile())
+        if (!OpenWorldFile(fileName, false))
             goto done;
 
         file->stream >> header.name;

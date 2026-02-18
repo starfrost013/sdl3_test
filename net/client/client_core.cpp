@@ -197,6 +197,9 @@ namespace Capy
         {
             Disconnect();
         }
+
+        // Test code
+        world.Serialise("Test.world");
         
         Render_Shutdown();
 

@@ -84,9 +84,9 @@ namespace Capy
 
         float noiseData[NOISE_STEPS];
 
-        bool OpenWorldFile(const char* fileName);      // open a world file
+        bool OpenWorldFile(const char* fileName, bool tryCreate);      // open a world file
         void CloseWorldFile();
-        
+
         void CreateGenerateWorld();
         void CreateGenerateNoise();
         void CreateGenerateQuadtree();
