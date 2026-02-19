@@ -83,6 +83,8 @@ namespace Capy
                             errMsg = "This device is already connected!";
                         else if (result == NetHelloStatus::HELLO_GO_AWAY)
                             errMsg = "Piss Off";
+                        else if (result == NetHelloStatus::HELLO_INVALID_VERSION)
+                            errMsg = "Incorrect client protocol version (try updating the game)";
 
                         Logging_LogChannel(errMsg, LogChannel::Error);
                         SetState(ClientState::CLIENT_UNCONNECTED);

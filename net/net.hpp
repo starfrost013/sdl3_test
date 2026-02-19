@@ -7,16 +7,34 @@
 #include <Capy.hpp>
 #include <data/entities/entity_world.hpp>
 
-/* 
-    Network message 
-    For now everything will be in one server using SDL_net (which is TCP)
-    If we need to, we should be able to rapidly rewrite to use UDP
-*/
+
 
 namespace Capy
 {
-    #define PORT_DEFAULT                6769    // 6-7 69
+    //
+    // DEFINES
+    //
+
+    #define PORT_DEFAULT                6769            // 6-7 69
     #define MAX_CLIENTS                 32
+
+    #define NETMSG_MAGIC                0x00FF55AA      // basic check that the message was received (tcp but still)
+    #define MAX_PACKET_SIZE             512             // max reliable, may increase later
+    #define PACKET_RESIZE_FACTOR        1.5             // amount packets get resized by when they are full
+    #define NET_PROTOCOL_VERSION    2               // network protocol version (1 = pre-alpha 4.0/5.0, 2 = pre-alpha 6)
+    
+    // 
+    // CVARS
+    //  
+
+    extern Cvar* netMode;
+    extern Cvar* netServerAddress;
+    extern Cvar* netPort;
+    extern Cvar* netMaxPlayers; 
+
+    //
+    // STRUCTURES & ENUMS
+    //
 
     // net cast types
     // these are encoded into the
@@ -58,12 +76,13 @@ namespace Capy
         HELLO_GO_AWAY = 2,                                          // YOU HAVE BEEN IP BAAAAAAAAAAAAANED
         HELLO_TOO_MANY = 3,                                         // Maximum client reached
         HELLO_DUPLICATE_CLIENT = 4,                                 // Duplicate client
+        HELLO_INVALID_VERSION = 5,                                  // Incorrect version
     };
 
-    //basic check that the message was received (tcp but still)
-    #define NETMSG_MAGIC            0x00FF55AA
-    #define MAX_PACKET_SIZE         512      // max reliable, may increase later
-    #define PACKET_RESIZE_FACTOR    1.5
+    // 
+    // Network message 
+    // Everything is sent over UDP and buffered internally
+    //
 
     struct NetMsg
     {
@@ -167,12 +186,7 @@ namespace Capy
         NETMODE_SERVER_LISTEN = 1,      // Server and client
         NETMODE_SERVER_DEDICATED = 2,   // Server only
     };
-    
-    // Cvars
-    extern Cvar* netMode;
-    extern Cvar* netServerAddress;
-    extern Cvar* netPort;
-    extern Cvar* netMaxPlayers; 
+
 
     /* Base for all network modes */
     class NetMode

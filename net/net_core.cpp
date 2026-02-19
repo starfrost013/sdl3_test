@@ -90,8 +90,8 @@ namespace Capy
         // only obtain the amount that actually exists
         if (msg.header.size > 0)
         {
-            msg.msgData = new uint8_t[dgram->buflen];
-            memcpy(msg.msgData, &dgram->buf[sizeof(NetMsg::NetHeader)], dgram->buflen - sizeof(NetMsg::NetHeader));
+            msg.msgData = new uint8_t[msg.header.size];
+            memcpy(msg.msgData, &dgram->buf[sizeof(NetMsg::NetHeader)], msg.header.size);
         }
 
         msg.addr = dgram->addr;
@@ -127,7 +127,24 @@ namespace Capy
 
     void NetMode::SendMessage(NetMsg msg, NET_Address* address)
     {
-        NET_SendDatagram(socket, address, port, (void*)&msg, sizeof(msg));
+        // optimised case: don't need to copy in the data 
+        // could just use a static array, but then every packet would be 512 bytes when it doesn't need to be
+        if (!msg.header.size)
+            NET_SendDatagram(socket, address, port, (void*)&msg, sizeof(msg));
+        else
+        {
+            // we can't just copy over the buf since it's a pointer
+            // so create this temporary buffer. if it is too slow optimise it later
+            int32_t bufSize = sizeof(NetMsg::NetHeader) + msg.header.size;
+            uint8_t buf[bufSize] = {0};
+
+            // make sure the data gets over properly
+            memcpy(buf, &msg.header, sizeof(NetMsg::NetHeader));
+            memcpy(buf + sizeof(NetMsg::NetHeader), msg.msgData, msg.header.size);
+
+            NET_SendDatagram(socket, address, port, (void*)buf, bufSize);
+        }
+
         seqNumber++;
     }
 

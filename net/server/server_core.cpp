@@ -21,7 +21,7 @@ namespace Capy
         // most cvars are created here.
         map = Cvar_Get("map", "test_map", false);
 
-        Logging_LogChannel("Setting map to %s...", LogChannel::Message);
+        Logging_LogChannel("Setting map to %s...", LogChannel::Message, map->string);
         world.Deserialise(map->string);
     }
             

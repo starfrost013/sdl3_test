@@ -52,6 +52,10 @@ namespace Capy
 
     void Filesystem::Close(FilesystemFile* ff)
     {
+        // could be called into while null if file was not found or did not open
+        if (!ff)
+            return;
+
         ff->stream.close();
         
         delete ff; 

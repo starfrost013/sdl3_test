@@ -9,7 +9,10 @@ namespace Capy
     NetMsg NetFactory_CreateClientHelloPacket()
     {
         // no data
-        return NetMsg(NetMsgType::NETMSG_HELLO, nullptr, 0);
+        NetMsg msg = NetMsg(NetMsgType::NETMSG_HELLO, nullptr, sizeof(uint8_t));
+        msg.Write<uint8_t>(NET_PROTOCOL_VERSION);
+        
+        return msg; 
     }
 
     NetMsg NetFactory_CreateServerHelloPacket()

@@ -15,15 +15,24 @@ namespace Capy
     {               
         // ip for debug
         const char* ip = NET_GetAddressString(msg->addr);
- 
+
         Logging_LogChannel("Client is attempting to connect from IP %s...", LogChannel::Debug, ip);
 
         NetHelloStatus helloStatus = NetHelloStatus::HELLO_OK;
 
         if (!IsNewClient(msg->addr))
         {
-            Logging_LogChannel("Connection rejected: Duplicate client",  LogChannel::Warning);
+            Logging_LogChannel("Connection rejected: Duplicate client", LogChannel::Warning);
             helloStatus = NetHelloStatus::HELLO_DUPLICATE_CLIENT;
+        }
+
+        uint8_t netVersion = msg->Read<uint8_t>();
+
+        if (netVersion != NET_PROTOCOL_VERSION)
+        {
+            Logging_LogChannel("Connection rejected: Incorrect client protocol version %d, expected %d", LogChannel::Warning,
+            netVersion, NET_PROTOCOL_VERSION);
+            helloStatus = NetHelloStatus::HELLO_INVALID_VERSION;
         }
 
         NetMsg serverHello = NetFactory_CreateServerHelloPacket();
