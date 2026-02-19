@@ -47,6 +47,7 @@ add_executable (Capy
 "net/server/server_core.cpp"
 
 # Net - Client
+"net/client/client_auth.cpp"
 "net/client/client_core.cpp"
 
 # Entity
