@@ -5,13 +5,13 @@ namespace Capy
 {
     // Evaluates a Client Hello from a client and sees if it is hopelessly confused or a real client.
     // TODO: Is this needed?
-    bool Server::IsNewClient(NET_Address* address)
+    bool Server::ClientIsNew(NET_Address* address)
     {
         return (GetMessageSender(address) == nullptr);
     }
 
     // Log in a new client
-    void Server::NewClient(NetMsg* msg)
+    void Server::ClientNew(NetMsg* msg)
     {               
         // ip for debug
         const char* ip = NET_GetAddressString(msg->addr);
@@ -20,7 +20,7 @@ namespace Capy
 
         NetHelloStatus helloStatus = NetHelloStatus::HELLO_OK;
 
-        if (!IsNewClient(msg->addr))
+        if (!ClientIsNew(msg->addr))
         {
             Logging_LogChannel("Connection rejected: Duplicate client", LogChannel::Warning);
             helloStatus = NetHelloStatus::HELLO_DUPLICATE_CLIENT;
@@ -65,7 +65,7 @@ namespace Capy
         }
     }
 
-    void Server::RemoveClient(Client* client)
+    void Server::ClientRemove(Client* client)
     {
         if (!numClients)
             return;

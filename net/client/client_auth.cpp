@@ -75,16 +75,29 @@ namespace Capy
                             errMsg = "Incorrect client protocol version (try updating the game)";
                         else if (result == NetHelloStatus::HELLO_TOO_MANY)
                             errMsg = "Server is full!";
+
                         Logging_LogChannel("Connection rejected: %s", LogChannel::Error, errMsg);
                         SetState(ClientState::CLIENT_UNCONNECTED);
                     }
                 }
                 break; 
             case ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD:
+                Logging_LogChannel("Initiating world download...", LogChannel::Debug);
                 SendMessage(NetFactory_CreateDownloadStartPacket_Client(), serverAddress);
                 connectPhase = ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD_SENT;
                 break;
             case ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD_SENT:
+                if (msg)
+                {
+                    char* mapName = msg->Read<char*>();
+                    Vector2<int32_t> mapSize = msg->Read<Vector2<int32_t>>();
+                    uint32_t expectedMapBytes = msg->Read<uint32_t>();
+
+                    Logging_LogChannel("Starting to download map %s %dx%d, %d bytes", LogChannel::Debug,
+                    mapName, mapSize.x, mapSize.y, expectedMapBytes);
+                }
+
+                connectPhase = ClientConnectionPhase::CLIENT_DOWNLOADING_WORLD;
                 break;
             case ClientConnectionPhase::CLIENT_LETS_GO:     // we are done
                 SetState(ClientState::CLIENT_CONNECTED);

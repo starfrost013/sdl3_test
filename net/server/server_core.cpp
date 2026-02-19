@@ -49,17 +49,24 @@ namespace Capy
         state = _state;
     }
 
+    void Server::ClientStartWorldDownload(Client* client)
+    {
+        WorldEntity::WorldHeader header = world.GetHeader();
+        SendMessage(NetFactory_CreateDownloadStartPacket_Server(map->name, header.size, world.GetSizeInBytes()), client);
+    }
+
     // Ticks the network aft
     void Server::TickNetwork_ConnectedClientMessage(Client* client, NetMsg* msg)
     {
         switch (msg->header.msgType)
         {
             case NetMsgType::NETMSG_WORLD_DOWNLOAD_START:
-
+                ClientStartWorldDownload(client);
+                client->connectPhase = Client::CLIENT_DOWNLOADING_WORLD; // server only cares about some of this
                 break;
             case NetMsgType::NETMSG_DISCONNECT:
                 Logging_LogChannel("Client disconnect from %s", LogChannel::Debug, client->serverOnly.ipStr);
-                RemoveClient(client);
+                ClientRemove(client);
                 break;
         }
     }
@@ -82,7 +89,7 @@ namespace Capy
             {
                 // Messages that don't require a client
                 case NetMsgType::NETMSG_HELLO:
-                    NewClient(msg);
+                    ClientNew(msg);
                     break; 
                 default:
                     Client* client = GetMessageSender(msg->addr);
@@ -143,7 +150,7 @@ namespace Capy
             // todo: send "server is shutting down..." message
             
             if (client != nullptr)
-                RemoveClient(client);
+                ClientRemove(client);
         }
 
         Logging_LogChannel("Shutting down server...", LogChannel::Message);

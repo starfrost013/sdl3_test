@@ -138,19 +138,34 @@ namespace Capy
 
         }
 
+        // Read something from the buffer. Some types have specialised implementations (mostly pointers e.g. const char*)
         template <typename T>
         T Read()
         {
-            return (T)msgData[msgPtrRead];
+            T thing = *(T*)&msgData[msgPtrRead];
+            
+            if (EnsureCapacityRead(sizeof(thing)))
+                msgPtrRead += sizeof(thing);
 
-            msgPtrRead += sizeof(T);
+            return thing;
         }
 
-        template <typename T>
-        void Write(T thing)
+        // Returns a boolean indicating that there are at least size bytes left in the packet to write.
+        bool EnsureCapacityRead(size_t size)
+        {
+            bool success = ((msgPtrRead + size) <= MAX_PACKET_SIZE);
+
+            if (!success)
+                Logging_LogChannel("NetMsg::EnsureCapacityRead - overflow (max size is %d)", LogChannel::Error, MAX_PACKET_SIZE);
+
+            return success; 
+        }
+
+        // Returns a boolean indicating that there are at least size bytes left in the packet to write.
+        bool EnsureCapacityWrite(size_t size)
         {
             // resize by 1.5x if the size would overflow
-            while (msgPtrWrite + sizeof(thing) > header.size)
+            while (msgPtrWrite + size > header.size)
             {
                 uint32_t oldSize = header.size;
                 header.size *= 1.5;
@@ -166,15 +181,25 @@ namespace Capy
                 msgData = newMsgData;
             }
 
-            if (msgPtrWrite + sizeof(thing) >= MAX_PACKET_SIZE)
+            if (msgPtrWrite + size >= MAX_PACKET_SIZE)
                 goto overflow;
+
+            return true; 
+
+        overflow:
+            Logging_LogChannel("NetMsg::EnsureCapacityWrite - overflow (max size is %d)", LogChannel::Error, MAX_PACKET_SIZE);
+            return false;
+        }
+
+        template <typename T>
+        void Write(T thing)
+        {
+            if (!EnsureCapacityWrite(sizeof(thing)))
+                return;
 
             memcpy(&msgData[msgPtrWrite], &thing, sizeof(thing));
             msgPtrWrite += sizeof(thing);
 
-            return;
-        overflow:
-            Logging_LogChannel("NetMsg::Write - overflow (max size is %d)", LogChannel::Error, MAX_PACKET_SIZE);
             return;
         }
     };
@@ -186,7 +211,6 @@ namespace Capy
         NETMODE_SERVER_LISTEN = 1,      // Server and client
         NETMODE_SERVER_DEDICATED = 2,   // Server only
     };
-
 
     /* Base for all network modes */
     class NetMode

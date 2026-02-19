@@ -71,6 +71,7 @@ namespace Capy
 
         WorldHeader& GetHeader() { return header; };
         void SetSize(Vector2<int32_t> size) { this->header.size = size; };
+        size_t GetSizeInBytes() { return (this->header.size.x * this->header.size.y); }; 
         
     private: 
 

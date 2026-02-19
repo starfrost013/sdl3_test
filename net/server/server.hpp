@@ -63,9 +63,11 @@ namespace Capy
         void TickNetwork_ConnectedClientMessage(Client* client, NetMsg* msg);
 
         // client related methods
-        bool IsNewClient(NET_Address* address);
-        void NewClient(NetMsg* hello);
-        void RemoveClient(Client* client);
+        bool ClientIsNew(NET_Address* address);
+        void ClientNew(NetMsg* hello);
+        void ClientRemove(Client* client);
+        void ClientStartWorldDownload(Client* client);
+        
         void SetMap();
         Client* GetMessageSender(NET_Address* address);
     };
