@@ -4,7 +4,6 @@
 #include <net/client/client.hpp>
 namespace Capy
 {    
-    WorldEntity world;                          // TEMP
     Cvar* playerName;
 
     void Client::Init()
@@ -43,7 +42,7 @@ namespace Capy
 
     void Client::Disconnect()
     {
-        SendMessage(NetFactory_CreateDisconnectPacket(NetCastType::NET_CAST_TO_SERVER), serverAddress);
+        SendMessage(NetFactory_CreateDisconnectPacket(), serverAddress);
     }
 
     void Client::ConnectOnResolveDone(NetMsg* msg)
@@ -56,9 +55,9 @@ namespace Capy
         {
             case ClientConnectionPhase::CLIENT_HELLO:
                 Logging_LogChannel("Client sending hello", LogChannel::Debug);
-                SendMessage(NetFactory_CreateClientHelloPacket(NetCastType::NET_CAST_TO_SERVER), serverAddress);
+                SendMessage(NetFactory_CreateClientHelloPacket(), serverAddress);
                 break;
-            case ClientConnectionPhase::CLIENT_HELLO_SENT: // TODO: figure out a better way of doing this than extra states
+            case ClientConnectionPhase::CLIENT_HELLO_SENT: // TODO: figure out a better way of doing this than extra states that prevents it being sent multiple times
                 Logging_LogChannel("Client received hello", LogChannel::Debug);
                 if (msg)
                 {

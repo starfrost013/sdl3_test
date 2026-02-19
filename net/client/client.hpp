@@ -3,6 +3,7 @@
 #pragma once
 #include <net/net.hpp>
 
+
 namespace Capy 
 {
     #define CLIENT_NAME_LENGTH              64
@@ -75,6 +76,7 @@ namespace Capy
             NET_Address* address; 
             char ipStr[CLIENT_IP_LENGTH];
         }; 
+
 
         ServerOnlyClientInfo serverOnly;
 

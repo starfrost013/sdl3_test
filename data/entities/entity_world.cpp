@@ -293,7 +293,6 @@ namespace Capy
 
         SDL_LockTexture(game.renderTarget, &newRect, (void**)&texturePixels, &pitch);
 
-
         WorldTile* currentTile = heightData[0];
         
         for (uint32_t x = 0; x < game.settings.screenX; x += TILE_SIZE_Y)

@@ -52,7 +52,7 @@ namespace Capy
         }
         else
         {
-            SendMessage(NetFactory_CreateDisconnectPacket(NetCastType::NET_CAST_TO_CLIENT), msg->addr);
+            SendMessage(NetFactory_CreateDisconnectPacket(), msg->addr);
         }
     }
 

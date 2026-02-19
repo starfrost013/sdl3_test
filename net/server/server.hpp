@@ -5,6 +5,7 @@
 
 namespace Capy
 {
+    extern Cvar* map; 
 
     class Server : public NetMode
     {
@@ -24,7 +25,10 @@ namespace Capy
             port = netPort->value;
 
             if (!netPort->value)
+            {
                 Cvar_Set("netPort", "6769", false);
+                port = netPort->value;
+            }
         }
 
         Server(uint16_t _port)
@@ -46,7 +50,6 @@ namespace Capy
         uint16_t port;
         Client* clients[MAX_CLIENTS] = {0};
         int32_t numClients; 
-
         
         // intenral tick methods
         void TickNetwork();
@@ -56,6 +59,7 @@ namespace Capy
         bool IsNewClient(NET_Address* address);
         void NewClient(NetMsg* hello);
         void RemoveClient(Client* client);
+        void SetMap();
         Client* GetMessageSender(NET_Address* address);
     };
 }

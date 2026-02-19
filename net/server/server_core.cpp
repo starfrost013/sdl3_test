@@ -3,14 +3,26 @@
 
 namespace Capy
 {
+    Cvar* map;
+
     void Server::Init()
     {
         Logging_LogChannel("Initialising server...", LogChannel::Message);
 
         socket = NET_CreateDatagramSocket(NULL, port);
+        SetMap();
+
         SetState(ServerState::SERVER_RUNNING);
         Logging_LogChannel("Server initialised!", LogChannel::Message);
+    }
 
+    void Server::SetMap()
+    {
+        // most cvars are created here.
+        map = Cvar_Get("map", "test_map", false);
+
+        Logging_LogChannel("Setting map to %s...", LogChannel::Message);
+        world.Deserialise(map->string);
     }
             
     Server::ServerState Server::GetState()

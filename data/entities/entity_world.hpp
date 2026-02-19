@@ -1,3 +1,4 @@
+#pragma once
 #include <Capy.hpp>
 #include <data/entities/entity.hpp>
 
@@ -93,9 +94,6 @@ namespace Capy
         void CreateGenerateWorld();
         void CreateGenerateNoise();
         void CreateGenerateQuadtree();
-
-        
-
     };
 }
 

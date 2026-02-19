@@ -44,7 +44,7 @@ namespace Capy
             // therefore we have to do this
             #ifdef __linux__
                 if (!success)
-                    Logging_LogChannel("NET_ReceiveDatagram failed!", LogChannel::Fatal);
+                    Logging_LogChannel("NetMode::GetAllIncomingMessages - NET_ReceiveDatagram failed!", LogChannel::Fatal);
             #endif
             // no message to receive
             return; 
@@ -71,12 +71,6 @@ namespace Capy
         if (msg.header.size > MAX_PACKET_SIZE)
         {
             Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid size %d", LogChannel::Error, msg.header.size);
-            return;
-        }
-
-        if (msg.header.castType > NET_CAST_LAST_VALID)
-        {
-            Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid cast type %d", LogChannel::Error, msg.header.msgType);
             return;
         }
 

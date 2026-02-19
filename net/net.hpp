@@ -3,8 +3,9 @@
 */
 
 #pragma once
-#include <Capy.hpp>
 #include <SDL3_net/SDL_net.h>
+#include <Capy.hpp>
+#include <data/entities/entity_world.hpp>
 
 /* 
     Network message 
@@ -72,7 +73,6 @@ namespace Capy
             std::size_t seqNumber;          // sequence number for message re-ordering etc
             // these are not enums because they could theoretically be out of range
             uint32_t size;                  // size does not need to be 8 bytes (nobody will send 2 GB packet!)
-            uint8_t castType;               // see netcast above
             uint8_t msgType;                // type of message
         };
 
@@ -92,7 +92,7 @@ namespace Capy
         }
 
         // Create a new NetMsg with a given message type, cast type, size and optional data
-        NetMsg(NetCastType castType, NetMsgType msgType, uint8_t data[], uint32_t size)
+        NetMsg(NetMsgType msgType, uint8_t data[], uint32_t size)
         {
             if (size > MAX_PACKET_SIZE)
             {
@@ -102,7 +102,6 @@ namespace Capy
 
             header.magic = NETMSG_MAGIC;
             header.size = size;
-            header.castType = castType;
             header.msgType = msgType;
             
             valid = true;
@@ -190,6 +189,7 @@ namespace Capy
 
             virtual void Shutdown() { };
 
+            
         protected:
             void GetAllIncomingMessages();
 
@@ -202,13 +202,17 @@ namespace Capy
             static const int32_t NET_BUFFER_SIZE = 64;    // Maximum number of packets in the buffer that can be serviced at any one time
             NetMsg netBuffer[NET_BUFFER_SIZE];  
             int32_t netBufferPtr = 0;
+
+            WorldEntity world;              // replicated from server
     };
 
     /* Net packet factory stuff */
 
-    NetMsg NetFactory_CreateClientHelloPacket(NetCastType castType);
+    NetMsg NetFactory_CreateClientHelloPacket();
     NetMsg NetFactory_CreateServerHelloPacket();
-    NetMsg NetFactory_CreateDisconnectPacket(NetCastType castType);
+    NetMsg NetFactory_CreateDisconnectPacket();
+    NetMsg NetFactory_CreateDownloadStartPacket_Client();
+    NetMsg NetFactory_CreateDownloadStartPacket_Server(const char* mapName, Vector2<int32_t> size, uint32_t expectedBytes);
 
     /* 
         Net system init 

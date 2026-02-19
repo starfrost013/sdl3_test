@@ -1,24 +1,40 @@
 /* 
-    The Packet Factory: Creates packets for use
+    The Packet Factory: Helper functions to create packets with a defined fot
 */
 
 #include <net/net.hpp>
 
 namespace Capy
 {
-    NetMsg NetFactory_CreateClientHelloPacket(NetCastType castType)
+    NetMsg NetFactory_CreateClientHelloPacket()
     {
         // no data
-        return NetMsg(castType, NetMsgType::NETMSG_HELLO, nullptr, 0);
+        return NetMsg(NetMsgType::NETMSG_HELLO, nullptr, 0);
     }
 
     NetMsg NetFactory_CreateServerHelloPacket()
     {
-        return NetMsg(NetCastType::NET_CAST_TO_CLIENT, NetMsgType::NETMSG_SERVER_HELLO, nullptr, sizeof(uint8_t));
+        return NetMsg(NetMsgType::NETMSG_SERVER_HELLO, nullptr, sizeof(uint8_t));
     }
 
-    NetMsg NetFactory_CreateDisconnectPacket(NetCastType castType)
+    NetMsg NetFactory_CreateDisconnectPacket()
     {
-        return NetMsg(castType, NetMsgType::NETMSG_DISCONNECT, nullptr, 0);
+        return NetMsg(NetMsgType::NETMSG_DISCONNECT, nullptr, 0);
+    }
+
+    NetMsg NetFactory_CreateDownloadStartPacket_Client()
+    {
+        return NetMsg(NetMsgType::NETMSG_WORLD_DOWNLOAD_START, nullptr, 0);
+    }
+
+    NetMsg NetFactory_CreateDownloadStartPacket_Server(const char* mapName, Vector2<int32_t> size, uint32_t expectedBytes)
+    {
+        // worst case scenario it will just autoexpand anyway
+        NetMsg msg = NetMsg(NetMsgType::NETMSG_WORLD_DOWNLOAD_START, nullptr, WORLD_NAME_LENGTH + sizeof(Vector2<int32_t>) + sizeof(uint32_t));
+        msg.Write<const char*>(mapName);
+        msg.Write<Vector2<int32_t>>(size);
+        msg.Write<uint32_t>(expectedBytes);
+
+        return msg; 
     }
 }
