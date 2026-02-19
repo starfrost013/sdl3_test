@@ -41,6 +41,7 @@ namespace Capy
             // these are logical pairs so put them on the same line
             CLIENT_HELLO, CLIENT_HELLO_SENT,
             CLIENT_DOWNLOAD_WORLD, CLIENT_DOWNLOAD_WORLD_SENT,
+            CLIENT_DOWNLOADING_WORLD,
             CLIENT_SPAWN_CHARACTER, CLIENT_SPAWN_CHARACTER_SENT,
             CLIENT_LETS_GO,
         };

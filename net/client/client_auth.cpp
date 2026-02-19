@@ -59,7 +59,10 @@ namespace Capy
                     bool success = (result == NetHelloStatus::HELLO_OK);
 
                     if (success)
+                    {
+                        Logging_LogChannel("Client hello accepted", LogChannel::Debug);
                         connectPhase = ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD;
+                    }
                     else
                     {
                         const char* errMsg = "TODO: Duplicated username handling\n";
@@ -71,7 +74,7 @@ namespace Capy
                         else if (result == NetHelloStatus::HELLO_INVALID_VERSION)
                             errMsg = "Incorrect client protocol version (try updating the game)";
 
-                        Logging_LogChannel(errMsg, LogChannel::Error);
+                        Logging_LogChannel("Connection rejected: %s", LogChannel::Error, errMsg);
                         SetState(ClientState::CLIENT_UNCONNECTED);
                     }
                 }
@@ -79,6 +82,8 @@ namespace Capy
             case ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD:
                 SendMessage(NetFactory_CreateDownloadStartPacket_Client(), serverAddress);
                 connectPhase = ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD_SENT;
+                break;
+            case ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD_SENT:
                 break;
             case ClientConnectionPhase::CLIENT_LETS_GO:     // we are done
                 SetState(ClientState::CLIENT_CONNECTED);
