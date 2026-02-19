@@ -73,7 +73,8 @@ namespace Capy
                             errMsg = "Piss Off";
                         else if (result == NetHelloStatus::HELLO_INVALID_VERSION)
                             errMsg = "Incorrect client protocol version (try updating the game)";
-
+                        else if (result == NetHelloStatus::HELLO_TOO_MANY)
+                            errMsg = "Server is full!";
                         Logging_LogChannel("Connection rejected: %s", LogChannel::Error, errMsg);
                         SetState(ClientState::CLIENT_UNCONNECTED);
                     }
