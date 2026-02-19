@@ -125,6 +125,12 @@ namespace Capy
         return &netBuffer[netBufferPtr + 1];
     }
 
+    void NetMode::DoneMessage(NetMsg* msg)
+    {
+        if (msg->header.size)
+            delete msg->msgData;
+    }
+
     void NetMode::SendMessage(NetMsg msg, NET_Address* address)
     {
         // optimised case: don't need to copy in the data 
@@ -144,6 +150,9 @@ namespace Capy
 
             NET_SendDatagram(socket, address, port, (void*)buf, bufSize);
         }
+
+        //delete the message
+        DoneMessage(&msg);
 
         seqNumber++;
     }

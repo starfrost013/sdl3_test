@@ -205,6 +205,7 @@ namespace Capy
 
             
         protected:
+            void DoneMessage(NetMsg* msg);  // discard of a message when done
             void GetAllIncomingMessages();
 
             size_t seqNumber;               // single source of truth for UDP packet sequencing (since it can be out of order, etc.)

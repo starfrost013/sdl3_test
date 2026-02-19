@@ -79,6 +79,9 @@ namespace Capy
             }
 
         }
+
+        if (msg)
+            DoneMessage(msg); // delete the message if neede
     }
 
     // Utility method that gets the client that sent a certain message frrom its address

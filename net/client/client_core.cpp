@@ -138,6 +138,10 @@ namespace Capy
                 ConnectOnResolveDone(msg);
                 break; 
         }   
+
+        //delete the message
+        if (msg)
+            DoneMessage(msg);
     }
 
     void Client::Tick()
@@ -173,6 +177,7 @@ namespace Capy
             case CLIENT_DEAD:
                 return;                 // don't do anything at all, don't even run the code after this
         }
+        
     }   
 
     void Client::Frame()
