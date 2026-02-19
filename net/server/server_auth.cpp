@@ -54,14 +54,14 @@ namespace Capy
 
             client->serverOnly.address = msg->addr;
             strncpy(client->serverOnly.ipStr, ip, CLIENT_IP_LENGTH);
-            
+            client->serverOnly.port = msg->port;
             numClients++;
 
-            SendMessage(serverHello, msg->addr);
+            SendMessage(serverHello, client);
         }
         else
         {
-            SendMessage(NetFactory_CreateDisconnectPacket(), msg->addr);
+            SendMessageToPort(NetFactory_CreateDisconnectPacket(), msg->addr, msg->port);
         }
     }
 

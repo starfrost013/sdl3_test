@@ -26,20 +26,24 @@ namespace Capy
         state = ClientState::CLIENT_UNCONNECTED;
         
         Cvar_Set("playerName", "Player", false);
-        
-        port = netPort->value;
     }
 
-   
-
+    // Get the client state
     Client::ClientState Client::GetState()
     {
         return state; 
     }
 
+    // Set the client state
     void Client::SetState(ClientState _state)
     {
         state = _state;
+    }
+
+    // Send a message to the server
+    void Client::SendMessage(NetMsg msg, NET_Address* address)
+    {
+        SendMessageToPort(msg, address, netPort->value);
     }
 
     // Run while the client is connected
@@ -56,7 +60,6 @@ namespace Capy
             // 0 = equal, anything else is less
             bool dontCare = NET_CompareAddresses(msg->addr, serverAddress);
             NET_UnrefAddress(msg->addr); //todo: move this to netcore layer
-        
         }
 
         if (dontCare)

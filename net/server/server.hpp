@@ -47,10 +47,13 @@ namespace Capy
 
     private: 
         ServerState state; 
-        uint16_t port;
         Client* clients[MAX_CLIENTS] = {0};
         int32_t numClients; 
-        
+        uint16_t port;
+
+        // send message
+        void SendMessage(NetMsg msg, Client* client);
+
         // intenral tick methods
         void TickNetwork();
         void TickNetwork_ConnectedClientMessage(Client* client, NetMsg* msg);

@@ -32,17 +32,17 @@ namespace Capy
     void Client::ConnectOnResolveDone(NetMsg* msg)
     {
         /* temp */
-        world.SetSize(Vector2(3000, 400));
-        world.Create();
+        //world.SetSize(Vector2(3000, 400));
+        //world.Create();
         
         switch (connectPhase)
         {
             case ClientConnectionPhase::CLIENT_HELLO:
                 Logging_LogChannel("Client sending hello", LogChannel::Debug);
                 SendMessage(NetFactory_CreateClientHelloPacket(), serverAddress);
+                connectPhase = ClientConnectionPhase::CLIENT_HELLO_SENT;
                 break;
             case ClientConnectionPhase::CLIENT_HELLO_SENT: // TODO: figure out a better way of doing this than extra states that prevents it being sent multiple times
-                Logging_LogChannel("Client received hello", LogChannel::Debug);
                 if (msg)
                 {
                     if (msg->header.msgType != NetMsgType::NETMSG_SERVER_HELLO)
@@ -51,10 +51,11 @@ namespace Capy
                         return;
                     }
 
+                    Logging_LogChannel("Client received hello", LogChannel::Debug);
+
                     // change state
 
                     NetHelloStatus result = static_cast<NetHelloStatus>(msg->Read<uint8_t>());
-
                     bool success = (result == NetHelloStatus::HELLO_OK);
 
                     if (success)
@@ -73,16 +74,16 @@ namespace Capy
                         Logging_LogChannel(errMsg, LogChannel::Error);
                         SetState(ClientState::CLIENT_UNCONNECTED);
                     }
-
                 }
                 break; 
             case ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD:
-                
-                
+                SendMessage(NetFactory_CreateDownloadStartPacket_Client(), serverAddress);
+                connectPhase = ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD_SENT;
                 break;
-            
+            case ClientConnectionPhase::CLIENT_LETS_GO:     // we are done
+                SetState(ClientState::CLIENT_CONNECTED);
+                break;
         }
 
-        SetState(ClientState::CLIENT_CONNECTED);
     }
 }

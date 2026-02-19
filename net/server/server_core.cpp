@@ -49,6 +49,12 @@ namespace Capy
         }
     }
 
+    // Send a message to a client
+    void Server::SendMessage(NetMsg msg, Client* client)
+    {
+        SendMessageToPort(msg, client->serverOnly.address, client->serverOnly.port);
+    }
+
     // Run while server is in ServerState::UPDATE_RUNNING
     void Server::TickNetwork()
     {

@@ -96,10 +96,10 @@ namespace Capy
         };
 
         NetHeader header;                   // header
-
+        uint16_t port;                      // port message came from (usually not important)
         uint8_t* msgData;                   // data of message
-        bool valid;                         // true if message parsed successfulyl        uint8_t msgPtrRead;                 // current location within the message while reading
-        uint32_t msgPtrRead;                // current location within the message while writing    
+        bool valid;                         // true if message parsed successfully
+        uint32_t msgPtrRead;                // current location within the message while reading    
         uint32_t msgPtrWrite;               // current location within the message while writing    
 
         NET_Address* addr;                  // sender's address
@@ -199,7 +199,7 @@ namespace Capy
             NetMsg* GetMessage();
 
             // this is very likely to be a temporary interface for testing until we have a real packet system
-            void SendMessage(NetMsg msg, NET_Address* address);
+            void SendMessageToPort(NetMsg msg, NET_Address* address, uint16_t port);
 
             virtual void Shutdown() { };
 
@@ -209,7 +209,6 @@ namespace Capy
             void GetAllIncomingMessages();
 
             size_t seqNumber;               // single source of truth for UDP packet sequencing (since it can be out of order, etc.)
-            uint16_t port;                  // port
             NET_DatagramSocket* socket;     // socket to use
 
             // We only process packets every 1/tickrate seconds,

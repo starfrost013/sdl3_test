@@ -70,13 +70,15 @@ namespace Capy
         void ConnectOnResolveDone(NetMsg* msg);
         void TickNetwork();
 
+        void SendMessage(NetMsg msg, NET_Address* address);
+
         // STUFF BELOW HERE ONLY EXISTS ON THE SERVER'S VERSION OF THE CLIENT AND CANNOT BE DEPENDED ON
         struct ServerOnlyClientInfo
         {
             NET_Address* address; 
             char ipStr[CLIENT_IP_LENGTH];
+            uint16_t port; 
         }; 
-
 
         ServerOnlyClientInfo serverOnly;
 

@@ -95,6 +95,7 @@ namespace Capy
         }
 
         msg.addr = dgram->addr;
+        msg.port = dgram->port;
         
         //temp, slightly bad design
         NET_RefAddress(dgram->addr);
@@ -131,7 +132,7 @@ namespace Capy
             delete msg->msgData;
     }
 
-    void NetMode::SendMessage(NetMsg msg, NET_Address* address)
+    void NetMode::SendMessageToPort(NetMsg msg, NET_Address* address, uint16_t port)
     {
         // optimised case: don't need to copy in the data 
         // could just use a static array, but then every packet would be 512 bytes when it doesn't need to be
@@ -147,6 +148,7 @@ namespace Capy
             // make sure the data gets over properly
             memcpy(buf, &msg.header, sizeof(NetMsg::NetHeader));
             memcpy(buf + sizeof(NetMsg::NetHeader), msg.msgData, msg.header.size);
+
 
             NET_SendDatagram(socket, address, port, (void*)buf, bufSize);
         }
