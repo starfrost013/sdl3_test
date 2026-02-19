@@ -5,6 +5,10 @@ namespace Capy
 {
     Cvar* map;
 
+    // TEMPORARY CVARS UNTIL WE HAVE A MENU
+    Cvar* mapSizeX;
+    Cvar* mapSizeY;
+
     void Server::Init()
     {
         Logging_LogChannel("Initialising server...", LogChannel::Message);
@@ -19,10 +23,20 @@ namespace Capy
     void Server::SetMap()
     {
         // most cvars are created here.
-        map = Cvar_Get("map", "test_map", false);
+        map = Cvar_Get("map", "", false);
+        mapSizeX = Cvar_Get("mapSizeX", "4000", false);
+        mapSizeY = Cvar_Get("mapSizeY", "300", false);
 
-        Logging_LogChannel("Setting map to %s...", LogChannel::Message, map->string);
-        world.Deserialise(map->string);
+        if (strlen(map->string))
+        {
+            Logging_LogChannel("Setting map to %s...", LogChannel::Message, map->string);
+            world.Deserialise(map->string);
+        }
+        else
+        {
+            world.SetSize(Vector2(int32_t(mapSizeX->value), int32_t(mapSizeY->value)));
+            world.Create();
+        }
     }
             
     Server::ServerState Server::GetState()
@@ -41,6 +55,7 @@ namespace Capy
         switch (msg->header.msgType)
         {
             case NetMsgType::NETMSG_WORLD_DOWNLOAD_START:
+
                 break;
             case NetMsgType::NETMSG_DISCONNECT:
                 Logging_LogChannel("Client disconnect from %s", LogChannel::Debug, client->serverOnly.ipStr);

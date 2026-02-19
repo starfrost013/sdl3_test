@@ -7,6 +7,10 @@ namespace Capy
 {
     extern Cvar* map; 
 
+    // TEMPORARY CVARS UNTIL WE HAVE A MENU
+    extern Cvar* mapSizeX; 
+    extern Cvar* mapSizeY; 
+
     class Server : public NetMode
     {
         // STRUCTURES AND ENUMS
