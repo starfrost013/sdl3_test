@@ -54,7 +54,7 @@ namespace Capy
         WorldEntity::WorldHeader header = world.GetHeader();
         SendMessage(NetFactory_CreateDownloadStartPacket_Server(map->name, header.size, world.GetSizeInBytes()), client);
 
-        client->connectPhase = Client::ClientConnectionPhase::CLIENT_DOWNLOADING_WORLD;
+        client->connectPhase = Client::ConnectPhase::CLIENT_DOWNLOADING_WORLD;
     }
 
     // Fill the client's buffer with world data every chunk. (Should only need a slight refactor for generic downloads, but we probably won't need those.)
@@ -87,7 +87,7 @@ namespace Capy
         if (client->downloadProgress >= worldSize)
         {
             Logging_LogChannel("Download is done!", LogChannel::Debug);
-            client->connectPhase = Client::ClientConnectionPhase::CLIENT_LETS_GO; //value does not really matter on server end. no other special stuff needed
+            client->connectPhase = Client::ConnectPhase::CLIENT_LETS_GO; //value does not really matter on server end. no other special stuff needed
             return;
         }
         //}
@@ -124,7 +124,7 @@ namespace Capy
         for (Client* client : clients)
         {
             if (client
-            && client->connectPhase == Client::ClientConnectionPhase::CLIENT_DOWNLOADING_WORLD)
+            && client->connectPhase == Client::ConnectPhase::CLIENT_DOWNLOADING_WORLD)
             {
                 ClientSendWorldChunk(client);
             }

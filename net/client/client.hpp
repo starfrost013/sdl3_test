@@ -36,7 +36,7 @@ namespace Capy
         };
 
         // Enumeration for the client connection phases
-        enum ClientConnectionPhase
+        enum ConnectPhase
         {
             // these are logical pairs so put them on the same line
             CLIENT_HELLO, CLIENT_HELLO_SENT,
@@ -63,7 +63,7 @@ namespace Capy
 
         ClientState state;
         // only valid if state == CLIENT_CONNECTING
-        ClientConnectionPhase connectPhase;
+        ConnectPhase connectPhase;
 
         // if client is downloading a file, store progress here
         // probably a tmeporary implementation

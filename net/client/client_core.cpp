@@ -93,7 +93,7 @@ namespace Capy
                     case NET_SUCCESS:
                         Logging_LogChannel("Client::Connect - Connecting...", LogChannel::Message);
                         SetState(ClientState::CLIENT_CONNECTING);
-                        connectPhase = ClientConnectionPhase::CLIENT_HELLO;
+                        connectPhase = ConnectPhase::CLIENT_HELLO;
                         break;
                     default:
                         break;
