@@ -103,6 +103,7 @@ namespace Capy
             case CLIENT_CONNECTED:
                 TickNetwork();          // usual update function
                 break;
+
             case CLIENT_SHUTTING_DOWN:
             case CLIENT_FATAL:          // will be treated differently later
                 Shutdown();

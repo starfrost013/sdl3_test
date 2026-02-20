@@ -104,16 +104,17 @@ namespace Capy
 
         // add to buffer
 
+        netBufferPtr++;
+
         if (netBufferPtr >= NET_BUFFER_SIZE)
         {
-            Logging_LogChannel("NetMode::GetMessage - NetBuffer overflow, reset", LogChannel::Warning);
-            netBufferPtr = 0; 
+            Logging_LogChannel("NetMode::GetMessage - NetBuffer overflow, probably some messages will be dropped", LogChannel::Warning);
+            netBufferPtr = 0;
+            return; 
         }
 
-        netBufferPtr++;
         netBuffer[netBufferPtr] = msg;
         
-
         if (Cmdline_Check("-netdebug"))
             Logging_LogChannel("netBufferPtr is now %d", LogChannel::Message, netBufferPtr);
         
@@ -125,6 +126,7 @@ namespace Capy
     {
         if (netBufferPtr < 0)
             return nullptr;
+
         NetMsg* msg = &netBuffer[netBufferPtr];
         netBufferPtr--;
         return msg;

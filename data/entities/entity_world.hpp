@@ -33,7 +33,8 @@ namespace Capy
     class WorldEntity : public Entity 
     {
     public: 
-
+        // let client access tileData
+        friend class Client;
         friend class WorldHeader;
         
         //

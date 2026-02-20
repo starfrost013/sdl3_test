@@ -34,31 +34,31 @@ namespace Capy
         char winTitleBuf[STRING_MAX_GENERIC] = {0};
         auto totalBytes = world.GetSizeInBytes();
 
-    // get as many messages as possible - special dispensation for fast downloads
-        while (netBufferPtr > 0)
+        if (!msg)
+            return;
+
+        if (msg->header.msgType != NETMSG_WORLD_DOWNLOAD_PACKET)
         {
-            if (msg->header.msgType != NETMSG_WORLD_DOWNLOAD_PACKET)
+            Logging_LogChannel("ClientConnectionPhase::CLIENT_DOWNLOADING_WORLD: Should be world download packet, but is type %0x :(",
+            LogChannel::Warning, msg->header.msgType);
+        }
+        else
+        {
+            memcpy(&world.tileData[downloadProgress], msg->msgData, msg->header.size);
+            
+            downloadProgress += msg->header.size;
+            snprintf(winTitleBuf, STRING_MAX_GENERIC, "Downloading world [%ld/%ld bytes]...", downloadProgress, totalBytes);
+            Render_SetWindowTitle(winTitleBuf);
+            Logging_LogChannel(winTitleBuf, LogChannel::Debug);
+
+            if (downloadProgress >= totalBytes)
             {
-                Logging_LogChannel("ClientConnectionPhase::CLIENT_DOWNLOADING_WORLD: Should be world download packet, but is type %0x :(",
-                LogChannel::Warning, msg->header.msgType);
+                // the server will be done sending by now. anything else is ignored, but we send an ACK to the server
+                Render_SetWindowTitle("Downloaded world!");
+
+                connectPhase = ClientConnectionPhase::CLIENT_LETS_GO;
+                return;
             }
-            else
-            {
-                downloadProgress += msg->header.size;
-                snprintf(winTitleBuf, STRING_MAX_GENERIC, "Downloading world [%ld/%ld bytes]...", downloadProgress, totalBytes);
-                Render_SetWindowTitle(winTitleBuf);
-
-                if (downloadProgress >= totalBytes)
-                {
-                    // the server will be done sending by now. anything else is ignored, but we send an ACK to the server
-                    Render_SetWindowTitle("Downloaded world!");
-
-                    connectPhase = ClientConnectionPhase::CLIENT_SPAWN_CHARACTER;
-                    return;
-                }
-            }
-
-            msg = GetMessage();
         }
     }
 

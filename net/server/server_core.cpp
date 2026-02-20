@@ -63,37 +63,36 @@ namespace Capy
         auto worldSize = world.GetSizeInBytes();
 
         // don't send too many at once
-        for (auto i = 0; i < (NET_BUFFER_SIZE / 4); i++)
+        //for (auto i = 0; i < 1; i++) //TODO: FIX
+        //{
+        auto size = 0;
+        size_t remainingBytes = (worldSize - client->downloadProgress);
+
+        if (remainingBytes < MAX_PACKET_SIZE)
+            size = remainingBytes;
+        else    
+            size = MAX_PACKET_SIZE;
+
+        NetMsg packetMsg = NetFactory_CreateDownloadPacket(size);
+
+        // we don't care about size checks since we know the size, just smash it in
+        packetMsg.header.size = size;
+        uint8_t* tileData = world.GetWorldTileData();
+
+        memcpy(packetMsg.msgData, (void*)&tileData[client->downloadProgress], size);
+        SendMessage(packetMsg, client); 
+
+        client->downloadProgress += size;
+
+        if (client->downloadProgress >= worldSize)
         {
-            auto size = 0;
-            size_t remainingBytes = (worldSize - client->downloadProgress);
-
-            if (remainingBytes < MAX_PACKET_SIZE)
-                size = remainingBytes;
-            else    
-                size = MAX_PACKET_SIZE;
-
-            NetMsg packetMsg = NetFactory_CreateDownloadPacket(size);
-
-            // we don't care about size checks since we know the size, just smash it in
-            packetMsg.header.size = size;
-            uint8_t* tileData = world.GetWorldTileData();
-
-            memcpy(packetMsg.msgData, (void*)&tileData[client->downloadProgress], size);
-            SendMessage(packetMsg, client); 
-
-            client->downloadProgress += size;
-
-            if (client->downloadProgress >= worldSize)
-            {
-                Logging_LogChannel("Download is done!", LogChannel::Debug);
-                client->connectPhase = Client::ClientConnectionPhase::CLIENT_LETS_GO; //value does not really matter on server end. no other special stuff needed
-                return;
-            }
-
+            Logging_LogChannel("Download is done!", LogChannel::Debug);
+            client->connectPhase = Client::ClientConnectionPhase::CLIENT_LETS_GO; //value does not really matter on server end. no other special stuff needed
+            return;
         }
+        //}
 
-        Logging_LogChannel("Sending world to client [%d/%d bytes]", LogChannel::Debug, client->downloadProgress, worldSize);
+        //Logging_LogChannel("Sending world to client [%d/%d bytes]", LogChannel::Debug, client->downloadProgress, worldSize);
     }
 
     // Ticks the network aft
