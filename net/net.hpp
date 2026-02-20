@@ -211,6 +211,12 @@ namespace Capy
         }
     };
 
+    // explicit specialisations for strings
+    template<> char* NetMsg::Read<char*>();
+    template<> const char* NetMsg::Read<const char*>();
+    template<> void NetMsg::Write<char*>(char* thing);
+    template<> void NetMsg::Write<const char*>(const char* thing);
+
     // network mode
     enum NetType
     {
