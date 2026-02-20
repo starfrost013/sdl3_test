@@ -50,7 +50,7 @@ namespace Capy
 
         auto finalSize = header.size.x * header.size.y; // really need to create a property that automates ths
 
-        file->stream.write((char*)world, finalSize);
+        file->stream.write((char*)tileData, finalSize);
         
         CloseWorldFile();
         return true; 
@@ -86,7 +86,7 @@ namespace Capy
             goto done; 
         }
 
-        world = new uint8_t[size];
+        tileData = new uint8_t[size];
 
         Logging_LogChannel("About to load world data for world:\n"
             "Name = %s\n"
@@ -97,7 +97,7 @@ namespace Capy
         );
 
         // read in the world
-        file->stream.read((char*)world, size);
+        file->stream.read((char*)tileData, size);
 
         if (file->stream.bad())
         {

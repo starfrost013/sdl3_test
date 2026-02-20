@@ -46,7 +46,22 @@ namespace Capy
         #define NOISE_STEPS         36
         #define NOISE_MAX_VARIANCE  72       
 
-        void Create();
+        //
+        // CONSTRUCTORS (cannot provide explicit size in constructor for now)
+        //
+
+        ~WorldEntity()
+        {
+            if (tileData)
+                delete tileData;
+        }
+
+        //
+        // METHODS
+        //
+
+        void Init(Vector2<int32_t> size);
+        void Generate();
         bool Serialise(const char* fileName);
         bool Deserialise(const char* fileName);
         void Render(); 
@@ -69,10 +84,11 @@ namespace Capy
             char name[WORLD_NAME_LENGTH];
         };
 
+        // Some stuff we're comfortable with getting but not setting...
         WorldHeader& GetHeader() { return header; };
-        void SetSize(Vector2<int32_t> size) { this->header.size = size; };
         size_t GetSizeInBytes() { return (this->header.size.x * this->header.size.y); }; 
-        
+        uint8_t* GetWorldTileData() { return tileData; };
+
     private: 
 
         WorldHeader header;
@@ -83,7 +99,7 @@ namespace Capy
             * A 2d array of 8-bit tile indicies (max 256 tiles, tile 0 is air)
             * A quadtree generated from that 2d array for collision detection purposes.
         */
-        uint8_t* world;
+        uint8_t* tileData;
         QuadTree<uint8_t*> collision;
         FilesystemFile* file; 
 
@@ -97,4 +113,3 @@ namespace Capy
         void CreateGenerateQuadtree();
     };
 }
-

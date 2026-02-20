@@ -40,4 +40,9 @@ namespace Capy
 
         return msg; 
     }
+
+    NetMsg NetFactory_CreateDownloadPacket(uint32_t size)
+    {
+        return NetMsg(NetMsgType::NETMSG_WORLD_DOWNLOAD_PACKET, nullptr, size);
+    }
 }

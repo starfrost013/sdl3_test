@@ -44,7 +44,6 @@ namespace Capy
 
     bool Game_Init(int32_t argc, char** argv)
     {
-
         logger.settings.channels = (LogChannel)(LogChannel::Debug | LogChannel::Message | LogChannel::Warning | LogChannel::Error | LogChannel::Fatal | LogChannel::SuperFatal);
         logger.settings.destination = (LogDestination)(LogDestination::File | LogDestination::Printf);
         logger.settings.keepOldLogs = false;

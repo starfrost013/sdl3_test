@@ -45,6 +45,11 @@ namespace Capy
         SDL_RenderPresent(game.renderer);
     }
 
+    void Render_SetWindowTitle(const char* wndTitle)
+    {
+        SDL_SetWindowTitle(game.window, wndTitle);
+    }
+
     void Render_Shutdown()
     {
         SDL_DestroyRenderer(game.renderer);

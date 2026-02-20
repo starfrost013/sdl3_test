@@ -29,12 +29,41 @@ namespace Capy
         SendMessage(NetFactory_CreateDisconnectPacket(), serverAddress);
     }
 
+    void Client::ConnectDownloadWorldChunk(NetMsg* msg)
+    {
+        char winTitleBuf[STRING_MAX_GENERIC] = {0};
+        auto totalBytes = world.GetSizeInBytes();
+
+    // get as many messages as possible - special dispensation for fast downloads
+        while (netBufferPtr > 0)
+        {
+            if (msg->header.msgType != NETMSG_WORLD_DOWNLOAD_PACKET)
+            {
+                Logging_LogChannel("ClientConnectionPhase::CLIENT_DOWNLOADING_WORLD: Should be world download packet, but is type %0x :(",
+                LogChannel::Warning, msg->header.msgType);
+            }
+            else
+            {
+                downloadProgress += msg->header.size;
+                snprintf(winTitleBuf, STRING_MAX_GENERIC, "Downloading world [%ld/%ld bytes]...", downloadProgress, totalBytes);
+                Render_SetWindowTitle(winTitleBuf);
+
+                if (downloadProgress >= totalBytes)
+                {
+                    // the server will be done sending by now. anything else is ignored, but we send an ACK to the server
+                    Render_SetWindowTitle("Downloaded world!");
+
+                    connectPhase = ClientConnectionPhase::CLIENT_SPAWN_CHARACTER;
+                    return;
+                }
+            }
+
+            msg = GetMessage();
+        }
+    }
+
     void Client::ConnectOnResolveDone(NetMsg* msg)
     {
-        /* temp */
-        //world.SetSize(Vector2(3000, 400));
-        //world.Create();
-        
         switch (connectPhase)
         {
             case ClientConnectionPhase::CLIENT_HELLO:
@@ -42,6 +71,7 @@ namespace Capy
                 SendMessage(NetFactory_CreateClientHelloPacket(), serverAddress);
                 connectPhase = ClientConnectionPhase::CLIENT_HELLO_SENT;
                 break;
+            // wait to see if we were allowed in
             case ClientConnectionPhase::CLIENT_HELLO_SENT: // TODO: figure out a better way of doing this than extra states that prevents it being sent multiple times
                 if (msg)
                 {
@@ -81,11 +111,13 @@ namespace Capy
                     }
                 }
                 break; 
+            // ask for map header
             case ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD:
                 Logging_LogChannel("Initiating world download...", LogChannel::Debug);
                 SendMessage(NetFactory_CreateDownloadStartPacket_Client(), serverAddress);
                 connectPhase = ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD_SENT;
                 break;
+            // wait for map header
             case ClientConnectionPhase::CLIENT_DOWNLOAD_WORLD_SENT:
                 if (msg)
                 {
@@ -95,10 +127,17 @@ namespace Capy
 
                     Logging_LogChannel("Starting to download map %s %dx%d, %d bytes", LogChannel::Debug,
                     mapName, mapSize.x, mapSize.y, expectedMapBytes);
+
+                    world.Init(mapSize);
                 }
 
                 connectPhase = ClientConnectionPhase::CLIENT_DOWNLOADING_WORLD;
                 break;
+            // client is downloading the world
+            case ClientConnectionPhase::CLIENT_DOWNLOADING_WORLD:
+                ConnectDownloadWorldChunk(msg);
+                break;
+            // we are done
             case ClientConnectionPhase::CLIENT_LETS_GO:     // we are done
                 SetState(ClientState::CLIENT_CONNECTED);
                 break;

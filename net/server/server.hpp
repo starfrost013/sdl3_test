@@ -60,13 +60,16 @@ namespace Capy
 
         // intenral tick methods
         void TickNetwork();
-        void TickNetwork_ConnectedClientMessage(Client* client, NetMsg* msg);
+        void TickNetwork_ClientMessage(Client* client, NetMsg* msg);
+        void TickDownloads();
 
+    
         // client related methods
         bool ClientIsNew(NET_Address* address);
         void ClientNew(NetMsg* hello);
         void ClientRemove(Client* client);
         void ClientStartWorldDownload(Client* client);
+        void ClientSendWorldChunk(Client* client);
         
         void SetMap();
         Client* GetMessageSender(NET_Address* address);

@@ -79,6 +79,13 @@ namespace Capy
         HELLO_INVALID_VERSION = 5,                                  // Incorrect version
     };
 
+    /* 
+        Net system init and shutdown
+        Called "CapyNet" to prevent confusion with SDL3_NET "NET" functions
+    */
+    void CapyNet_Init();
+    void CapyNet_Shutdown();
+
     // 
     // Network message 
     // Everything is sent over UDP and buffered internally
@@ -239,7 +246,7 @@ namespace Capy
             // but they could theoretically be sent faster. Therefore we have a buffer to put in
             static const int32_t NET_BUFFER_SIZE = 64;    // Maximum number of packets in the buffer that can be serviced at any one time
             NetMsg netBuffer[NET_BUFFER_SIZE];  
-            int32_t netBufferPtr = 0;
+            int32_t netBufferPtr = -1;
 
             WorldEntity world;              // replicated from server
     };
@@ -251,11 +258,7 @@ namespace Capy
     NetMsg NetFactory_CreateDisconnectPacket();
     NetMsg NetFactory_CreateDownloadStartPacket_Client();
     NetMsg NetFactory_CreateDownloadStartPacket_Server(const char* mapName, Vector2<int32_t> size, uint32_t expectedBytes);
+    NetMsg NetFactory_CreateDownloadPacket(uint32_t size);
 
-    /* 
-        Net system init 
-        Called "CapyNet" to prevent confusion with exising system
-    */
-    void CapyNet_Init();
-    void CapyNet_Shutdown();
+
 }

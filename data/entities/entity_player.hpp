@@ -9,7 +9,7 @@ namespace Capy
     class PlayerEntity : public Entity 
     {
         public:
-            virtual void Create();              // Called on object creation.
+            virtual void Generate();              // Called on object creation.
             virtual void Tick();                // Called every tick.
             virtual void Render();              // Called every frame.
             virtual void Destroy();             // Called on object destruction

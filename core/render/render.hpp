@@ -12,5 +12,6 @@ namespace Capy
     bool Render_Init();                 // Initialises the renderer
     void Render_Clear();            
     void Render_Present();
+    void Render_SetWindowTitle(const char* wndTitle);
     void Render_Shutdown();
 }

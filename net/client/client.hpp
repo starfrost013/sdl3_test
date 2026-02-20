@@ -56,9 +56,6 @@ namespace Capy
         ClientState GetState();
         void SetState(ClientState _state);
 
-        // If the client exists on the server (so we can use faster static allocation)
-        bool exists;
-
     private:
         int id;                         // client unique id
         char name[CLIENT_NAME_LENGTH];  // client name
@@ -68,7 +65,12 @@ namespace Capy
         // only valid if state == CLIENT_CONNECTING
         ClientConnectionPhase connectPhase;
 
+        // if client is downloading a file, store progress here
+        // probably a tmeporary implementation
+        size_t downloadProgress; 
+
         void ConnectOnResolveDone(NetMsg* msg);
+        void ConnectDownloadWorldChunk(NetMsg* msg);
         void TickNetwork();
 
         void SendMessage(NetMsg msg, NET_Address* address);
@@ -79,6 +81,7 @@ namespace Capy
             NET_Address* address; 
             char ipStr[CLIENT_IP_LENGTH];
             uint16_t port; 
+
         }; 
 
         ServerOnlyClientInfo serverOnly;

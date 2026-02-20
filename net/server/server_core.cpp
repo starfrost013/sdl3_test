@@ -34,8 +34,8 @@ namespace Capy
         }
         else
         {
-            world.SetSize(Vector2(int32_t(mapSizeX->value), int32_t(mapSizeY->value)));
-            world.Create();
+            world.Init(Vector2(int32_t(mapSizeX->value), int32_t(mapSizeY->value)));
+            world.Generate();
         }
     }
             
@@ -53,16 +53,58 @@ namespace Capy
     {
         WorldEntity::WorldHeader header = world.GetHeader();
         SendMessage(NetFactory_CreateDownloadStartPacket_Server(map->name, header.size, world.GetSizeInBytes()), client);
+
+        client->connectPhase = Client::ClientConnectionPhase::CLIENT_DOWNLOADING_WORLD;
+    }
+
+    // Fill the client's buffer with world data every chunk. (Should only need a slight refactor for generic downloads, but we probably won't need those.)
+    void Server::ClientSendWorldChunk(Client* client)
+    {
+        auto worldSize = world.GetSizeInBytes();
+
+        // don't send too many at once
+        for (auto i = 0; i < (NET_BUFFER_SIZE / 4); i++)
+        {
+            auto size = 0;
+            size_t remainingBytes = (worldSize - client->downloadProgress);
+
+            if (remainingBytes < MAX_PACKET_SIZE)
+                size = remainingBytes;
+            else    
+                size = MAX_PACKET_SIZE;
+
+            NetMsg packetMsg = NetFactory_CreateDownloadPacket(size);
+
+            // we don't care about size checks since we know the size, just smash it in
+            packetMsg.header.size = size;
+            uint8_t* tileData = world.GetWorldTileData();
+
+            memcpy(packetMsg.msgData, (void*)&tileData[client->downloadProgress], size);
+            SendMessage(packetMsg, client); 
+
+            client->downloadProgress += size;
+
+            if (client->downloadProgress >= worldSize)
+            {
+                Logging_LogChannel("Download is done!", LogChannel::Debug);
+                client->connectPhase = Client::ClientConnectionPhase::CLIENT_LETS_GO; //value does not really matter on server end. no other special stuff needed
+                return;
+            }
+
+        }
+
+        Logging_LogChannel("Sending world to client [%d/%d bytes]", LogChannel::Debug, client->downloadProgress, worldSize);
     }
 
     // Ticks the network aft
-    void Server::TickNetwork_ConnectedClientMessage(Client* client, NetMsg* msg)
-    {
+    void Server::TickNetwork_ClientMessage(Client* client, NetMsg* msg)
+    {  
         switch (msg->header.msgType)
         {
             case NetMsgType::NETMSG_WORLD_DOWNLOAD_START:
                 ClientStartWorldDownload(client);
                 client->connectPhase = Client::CLIENT_DOWNLOADING_WORLD; // server only cares about some of this
+                Logging_LogChannel("Downloading world to client (not cached)", LogChannel::Message);
                 break;
             case NetMsgType::NETMSG_DISCONNECT:
                 Logging_LogChannel("Client disconnect from %s", LogChannel::Debug, client->serverOnly.ipStr);
@@ -77,9 +119,25 @@ namespace Capy
         SendMessageToPort(msg, client->serverOnly.address, client->serverOnly.port);
     }
 
+    // is this a good idea?
+    void Server::TickDownloads()
+    {
+        for (Client* client : clients)
+        {
+            if (client
+            && client->connectPhase == Client::ClientConnectionPhase::CLIENT_DOWNLOADING_WORLD)
+            {
+                ClientSendWorldChunk(client);
+            }
+        }
+    }
+
     // Run while server is in ServerState::UPDATE_RUNNING
     void Server::TickNetwork()
     {
+        // first tick downloads
+        TickDownloads();
+
         NetMsg* msg = GetMessage();
 
         if (msg 
@@ -101,7 +159,7 @@ namespace Capy
                     }
                     
                     // not fully connected until character spawn request is fulfilled
-                    TickNetwork_ConnectedClientMessage(client, msg);
+                    TickNetwork_ClientMessage(client, msg);
 
                     break;
             }

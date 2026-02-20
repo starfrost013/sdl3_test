@@ -67,6 +67,28 @@ namespace Capy
         { 64, &WorldTileLava },
     };
 
+    void WorldEntity::Init(Vector2<int32_t> size)
+    {
+        header.size.x = size.x;
+        header.size.y = size.y;
+        
+        if (header.size.x == 0
+        || header.size.y == 0)
+        {
+            Logging_LogChannel("Tried to create a world with a size of 0 in at least one dimension!", LogChannel::Fatal);
+            return;
+        }
+        
+        uint32_t mapSizeBytes = header.size.x * header.size.y;
+
+        // this is messed up when logged
+        Logging_LogChannel("Allocating memory for map (size will be %d bytes, %d x %d tiles, %d x %d pixels)", 
+            LogChannel::Debug, 
+        mapSizeBytes, header.size.x, header.size.y, (header.size.x * TILE_SIZE_X), (header.size.y * TILE_SIZE_Y));
+
+        tileData = new uint8_t[mapSizeBytes]; 
+    }
+
     void WorldEntity::CreateGenerateNoise()
     {
         Logging_LogChannel("[Phase 1] Generating noisemap (%d points, %d variance)", LogChannel::Debug,
@@ -80,14 +102,6 @@ namespace Capy
 
     void WorldEntity::CreateGenerateWorld()
     {
-
-        if (header.size.x == 0
-        || header.size.y == 0)
-        {
-            Logging_LogChannel("Tried to create a world with a size of 0 in at least one dimension.", LogChannel::Fatal);
-            return;
-        }
-
         /* 
             optimisation:
             
@@ -101,15 +115,6 @@ namespace Capy
 
         for (IndexToTileMap::const_iterator it = tileIndices.begin(); it != tileIndices.end(); ++it)
             pointersToIndicesMap.insert({ it->second, it->first });
-
-        uint32_t mapSizeBytes = header.size.x * header.size.y;
-
-        // this is messed up when logged
-        Logging_LogChannel("[Phase 2] Allocating memory for map (size will be %d bytes, %d x %d tiles, %d x %d pixels)", 
-            LogChannel::Debug, 
-        mapSizeBytes, header.size.x, header.size.y, (header.size.x * TILE_SIZE_X), (header.size.y * TILE_SIZE_Y));
-
-        world = new uint8_t[mapSizeBytes];
 
         // 32bpp so 1 index = 4 bytes
         uint32_t firstGroundY = 0, data = 0;        
@@ -215,7 +220,7 @@ namespace Capy
 
                 uint32_t index = (adjustedY * header.size.x) + x;
 
-                world[index] = pointersToIndicesMap[currentTile];
+                tileData[index] = pointersToIndicesMap[currentTile];
             }
 
             // reset step counter
@@ -266,10 +271,9 @@ namespace Capy
     }
 
 
-    void WorldEntity::Create()
+    void WorldEntity::Generate()
     {
         Logging_LogChannel("World Generation:", LogChannel::Debug);
-
 
         CreateGenerateNoise();
         CreateGenerateWorld();
@@ -313,7 +317,7 @@ namespace Capy
                 }
 
                 uint32_t worldIndex = (yTile * header.size.x) + xTile;
-                uint8_t index = world[worldIndex];
+                uint8_t index = tileData[worldIndex];
 
                 // don't draw out of bounds as random 'tiles' just in case - might not be the fastest code
                 if (index > (tileIndices.size()))
