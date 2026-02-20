@@ -129,9 +129,9 @@ namespace Capy
                     mapName, mapSize.x, mapSize.y, expectedMapBytes);
 
                     world.Init(mapSize);
+                    connectPhase = ConnectPhase::CLIENT_DOWNLOADING_WORLD;
                 }
 
-                connectPhase = ConnectPhase::CLIENT_DOWNLOADING_WORLD;
                 break;
             // client is downloading the world
             case ConnectPhase::CLIENT_DOWNLOADING_WORLD:

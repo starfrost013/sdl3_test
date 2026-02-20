@@ -21,16 +21,22 @@ Notes:
 * There are no controls.
 * If the server is there, you will see the world.
 * "Win64" contains a Windows binary using (MinGW-w64 GCC 15.2.0 Windows 11 24H2), "Linux64" contains a Linux binary (GCC 13.3.0, Mint 22.3). The experience should be identical.
+* World download takes a long time, this will be fixed in the future.
 
 Command line options:
 -memdebug - log all memory allocations (huge amounts of spam)
+-netdebug - some network debug stuff
 +set - set convar.
 
 Convars that exist:
+    - map - Map name.
+    - mapSizeX - Map size X to create on the server. Must be above zero.
+    - mapSizeY - Map size Y to create on the server. Must be above zero.
     - fsBasedir - base directory for filesystem operations
     - netMaxPlayers - max players (must be 1-32, default is 32) 
     - netMode - network mode (0 = client, 1 = listen server - doesn't work yet, 2 = dedicated server)
     - netPort - port
     - netServerAddress - server address
+    - playerName - player name
 
 

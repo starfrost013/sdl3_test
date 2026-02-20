@@ -102,7 +102,6 @@ namespace Capy
         {
             case NetMsgType::NETMSG_WORLD_DOWNLOAD_START:
                 ClientStartWorldDownload(client);
-                client->connectPhase = Client::CLIENT_DOWNLOADING_WORLD; // server only cares about some of this
                 Logging_LogChannel("Downloading world to client (not cached)", LogChannel::Message);
                 break;
             case NetMsgType::NETMSG_DISCONNECT:
