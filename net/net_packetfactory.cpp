@@ -41,6 +41,16 @@ namespace Capy
         return msg; 
     }
 
+    NetMsg NetFactory_CreateEntitySpawnPacket()
+    {
+        NetMsg msg = NetMsg(NetMsgType::NETMSG_WORLD_SPAWN_ENTITY, nullptr, MAX_PACKET_SIZE);
+    }
+
+    NetMsg NetFactory_CreateEntityUpdatePacket()
+    {
+
+    }
+
     NetMsg NetFactory_CreateDownloadPacket(uint32_t size)
     {
         return NetMsg(NetMsgType::NETMSG_WORLD_DOWNLOAD_PACKET, nullptr, size);

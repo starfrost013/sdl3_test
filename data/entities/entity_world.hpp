@@ -30,7 +30,7 @@ namespace Capy
         WorldEntity
         All other entities
     */
-    class WorldEntity : public Entity 
+    class WorldEntity 
     {
     public: 
         // let client access tileData

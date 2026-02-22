@@ -7,8 +7,6 @@
 #include <Capy.hpp>
 #include <data/entities/entity_world.hpp>
 
-
-
 namespace Capy
 {
     //
@@ -19,9 +17,9 @@ namespace Capy
     #define MAX_CLIENTS                 32
 
     #define NETMSG_MAGIC                0x00FF55AA      // basic check that the message was received (tcp but still)
-    #define MAX_PACKET_SIZE             512             // max reliable, may increase later
+    #define MAX_PACKET_SIZE             1400            // maximum reliable packet size for IP/Ethernet (1400 bytes)
     #define PACKET_RESIZE_FACTOR        1.5             // amount packets get resized by when they are full
-    #define NET_PROTOCOL_VERSION    2               // network protocol version (1 = pre-alpha 4.0/5.0, 2 = pre-alpha 6)
+    #define NET_PROTOCOL_VERSION        3               // network protocol version (1 = pre-alpha 4.0/5.0, 2 = pre-alpha 6)
     
     // 
     // CVARS
@@ -63,9 +61,8 @@ namespace Capy
 
         NETMSG_SERVER_HELLO = NETMSG_IS_SERVER_MESSAGE | 0x0,
         NETMSG_SERVER_HEARTBEAT = NETMSG_IS_SERVER_MESSAGE | 0x1,   // Server heartbeat (if nothing for 5 seconds, disconnect)  
-        NETMSG_UPDATE_ENTITY = NETMSG_IS_SERVER_MESSAGE | 0x2,      // Server update entity                            
 
-        NETMSG_LAST_VALID = NETMSG_UPDATE_ENTITY,                   // Sentinel value
+        NETMSG_LAST_VALID = NETMSG_SERVER_HEARTBEAT,                   // Sentinel value
     };
 
     // enumerates network hello response statuses from the server to the client
