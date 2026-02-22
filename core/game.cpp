@@ -14,7 +14,7 @@
 #include <net/server/server.hpp>
 #include <core/game.hpp>
 #include <data/entities/entity_player.hpp>
-#include <data/entities/entity_world.hpp>
+#include <data/world/world.hpp>
 
 namespace Capy
 {

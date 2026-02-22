@@ -5,7 +5,7 @@
 #pragma once
 #include <SDL3_net/SDL_net.h>
 #include <Capy.hpp>
-#include <data/entities/entity_world.hpp>
+#include <data/world/world.hpp>
 
 namespace Capy
 {
@@ -250,7 +250,7 @@ namespace Capy
             NetMsg netBuffer[NET_BUFFER_SIZE];  
             int32_t netBufferPtr = -1;
 
-            WorldEntity world;              // replicated from server
+            World world;              // replicated from server
 
             void GetAllIncomingMessages();  // add incoming messages to the buffer 
             void DoneMessage(NetMsg* msg);  // discards a message when done

@@ -4,7 +4,7 @@
 
 #include <core/game.hpp>
 #include <core/render/render.hpp>
-#include <data/entities/entity_world.hpp>
+#include <data/world/world.hpp>
 #include <net/client/client.hpp>
 
 namespace Capy

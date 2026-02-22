@@ -8,6 +8,19 @@ namespace Capy
     // NEVER EVER EVER WRITE CODE LIKE THIS!
     std::string consoleBuf;
 
+    void Server::ConsoleUpdate()
+    {
+        // maybe a bad idea
+        if (consoleInputProc.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+        {
+            Command_Execute(consoleInputProc.get(), CommandType::COMMAND_CONSOLE);
+
+            // restart
+            consoleInputProc = std::async(std::launch::async, &Server::ConsoleInputThread);
+        }
+            
+    }
+
     // Get console input asynchronously.
     char* Server::ConsoleInputThread()
     {

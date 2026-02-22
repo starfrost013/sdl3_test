@@ -3,7 +3,7 @@
 #include <Capy.hpp>
 #include <core/game.hpp>
 #include <data/entities/entity.hpp>
-#include <data/entities/entity_world.hpp>
+#include <data/world/world.hpp>
 #include <util/util.hpp>
 
 namespace Capy
@@ -67,7 +67,7 @@ namespace Capy
         { 64, &WorldTileLava },
     };
 
-    void WorldEntity::Init(Vector2<int32_t> size)
+    void World::Init(Vector2<int32_t> size)
     {
         header.size.x = size.x;
         header.size.y = size.y;
@@ -89,7 +89,7 @@ namespace Capy
         tileData = new uint8_t[mapSizeBytes]; 
     }
 
-    void WorldEntity::CreateGenerateNoise()
+    void World::CreateGenerateNoise()
     {
         Logging_LogChannel("[Phase 1] Generating noisemap (%d points, %d variance)", LogChannel::Debug,
         NOISE_STEPS, NOISE_MAX_VARIANCE);
@@ -100,7 +100,7 @@ namespace Capy
         }
     }
 
-    void WorldEntity::CreateGenerateWorld()
+    void World::CreateGenerateWorld()
     {
         /* 
             optimisation:
@@ -230,7 +230,7 @@ namespace Capy
 
     }
     
-    void WorldEntity::CreateGenerateQuadtree()
+    void World::CreateGenerateQuadtree()
     {
         Logging_LogChannel("[Phase 4] Terrain generation done. Generating quadtree for collision... (wip)", LogChannel::Debug);
 
@@ -271,7 +271,7 @@ namespace Capy
     }
 
 
-    void WorldEntity::Generate()
+    void World::Generate()
     {
         Logging_LogChannel("World Generation:", LogChannel::Debug);
 
@@ -282,7 +282,7 @@ namespace Capy
     }
 
 
-    void WorldEntity::Render()
+    void World::Render()
     {
         uint32_t* texturePixels;  
         uint32_t index; 
@@ -376,12 +376,12 @@ done:
         SDL_RenderTexture(game.renderer, game.renderTarget, NULL, NULL);
     }
 
-    void WorldEntity::Tick()
+    void World::Tick()
     {
 
     }
 
-    void WorldEntity::Destroy()
+    void World::Destroy()
     {
 
     }

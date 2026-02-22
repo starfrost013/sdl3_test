@@ -57,7 +57,7 @@ namespace Capy
 
     void Server::ClientStartWorldDownload(Client* client)
     {
-        WorldEntity::WorldHeader header = world.GetHeader();
+        World::WorldHeader header = world.GetHeader();
         SendMessage(NetFactory_CreateDownloadStartPacket_Server(map->name, header.size, world.GetSizeInBytes()), client);
 
         client->connectPhase = Client::ConnectPhase::CLIENT_DOWNLOADING_WORLD;
@@ -211,17 +211,7 @@ namespace Capy
 
         // get the latest console lines and shove them into the command system
         if (IsDedicated())
-        {
-            // maybe a bad idea
-            if (consoleInputProc.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
-            {
-                Command_Execute(consoleInputProc.get(), CommandType::COMMAND_CONSOLE);
-
-                // restart
-                consoleInputProc = std::async(std::launch::async, &Server::ConsoleInputThread);
-            }
-                
-        }
+            ConsoleUpdate();
     }
 
     void Server::Shutdown()

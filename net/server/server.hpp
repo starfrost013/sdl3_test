@@ -57,6 +57,7 @@ namespace Capy
         uint16_t port;
 
         // console input
+        void ConsoleUpdate();
         static char* ConsoleInputThread();
         std::future<char*> consoleInputProc;
 

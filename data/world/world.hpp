@@ -30,7 +30,7 @@ namespace Capy
         WorldEntity
         All other entities
     */
-    class WorldEntity 
+    class World 
     {
     public: 
         // let client access tileData
@@ -51,7 +51,7 @@ namespace Capy
         // CONSTRUCTORS (cannot provide explicit size in constructor for now)
         //
 
-        ~WorldEntity()
+        ~World()
         {
             if (tileData)
                 delete tileData;

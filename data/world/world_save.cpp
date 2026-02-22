@@ -1,6 +1,6 @@
 // entity_world.cpp: World load/save code
 
-#include <data/entities/entity_world.hpp>
+#include <data/world/world.hpp>
 #include <core/game.hpp>
 #include <data/entities/entity.hpp>
 #include <util/util.hpp>
@@ -9,7 +9,7 @@
 namespace Capy
 {
     // Open the world file (returns true if it succeeded or is already open, returns false if it failed)
-    bool WorldEntity::OpenWorldFile(const char* fileName = WORLD_DEFAULT_FILENAME, bool tryCreate = true)
+    bool World::OpenWorldFile(const char* fileName = WORLD_DEFAULT_FILENAME, bool tryCreate = true)
     {
         // create the file if it does not exist
         if (!file)
@@ -28,13 +28,13 @@ namespace Capy
         return true; 
     }
 
-    void WorldEntity::CloseWorldFile()
+    void World::CloseWorldFile()
     {
         Filesystem::Close(file);
     }
 
     // Save level
-    bool WorldEntity::Serialise(const char* fileName = WORLD_DEFAULT_FILENAME)
+    bool World::Serialise(const char* fileName = WORLD_DEFAULT_FILENAME)
     {        
         Logging_LogChannel("Serialising level to %s", LogChannel::Debug, fileName);
 
@@ -57,7 +57,7 @@ namespace Capy
     }
 
     // Called during level loading
-    bool WorldEntity::Deserialise(const char* fileName = WORLD_DEFAULT_FILENAME)
+    bool World::Deserialise(const char* fileName = WORLD_DEFAULT_FILENAME)
     {        
         Logging_LogChannel("Deserialising level from %s", LogChannel::Debug, fileName);
 

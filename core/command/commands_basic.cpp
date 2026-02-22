@@ -1,4 +1,5 @@
 #include "command.hpp"
+#include <core/game.hpp>
 #include <core/command/command.hpp>
 
 //
@@ -15,6 +16,7 @@ namespace Capy
     void Command_Echo(CommandType origin);
 #endif
     void Command_CvarList(CommandType origin);
+    void Command_Shutdown(CommandType origin);
 
     void Command_CreateBasicCommands()
     {
@@ -32,7 +34,7 @@ namespace Capy
         Command_Add("memstats", CommandType::COMMAND_GLOBAL, Command_MemStats);
         Command_Add("meminfo", CommandType::COMMAND_GLOBAL, Command_MemStats); // alias
         Command_Add("cvarlist", CommandType::COMMAND_GLOBAL, Command_CvarList); // alias
-
+        Command_Add("shutdown", CommandType::COMMAND_GLOBAL, Command_Shutdown); // alias
     }
 
     void Command_CvarCreate(CommandType origin)
@@ -86,5 +88,10 @@ namespace Capy
     void Command_CvarList(CommandType origin)
     {
         Cvar_List();
+    }
+
+    void Command_Shutdown(CommandType origin)
+    {
+        Game_Shutdown();
     }
 }
