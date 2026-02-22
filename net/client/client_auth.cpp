@@ -31,7 +31,7 @@ namespace Capy
 
     void Client::ConnectDownloadWorldChunk(NetMsg* msg)
     {
-        char winTitleBuf[STRING_MAX_GENERIC] = {0};
+        char winTitleBuf[STRING_MAX] = {0};
         auto totalBytes = world.GetSizeInBytes();
 
         if (!msg)
@@ -47,7 +47,7 @@ namespace Capy
             memcpy(&world.tileData[downloadProgress], msg->msgData, msg->header.size);
             
             downloadProgress += msg->header.size;
-            snprintf(winTitleBuf, STRING_MAX_GENERIC, "Downloading world [%ld/%ld bytes]...", downloadProgress, totalBytes);
+            snprintf(winTitleBuf, STRING_MAX, "Downloading world [%ld/%ld bytes]...", downloadProgress, totalBytes);
             Render_SetWindowTitle(winTitleBuf);
             Logging_LogChannel(winTitleBuf, LogChannel::Debug);
 

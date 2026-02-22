@@ -55,11 +55,9 @@ namespace Capy
             std::cout << "Catastrophic non-fatal error: SSLS Logger Initialisation FAILED (0xDEADDEAD). You won't get any logging!\n" << std::endl;            
 
         Game_PrintBuildInfo();
-
         Cmdline_Init(argc, argv);
-
-        Filesystem::Init();
-        
+        Command_Init();
+        Filesystem::Init();    
         CapyNet_Init();
 
         NetType mode = static_cast<NetType>(int(netMode->value));

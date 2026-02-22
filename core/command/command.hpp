@@ -1,0 +1,59 @@
+#pragma once
+#include <Capy.hpp>
+#include <util/util.hpp>
+
+//
+// command.hpp: Command Subsystem
+// 23 February 2025
+// 22 February 2026 - Ported to Capybara Wars
+//
+
+namespace Capy
+{
+
+    // Flags for the command - where did it come from
+    // "Command" is to prevent conflict with client class
+    enum CommandType
+    {
+        COMMAND_CLIENT = 1,
+        COMMAND_CONSOLE = (1 << 1),
+        COMMAND_SERVER = (1 << 2),
+
+        // A special value that indicates it can be used everywhere.
+        COMMAND_GLOBAL = COMMAND_CLIENT | COMMAND_CONSOLE | COMMAND_SERVER,
+    };
+
+    // Defines a command.
+    struct Command
+    {
+        const char* name;                           // The name of this command.
+        CommandType type;                           // Determines where in the engine the command is allowed to come from. 
+        void (*onExecute)(CommandType origin);     // Function to run when this command is executed.
+        Command* prev;
+        Command* next; 
+    };
+    
+    extern Command* commandHead;
+    extern Command* commandTail;
+
+    void Command_Init();
+    Command* Command_Add(const char* name, CommandType type, void (*on_execute)(CommandType origin));       // Add a command to the command system.
+    Command* Command_FindByName(const char* name);                                                          // Find a command by its name
+
+    uint32_t Command_Argc();                                                                                // Get the parameter count of the last executed command.
+    const char* Command_Argv(uint32_t argv);                                                                // Get a parameter of the last executed command.
+    const char* Command_AllTextAfterName();                                                              // Get all text after the name of the last executed command.
+
+    void Command_Execute(const char* cmd, CommandType origin);                                              // Execute a command string.
+    void Command_ExecuteGlobal(const char* cmd);                                                            // Execute a command that can be executed from anywhere.
+    
+    void Command_Shutdown();                                                                                // Shut down the command system.
+
+    // GLOBAL COMMAND CREATION FUNCTIONS
+    
+    void Command_CreateBasicCommands();
+
+    // COMMANDS STORED IN DIFFERENT FILES
+    void Command_Exec(CommandType origin);
+    void Command_MemStats(CommandType origin);
+}

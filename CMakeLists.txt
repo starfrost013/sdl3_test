@@ -29,6 +29,12 @@ add_executable (Capy
 # Core - command line
 "core/cmdline/cmdline.cpp"
 
+# Core - command system
+"core/command/command.cpp"
+"core/command/commands_basic.cpp"
+"core/command/commands_exec.cpp"
+"core/command/commands_memory.cpp"
+
 # Core - Convar
 "core/cvar/cvar.cpp"
 
@@ -105,7 +111,7 @@ elseif (LINUX)
   # horrible hack for origin rpath (TEMP, we will static link everything)
   install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so DESTINATION ${CAPY_INSTALL_DIR})
   install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so.0 DESTINATION ${CAPY_INSTALL_DIR})
-  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so.0.4.1 DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so.0.4.3 DESTINATION ${CAPY_INSTALL_DIR}) #ireally need to fix this
   install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/libSDL3_net.so DESTINATION ${CAPY_INSTALL_DIR})
   install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/libSDL3_net.so.0 DESTINATION ${CAPY_INSTALL_DIR})
   install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/libSDL3_net.so.0.0.0 DESTINATION ${CAPY_INSTALL_DIR})

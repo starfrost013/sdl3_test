@@ -24,15 +24,16 @@
 // Some base systems that are useful to have everywhere, as long as they don't have any other dependencies,
 // or those dependencies can be resolved by using forward declarations
 #include <core/cmdline/cmdline.hpp>
+#include <core/command/command.hpp>
 #include <core/cvar/cvar.hpp>
 #include <core/filesystem/filesystem.hpp>
 
-
 namespace Capy
 {
-    #define STRING_EMPTY                ""
-    #define STRING_MAX_GENERIC          256     // Generic max string length
-    #define ARRAY_SIZE(x)               sizeof(x)/sizeof(x[0])
+    #define STRING_EMPTY                    ""
+    #define STRING_WHITESPACE_DELIMITERS    " \n\r\t\f\v"
+    #define STRING_MAX                      256     // Generic max string length
+    #define ARRAY_SIZE(x)                   sizeof(x)/sizeof(x[0])
 
     #define APP_NAME "Capybara Wars Project - CONFIDENTIAL"
     #define APP_VERSION "Pre-Alpha 7.0"

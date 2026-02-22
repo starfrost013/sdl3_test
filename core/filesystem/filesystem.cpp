@@ -21,9 +21,9 @@ namespace Capy
 
     FilesystemFile* Filesystem::Open(const char* path, FilesystemFileMode mode)
     {
-        char finalPathBuf[STRING_MAX_GENERIC] = {0};
+        char finalPathBuf[STRING_MAX] = {0};
 
-        snprintf(finalPathBuf, STRING_MAX_GENERIC, "%s%s", fsBasedir->string, path);
+        snprintf(finalPathBuf, STRING_MAX, "%s%s", fsBasedir->string, path);
 
         FilesystemFile* ff = new FilesystemFile;
         
