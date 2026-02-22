@@ -8,6 +8,7 @@
 
 // STL Includes
 #include <cstring>
+#include <future>
 #include <fstream>
 #include <iostream>
 #include <unordered_map>

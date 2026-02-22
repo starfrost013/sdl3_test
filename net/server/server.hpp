@@ -44,6 +44,7 @@ namespace Capy
 
         void Init() override; 
         void Tick() override;
+        void Frame() override; 
         void Shutdown() override; 
         
         ServerState GetState();
@@ -55,6 +56,10 @@ namespace Capy
         int32_t numClients; 
         uint16_t port;
 
+        // console input
+        static char* ConsoleInputThread();
+        std::future<char*> consoleInputProc;
+
         // send message
         void SendMessage(NetMsg msg, Client* client);
 
@@ -62,7 +67,6 @@ namespace Capy
         void TickNetwork();
         void TickNetwork_ClientMessage(Client* client, NetMsg* msg);
         void TickDownloads();
-
     
         // client related methods
         bool ClientIsNew(NET_Address* address);
@@ -73,5 +77,6 @@ namespace Capy
         
         void SetMap();
         Client* GetMessageSender(NET_Address* address);
+        
     };
 }

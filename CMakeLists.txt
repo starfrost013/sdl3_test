@@ -5,6 +5,8 @@
 
 cmake_minimum_required (VERSION 3.10)
 
+option(DEDICATED_SERVER "Dedicated server only" OFF)
+
 project("Capy")
 
 add_subdirectory(external/sdl3 EXCLUDE_FROM_ALL)
@@ -50,6 +52,7 @@ add_executable (Capy
 
 # Net - Server
 "net/server/server_auth.cpp"
+"net/server/server_console.cpp"
 "net/server/server_core.cpp"
 
 # Net - Client
@@ -88,6 +91,12 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
   target_compile_definitions(Capy PRIVATE RELEASE)
   set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
+
+endif()
+
+# Enable dedicated server if required
+if(DEDICATED_SERVER)
+  target_compile_definitions(Capy PRIVATE DEDICATED)
 endif()
 
 # Static link

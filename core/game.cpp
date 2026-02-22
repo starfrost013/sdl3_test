@@ -60,7 +60,7 @@ namespace Capy
         Filesystem::Init();    
         CapyNet_Init();
 
-        NetType mode = static_cast<NetType>(int(netMode->value));
+        NetModeEnum mode = static_cast<NetModeEnum>(int(netMode->value));
 
         switch (mode)
         {
@@ -99,7 +99,7 @@ namespace Capy
 
     void Game_Run()
     {
-        NetType mode = static_cast<NetType>(int(netMode->value));
+        NetModeEnum mode = static_cast<NetModeEnum>(int(netMode->value));
 
         /* Update the game world, using nanoseconds for more precision */
         uint64_t time_now = SDL_GetTicksNS();

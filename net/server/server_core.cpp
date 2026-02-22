@@ -16,6 +16,12 @@ namespace Capy
         socket = NET_CreateDatagramSocket(NULL, port);
         SetMap();
 
+        if (IsDedicated())
+        {
+            // non-blocking console input
+            consoleInputProc = std::async(std::launch::async, &Server::ConsoleInputThread);
+        }
+
         SetState(ServerState::SERVER_RUNNING);
         Logging_LogChannel("Server initialised!", LogChannel::Message);
     }
@@ -196,6 +202,25 @@ namespace Capy
             case ServerState::SERVER_DEAD:
                 return;
             
+        }
+    }
+
+    void Server::Frame()
+    {
+        NetMode::Frame();
+
+        // get the latest console lines and shove them into the command system
+        if (IsDedicated())
+        {
+            // maybe a bad idea
+            if (consoleInputProc.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+            {
+                Command_Execute(consoleInputProc.get(), CommandType::COMMAND_CONSOLE);
+
+                // restart
+                consoleInputProc = std::async(std::launch::async, &Server::ConsoleInputThread);
+            }
+                
         }
     }
 

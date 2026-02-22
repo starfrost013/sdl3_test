@@ -215,7 +215,7 @@ namespace Capy
     template<> void NetMsg::Write<const char*>(const char* thing);
 
     // network mode
-    enum NetType
+    enum NetModeEnum
     {
         NETMODE_CLIENT = 0,             // Client only
         NETMODE_SERVER_LISTEN = 1,      // Server and client
@@ -239,8 +239,7 @@ namespace Capy
 
             
         protected:
-            void DoneMessage(NetMsg* msg);  // discard of a message when done
-            void GetAllIncomingMessages();
+
 
             size_t seqNumber;               // single source of truth for UDP packet sequencing (since it can be out of order, etc.)
             NET_DatagramSocket* socket;     // socket to use
@@ -252,6 +251,14 @@ namespace Capy
             int32_t netBufferPtr = -1;
 
             WorldEntity world;              // replicated from server
+
+            void GetAllIncomingMessages();  // add incoming messages to the buffer 
+            void DoneMessage(NetMsg* msg);  // discards a message when done
+            
+            // check mode
+            bool IsClient() { return (static_cast<NetModeEnum>(netMode->value) == NETMODE_CLIENT); }; 
+            bool IsDedicated() { return (static_cast<NetModeEnum>(netMode->value) == NETMODE_SERVER_DEDICATED); }; 
+            bool IsListen() { return (static_cast<NetModeEnum>(netMode->value) == NETMODE_SERVER_LISTEN); }; 
     };
 
     /* Net packet factory stuff */
