@@ -1,8 +1,8 @@
 // entity_world.cpp: World load/save code
 
-#include <data/world/world.hpp>
+#include <world/world.hpp>
 #include <core/game.hpp>
-#include <data/entities/entity.hpp>
+#include <entity/entity.hpp>
 #include <util/util.hpp>
 
 

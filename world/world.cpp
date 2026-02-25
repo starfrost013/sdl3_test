@@ -2,8 +2,8 @@
 
 #include <Capy.hpp>
 #include <core/game.hpp>
-#include <data/entities/entity.hpp>
-#include <data/world/world.hpp>
+#include <entity/entity.hpp>
+#include <world/world.hpp>
 #include <util/util.hpp>
 
 namespace Capy
@@ -226,8 +226,6 @@ namespace Capy
             // reset step counter
             stepCurrent = stepProgress = 0;
         }  
-
-
     }
     
     void World::CreateGenerateQuadtree()

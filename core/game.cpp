@@ -13,8 +13,8 @@
 #include <net/client/client.hpp>
 #include <net/server/server.hpp>
 #include <core/game.hpp>
-#include <data/entities/entity_player.hpp>
-#include <data/world/world.hpp>
+#include <entity/entity_player.hpp>
+#include <world/world.hpp>
 
 namespace Capy
 {

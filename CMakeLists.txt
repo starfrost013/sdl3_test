@@ -60,11 +60,11 @@ add_executable (Capy
 "net/client/client_core.cpp"
 
 # Entity
-"data/entities/entity_player.cpp"
+"entity/entity_player.cpp"
 
 # World
-"data/world/world.cpp"
-"data/world/world_save.cpp"
+"world/world.cpp"
+"world/world_save.cpp"
 
 "util/util.cpp"
 "util/logging.cpp"

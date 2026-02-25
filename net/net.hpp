@@ -5,7 +5,7 @@
 #pragma once
 #include <SDL3_net/SDL_net.h>
 #include <Capy.hpp>
-#include <data/world/world.hpp>
+#include <world/world.hpp>
 
 namespace Capy
 {
@@ -237,10 +237,7 @@ namespace Capy
 
             virtual void Shutdown() { };
 
-            
         protected:
-
-
             size_t seqNumber;               // single source of truth for UDP packet sequencing (since it can be out of order, etc.)
             NET_DatagramSocket* socket;     // socket to use
 

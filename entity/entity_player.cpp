@@ -1,6 +1,6 @@
 /* Core player code */
 
-#include <data/entities/entity_player.hpp>
+#include <entity/entity_player.hpp>
 
 namespace Capy
 {
