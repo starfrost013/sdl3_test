@@ -1,6 +1,8 @@
 #pragma once
 #include <Capy.hpp>
 
+class NetMsg;
+
 /* entity.hpp: Core Entity code */
 
 namespace Capy
@@ -18,7 +20,7 @@ namespace Capy
             virtual void Render() { };                         // Called every frame.
             virtual void Destroy() { };                        // Called on object destruction
 
-            virtual void StaticRequest(NetMsg* msg) { };
+            static void CreateRequest(NetMsg* msg) { };
             virtual void ReadRequest(NetMsg* msg) { };
             virtual void UpdateRequest(NetMsg* msg) { };
             virtual void DeleteRequest(NetMsg* msg) { };

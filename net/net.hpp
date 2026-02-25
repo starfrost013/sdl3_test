@@ -69,7 +69,7 @@ namespace Capy
     {
         NETMSG_RPC_REQUEST_ENTITY_CREATE = 0x0,                     // Request new entity 
         NETMSG_RPC_REQUEST_ENTITY_READ = 0x1,                       // Read entity
-        NETMSG_RPC_REQUEST_ENTITY_UPDATE = 0x2,                     // Update entity component
+        NETMSG_RPC_REQUEST_ENTITY_UPDATE = 0x2,                     // Update entity 
         NETMSG_RPC_REQUEST_ENTITY_DELETE = 0x3,                     // Delete entity
     }; 
 
