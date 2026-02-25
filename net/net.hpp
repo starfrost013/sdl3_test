@@ -55,15 +55,23 @@ namespace Capy
         NETMSG_HELLO = 0x0,                                         // Client Hello & Identity
         NETMSG_WORLD_DOWNLOAD_START = 0x2,                          // Client Request World Download
         NETMSG_WORLD_DOWNLOAD_PACKET = 0x3,                         // Client Request World Packet
-        NETMSG_WORLD_SPAWN_ENTITY = 0x4,                            // Client Request Entity Spawn (a.k.a. Client)
-        NETMSG_WORLD_UPDATE_ENTITY = 0x5,                           // Client Request Entity Update
         NETMSG_DISCONNECT = 0x6,                                    // Client Disconnect
+        NETMSG_WORLD_RPC_CLIENT = 0x7,                              // Client-to-Server RPC
 
-        NETMSG_SERVER_HELLO = NETMSG_IS_SERVER_MESSAGE | 0x0,
+        NETMSG_SERVER_HELLO = NETMSG_IS_SERVER_MESSAGE | 0x0,       // Server Hello
         NETMSG_SERVER_HEARTBEAT = NETMSG_IS_SERVER_MESSAGE | 0x1,   // Server heartbeat (if nothing for 5 seconds, disconnect)  
-
-        NETMSG_LAST_VALID = NETMSG_SERVER_HEARTBEAT,                   // Sentinel value
+        NETMSG_SERVER_RPC = NETMSG_IS_SERVER_MESSAGE | 0x2,         // Server-to-Client RPC
+        NETMSG_LAST_VALID = NETMSG_SERVER_RPC,                      // Sentinel value
     };
+
+    // Entity management packet
+    enum NetMsgRpcType
+    {
+        NETMSG_RPC_REQUEST_ENTITY_CREATE = 0x0,                     // Request new entity 
+        NETMSG_RPC_REQUEST_ENTITY_READ = 0x1,                       // Read entity
+        NETMSG_RPC_REQUEST_ENTITY_UPDATE = 0x2,                     // Update entity component
+        NETMSG_RPC_REQUEST_ENTITY_DELETE = 0x3,                     // Delete entity
+    }; 
 
     // enumerates network hello response statuses from the server to the client
     enum NetHelloStatus

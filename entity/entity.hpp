@@ -13,10 +13,15 @@ namespace Capy
             // 
             // Events
             //
-            virtual void Generate() = 0;              // Called on object creation.
-            virtual void Tick() = 0;                // Called every tick.
-            virtual void Render() = 0;              // Called every frame.
-            virtual void Destroy() = 0;             // Called on object destruction
+            virtual void Create() { };                        // Called on object creation.
+            virtual void Tick() { };                            // Called every tick.
+            virtual void Render() { };                         // Called every frame.
+            virtual void Destroy() { };                        // Called on object destruction
+
+            virtual void StaticRequest(NetMsg* msg) { };
+            virtual void ReadRequest(NetMsg* msg) { };
+            virtual void UpdateRequest(NetMsg* msg) { };
+            virtual void DeleteRequest(NetMsg* msg) { };
 
     };
 }

@@ -48,6 +48,7 @@ add_executable (Capy
 
 # Net - Core
 "net/net_core.cpp"
+"net/net_message.cpp"
 "net/net_packetfactory.cpp"
 
 # Net - Server

@@ -4,7 +4,7 @@
 
 namespace Capy
 {
-    void PlayerEntity::Generate()
+    void PlayerEntity::Create()
     {
 
     }
