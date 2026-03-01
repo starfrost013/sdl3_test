@@ -11,7 +11,7 @@ namespace Capy
 
     Entity* NetIdentity_SpawnPlayer() { return (Entity*)new PlayerEntity; };
     
-    std::unordered_map<const char*, Entity* (*)()> netIdentities = 
+    std::unordered_map<const char*, Entity* (*)()> Entity::netIdentities = 
     {
         { PlayerEntity::classname, NetIdentity_SpawnPlayer },
         

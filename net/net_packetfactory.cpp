@@ -44,10 +44,11 @@ namespace Capy
     // Create an RPC create packet
     NetMsg NetFactory_CreateRpcCreatePacket_Client(const char* classname)
     {
-        if (!Entity::HasNetIdentity(classname))
-            return; 
 
         NetMsg msg = NetMsg(NetMsgType::NETMSG_CLIENT_RPC, nullptr, sizeof(uint8_t) + strlen(classname));
+        if (!Entity::HasNetIdentity(classname))
+            return msg; 
+
         msg.Write<uint8_t>(NetMsgRpcType::NETMSG_RPC_REQUEST_ENTITY_CREATE);
         msg.Write<const char*>(classname);
         

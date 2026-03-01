@@ -2,13 +2,18 @@
 #include <Capy.hpp>
 
 class NetMsg;
+class Entity; // needed for netIdentities
 
 /* entity.hpp: Core Entity code */
 
 namespace Capy
-{
+{    
+    
     class Entity 
     { 
+        private: 
+            static std::unordered_map<const char*, Entity* (*)()> netIdentities;
+
         public: 
             static const char* classname; 
  
@@ -25,7 +30,7 @@ namespace Capy
             virtual void UpdateRequest(NetMsg* msg) { };
             virtual void DeleteRequest(NetMsg* msg) { };
 
-                // Checks if an entity has a network identity.
+            // Checks if an entity has a network identity.
             static bool HasNetIdentity(const char* classname)
             {
                 if (!classname)
@@ -39,10 +44,10 @@ namespace Capy
                     Logging_LogChannel("Entity_HasNetIdentity: class %s does not exist!", LogChannel::Warning, classname);
                     return false; 
                 }
-            }
 
+                return true;
+            }
     };
 
-    extern std::unordered_map<const char*, Entity* (*)()> netIdentities;
 }
 
