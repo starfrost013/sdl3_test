@@ -41,6 +41,29 @@ namespace Capy
         return msg; 
     }
 
+    // Create an RPC create packet
+    NetMsg NetFactory_CreateRpcCreatePacket_Client(const char* classname)
+    {
+        if (!Entity::HasNetIdentity(classname))
+            return; 
+
+        NetMsg msg = NetMsg(NetMsgType::NETMSG_CLIENT_RPC, nullptr, sizeof(uint8_t) + strlen(classname));
+        msg.Write<uint8_t>(NetMsgRpcType::NETMSG_RPC_REQUEST_ENTITY_CREATE);
+        msg.Write<const char*>(classname);
+        
+        return msg;
+    }
+
+    // Create an RPC create packet
+    NetMsg NetFactory_CreateRpcCreatePacket_Server(uint32_t edictId)
+    {
+        NetMsg msg = NetMsg(NetMsgType::NETMSG_SERVER_RPC, nullptr, sizeof(uint8_t) + sizeof(uint32_t));
+        msg.Write<uint8_t>(NetMsgRpcType::NETMSG_RPC_REQUEST_ENTITY_CREATE);
+        msg.Write<uint32_t>(edictId);
+
+        return msg;
+    }
+
     /*
     NetMsg NetFactory_CreateEntitySpawnPacket()
     {

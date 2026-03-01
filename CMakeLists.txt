@@ -61,6 +61,7 @@ add_executable (Capy
 "net/client/client_core.cpp"
 
 # Entity
+"entity/entity_netidentity.cpp"
 "entity/entity_player.cpp"
 
 # World

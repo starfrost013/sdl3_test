@@ -10,7 +10,7 @@ namespace Capy
     class Entity 
     { 
         public: 
-            const char* classname; 
+            static const char* classname; 
  
             // 
             // Events
@@ -25,6 +25,24 @@ namespace Capy
             virtual void UpdateRequest(NetMsg* msg) { };
             virtual void DeleteRequest(NetMsg* msg) { };
 
+                // Checks if an entity has a network identity.
+            static bool HasNetIdentity(const char* classname)
+            {
+                if (!classname)
+                {
+                    Logging_LogChannel("Entity_HasNetIdentity: invalid classname", LogChannel::Warning);
+                    return false; 
+                }
+
+                if (!netIdentities[classname])
+                {
+                    Logging_LogChannel("Entity_HasNetIdentity: class %s does not exist!", LogChannel::Warning, classname);
+                    return false; 
+                }
+            }
+
     };
+
+    extern std::unordered_map<const char*, Entity* (*)()> netIdentities;
 }
 

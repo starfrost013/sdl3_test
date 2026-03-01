@@ -19,7 +19,7 @@ namespace Capy
     #define NETMSG_MAGIC                0x00FF55AA      // basic check that the message was received (tcp but still)
     #define MAX_PACKET_SIZE             1400            // maximum reliable packet size for IP/Ethernet (1400 bytes)
     #define PACKET_RESIZE_FACTOR        1.5             // amount packets get resized by when they are full
-    #define NET_PROTOCOL_VERSION        3               // network protocol version (1 = pre-alpha 4.0/5.0, 2 = pre-alpha 6)
+    #define NET_PROTOCOL_VERSION        4               // network protocol version (1 = pre-alpha 4.0/5.0, 2 = pre-alpha 6)
     
     // 
     // CVARS
@@ -56,7 +56,7 @@ namespace Capy
         NETMSG_WORLD_DOWNLOAD_START = 0x2,                          // Client Request World Download
         NETMSG_WORLD_DOWNLOAD_PACKET = 0x3,                         // Client Request World Packet
         NETMSG_DISCONNECT = 0x6,                                    // Client Disconnect
-        NETMSG_WORLD_RPC_CLIENT = 0x7,                              // Client-to-Server RPC
+        NETMSG_CLIENT_RPC = 0x7,                                    // Client-to-Server RPC
 
         NETMSG_SERVER_HELLO = NETMSG_IS_SERVER_MESSAGE | 0x0,       // Server Hello
         NETMSG_SERVER_HEARTBEAT = NETMSG_IS_SERVER_MESSAGE | 0x1,   // Server heartbeat (if nothing for 5 seconds, disconnect)  

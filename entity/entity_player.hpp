@@ -9,6 +9,8 @@ namespace Capy
     class PlayerEntity : public Entity 
     {
         public:
+            static constexpr const char* classname = "Player"; 
+
             virtual void Create() override;     // Called on object creation.
             virtual void Tick() override;       // Called every tick.
             virtual void Render() override;     // Called every frame.
