@@ -7,11 +7,12 @@
 
 #include <Capy.hpp>
 #include <render/assets/asset.hpp>
+#include <render/assets/asset_texture.hpp>
 
 namespace Capy
 {
     void AssetTexture::Load(FilesystemFile* file)
     {
-        
+
     }
 }
