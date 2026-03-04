@@ -1,5 +1,5 @@
 //
-// Texture system
+// Texture system implementation
 // The system of textures, used by the texture component of the ECS
 //
 
@@ -10,11 +10,8 @@
 
 namespace Capy
 {
-    class AssetTexture : public Asset
+    void AssetTexture::Load(FilesystemFile* file)
     {
-        public: 
-            void Load(FilesystemFile* file) override; 
-
-        private: 
+        
     }
 }
