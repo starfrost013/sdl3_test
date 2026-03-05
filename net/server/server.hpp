@@ -63,6 +63,7 @@ namespace Capy
 
         // send message
         void SendMessage(NetMsg msg, Client* client);
+        void SendMessageToAll(NetMsg msg);
 
         // intenral tick methods
         void TickNetwork();

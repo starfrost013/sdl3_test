@@ -97,8 +97,6 @@ namespace Capy
             return;
         }
         //}
-
-        //Logging_LogChannel("Sending world to client [%d/%d bytes]", LogChannel::Debug, client->downloadProgress, worldSize);
     }
 
     // Ticks the network aft
@@ -121,6 +119,15 @@ namespace Capy
     void Server::SendMessage(NetMsg msg, Client* client)
     {
         SendMessageToPort(msg, client->serverOnly.address, client->serverOnly.port);
+    }
+
+    void Server::SendMessageToAll(NetMsg msg)
+    {
+        for (Client* client : clients)
+        {
+            if (client)
+                SendMessage(msg, client);
+        }
     }
 
     // is this a good idea?

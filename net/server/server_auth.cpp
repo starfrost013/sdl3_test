@@ -52,7 +52,6 @@ namespace Capy
 
         if (helloStatus == NetHelloStatus::HELLO_OK)
         {
-
             Client* client = new Client();
             clients[numClients] = client;
 

@@ -14,7 +14,7 @@ namespace Capy
     //
 
     #define PORT_DEFAULT                6769            // 6-7 69
-    #define MAX_CLIENTS                 32
+    #define MAX_CLIENTS                 32              // maximum client mode
 
     #define NETMSG_MAGIC                0x00FF55AA      // basic check that the message was received (tcp but still)
     #define MAX_PACKET_SIZE             1400            // maximum reliable packet size for IP/Ethernet (1400 bytes)
@@ -25,10 +25,10 @@ namespace Capy
     // CVARS
     //  
 
-    extern Cvar* netMode;
-    extern Cvar* netServerAddress;
-    extern Cvar* netPort;
-    extern Cvar* netMaxPlayers; 
+    extern Cvar* netMode;                               // see netMode enum
+    extern Cvar* netServerAddress;                      // address to connect to
+    extern Cvar* netPort;                               // port to use
+    extern Cvar* netMaxPlayers;                         // maximum players (must be below MAX_CLIENTS above)
 
     //
     // STRUCTURES & ENUMS
