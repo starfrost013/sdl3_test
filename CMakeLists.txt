@@ -46,6 +46,9 @@ add_executable (Capy
 # Core - Render
 "core/render/render.cpp"
 
+# Core - Asset System
+"core/render/assets/asset_texture.cpp"
+
 # Net - Core
 "net/net_core.cpp"
 "net/net_message.cpp"
@@ -80,10 +83,11 @@ include_directories(".")
 
 message(${CMAKE_SOURCE_DIR})
 
+# Libraries and compiler specific stuff (prefer submodules)
+
 include_directories(${CMAKE_SOURCE_DIR}"/external/sdl3/include")
 include_directories(${CMAKE_SOURCE_DIR}"/external/sdl3_net/include")
-
-# Libraries and compiler specific stuff
+include_directories(${CMAKE_SOURCE_DIR}"/external/stbi")
 
 target_link_libraries(Capy PRIVATE SDL3::SDL3)
 target_link_libraries(Capy PRIVATE SDL3_net::SDL3_net)
@@ -122,7 +126,7 @@ elseif (LINUX)
   # horrible hack for origin rpath (TEMP, we will static link everything)
   install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so DESTINATION ${CAPY_INSTALL_DIR})
   install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so.0 DESTINATION ${CAPY_INSTALL_DIR})
-  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so.0.4.3 DESTINATION ${CAPY_INSTALL_DIR}) #ireally need to fix this
+  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so.0.4.3 DESTINATION ${CAPY_INSTALL_DIR}) #ireally need to fix this (SDL 3.4.3)
   install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/libSDL3_net.so DESTINATION ${CAPY_INSTALL_DIR})
   install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/libSDL3_net.so.0 DESTINATION ${CAPY_INSTALL_DIR})
   install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/libSDL3_net.so.0.0.0 DESTINATION ${CAPY_INSTALL_DIR})

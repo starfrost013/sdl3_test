@@ -1,20 +1,32 @@
 //
 // Texture system
-// The system of textures, used by the texture component of the ECS
+// Implemented as an asset type
 //
 
 #pragma once
 
 #include <Capy.hpp>
-#include <render/assets/asset.hpp>
+#include <core/render/assets/asset.hpp>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <external/stbi/stb_image.h>
 
 namespace Capy
 {
     class AssetTexture : public Asset
     {
         public: 
-            void Load(FilesystemFile* file) override; 
+            void Load(const char* path) override; 
+            void Unload() override; 
 
+            void SetSize(Vector2<int32_t> _size)
+            {
+                size = _size; 
+            }
         private: 
-    }
+            Vector2<int32_t> size;    
+            int32_t bpp;
+
+            stbi_uc* data = nullptr; 
+    };
 }
