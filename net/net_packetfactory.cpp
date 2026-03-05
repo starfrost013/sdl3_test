@@ -41,6 +41,11 @@ namespace Capy
         return msg; 
     }
 
+    NetMsg NetFactory_CreateDownloadPacket(uint32_t size)
+    {
+        return NetMsg(NetMsgType::NETMSG_WORLD_DOWNLOAD_PACKET, nullptr, size);
+    }
+
     // Create an RPC create packet
     NetMsg NetFactory_CreateRpcCreatePacket_Client(const char* classname)
     {
@@ -63,23 +68,5 @@ namespace Capy
         msg.Write<uint32_t>(edictId);
 
         return msg;
-    }
-
-    /*
-    NetMsg NetFactory_CreateEntitySpawnPacket()
-    {
-        NetMsg msg = NetMsg(NetMsgType::NETMSG_WORLD_SPAWN_ENTITY, nullptr, MAX_PACKET_SIZE);
-        return msg;
-    }
-
-    NetMsg NetFactory_CreateEntityUpdatePacket()
-    {
-        NetMsg msg = NetMsg(NetMsgType::NETMSG_WORLD_UPDATE_ENTITY, nullptr, MAX_PACKET_SIZE);
-        return msg;
-    }
-*/
-    NetMsg NetFactory_CreateDownloadPacket(uint32_t size)
-    {
-        return NetMsg(NetMsgType::NETMSG_WORLD_DOWNLOAD_PACKET, nullptr, size);
     }
 }

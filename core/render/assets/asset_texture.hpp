@@ -8,8 +8,8 @@
 #include <Capy.hpp>
 #include <core/render/assets/asset.hpp>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <external/stbi/stb_image.h>
+// stbi stuff we need 
+typedef Uint8 stbi_uc;
 
 namespace Capy
 {
@@ -17,6 +17,8 @@ namespace Capy
     {
         public: 
             void Load(const char* path) override; 
+            void LoadFile(FilesystemFile* file) override; 
+
             void Unload() override; 
 
             void SetSize(Vector2<int32_t> _size)

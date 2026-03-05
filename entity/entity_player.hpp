@@ -1,8 +1,11 @@
 /* Player code */
 
-#include <Capy.hpp>
+#pragma once
+
 #include <Capy.hpp>
 #include <entity/entity.hpp>
+// include asset types here at the end so other parts of the engine only hav 
+#include <core/render/assets/asset_texture.hpp>
 
 namespace Capy
 {
@@ -17,6 +20,7 @@ namespace Capy
             virtual void Destroy() override;    // Called on object destruction
 
         private:
+            AssetTexture* texture; 
     };
 }
 
