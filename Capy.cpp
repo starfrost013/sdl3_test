@@ -17,9 +17,7 @@ namespace Capy
         Game_Init(argc, argv);
 
         while (game.running)
-        {
             Game_Run();
-        }
 
         Game_Shutdown();
     }

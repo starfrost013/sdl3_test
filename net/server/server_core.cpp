@@ -201,7 +201,6 @@ namespace Capy
                 break;
             case ServerState::SERVER_DEAD:
                 return;
-            
         }
     }
 

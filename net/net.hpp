@@ -173,14 +173,14 @@ namespace Capy
             return success; 
         }
 
-        // Returns a boolean indicating that there are at least size bytes left in the packet to write.
+        // Returns a boolean indicating that there are at least size bytes left in the packet to write. not the best code path
         bool EnsureCapacityWrite(size_t size)
         {
             // resize by 1.5x if the size would overflow
-            while (msgPtrWrite + size > header.size)
+            if (header.size < (msgPtrWrite + size))
             {
                 uint32_t oldSize = header.size;
-                header.size *= 1.5;
+                header.size += size; 
 
                 if (header.size >= MAX_PACKET_SIZE)
                     goto overflow;
@@ -268,7 +268,7 @@ namespace Capy
 
     /* Net packet factory stuff */
 
-    NetMsg NetFactory_CreateClientHelloPacket();
+    NetMsg NetFactory_CreateClientHelloPacket(const char* username);
     NetMsg NetFactory_CreateServerHelloPacket();
     NetMsg NetFactory_CreateDisconnectPacket();
     NetMsg NetFactory_CreateDownloadStartPacket_Client();

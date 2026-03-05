@@ -18,11 +18,9 @@ namespace Capy
         netPort = Cvar_Get("netPort", "6769", false);
         netMaxPlayers = Cvar_Get("netMaxPlayers", "32", false);
 
-        if (netMaxPlayers->value == 0)
+        if (netMaxPlayers->value == 0
+        || netMaxPlayers->value > MAX_CLIENTS)
             Cvar_Set("netMaxPlayers", "32", false);
-        else if (netMaxPlayers->value > MAX_CLIENTS)
-            Cvar_Set("netMaxPlayers", "32", false);
-
         NET_Init();
     }
 

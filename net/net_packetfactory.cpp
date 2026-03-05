@@ -1,17 +1,18 @@
 /* 
-    The Packet Factory: Helper functions to create packets with a defined fot
+    The Packet Factory: Helper functions to create packets with a defined type/schema
 */
 
 #include <net/net.hpp>
 
 namespace Capy
 {
-    NetMsg NetFactory_CreateClientHelloPacket()
+    NetMsg NetFactory_CreateClientHelloPacket(const char* username)
     {
         // no data
         NetMsg msg = NetMsg(NetMsgType::NETMSG_HELLO, nullptr, sizeof(uint8_t));
         msg.Write<uint8_t>(NET_PROTOCOL_VERSION);
-        
+        msg.Write<const char*>(username);
+
         return msg; 
     }
 
@@ -49,8 +50,8 @@ namespace Capy
     // Create an RPC create packet
     NetMsg NetFactory_CreateRpcCreatePacket_Client(const char* classname)
     {
-
         NetMsg msg = NetMsg(NetMsgType::NETMSG_CLIENT_RPC, nullptr, sizeof(uint8_t) + strlen(classname));
+     
         if (!Entity::HasNetIdentity(classname))
             return msg; 
 

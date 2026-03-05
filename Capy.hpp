@@ -28,6 +28,7 @@
 #include <core/command/command.hpp>
 #include <core/cvar/cvar.hpp>
 #include <core/filesystem/filesystem.hpp>
+#include <core/script/script.hpp>
 
 namespace Capy
 {

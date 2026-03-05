@@ -25,7 +25,7 @@ namespace Capy
         socket = NET_CreateDatagramSocket(NULL, 0);
         state = ClientState::CLIENT_UNCONNECTED;
         
-        Cvar_Set("playerName", "Player", false);
+        playerName = Cvar_Get("playerName", "Player", false);
     }
 
     // Get the client state

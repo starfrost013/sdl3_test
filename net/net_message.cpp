@@ -30,16 +30,20 @@ namespace Capy
     template<>
     void NetMsg::Write<char*>(char* thing)
     {
+        if (!thing)
+        {
+            Logging_LogChannel("NetMsg::Write: nullptr!", LogChannel::Error);
+            return;
+        }
+
         auto size = strlen(thing);
 
         if (!EnsureCapacityWrite(size + 1)) // + 1 for null terminator
             return;
 
-        strncpy((char*)msgData, thing, size);
+        strncpy((char*)(msgData + msgPtrWrite), thing, header.size);
 
-        // add null-terminator
-        msgData[size] = '\0';
-
+        // we don't need to zero-initialise because we do it in NetMsg::NetMsg() (see net_mode.hpp)
         msgPtrWrite += size + 1;
     }
 

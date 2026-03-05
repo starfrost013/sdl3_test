@@ -11,7 +11,10 @@ namespace Capy
 {
     void Client::Connect(const char* addr)
     {
-        Logging_LogChannel("Client::Connect - Trying to connect to server at %s...", LogChannel::Message, addr);
+        // temp
+        strncpy(name, playerName->string, CLIENT_NAME_LENGTH);
+
+        Logging_LogChannel("Client::Connect - Resolving server IP at %s...", LogChannel::Message, addr);
         SetState(ClientState::CLIENT_RESOLVING_ADDRESS);
 
         serverAddress = NET_ResolveHostname(addr);
@@ -68,7 +71,7 @@ namespace Capy
         {
             case ConnectPhase::CLIENT_HELLO:
                 Logging_LogChannel("Client sending hello", LogChannel::Debug);
-                SendMessage(NetFactory_CreateClientHelloPacket(), serverAddress);
+                SendMessage(NetFactory_CreateClientHelloPacket(name), serverAddress);
                 connectPhase = ConnectPhase::CLIENT_HELLO_SENT;
                 break;
             // wait to see if we were allowed in

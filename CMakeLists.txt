@@ -11,6 +11,7 @@ project("Capy")
 
 add_subdirectory(external/sdl3 EXCLUDE_FROM_ALL)
 add_subdirectory(external/sdl3_net EXCLUDE_FROM_ALL)
+add_subdirectory(external/squirrel EXCLUDE_FROM_ALL)
 
 if (LINUX)
     set(CMAKE_INSTALL_RPATH $ORIGIN)
@@ -48,6 +49,9 @@ add_executable (Capy
 
 # Core - Asset System
 "core/render/assets/asset_texture.cpp"
+
+# Core - script
+"core/script/script_core.cpp"
 
 # Net - Core
 "net/net_core.cpp"
@@ -88,9 +92,12 @@ message(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}"/external/sdl3/include")
 include_directories(${CMAKE_SOURCE_DIR}"/external/sdl3_net/include")
 include_directories(${CMAKE_SOURCE_DIR}"/external/stbi")
+include_directories(${CMAKE_SOURCE_DIR}"/external/squirrel/include")
 
 target_link_libraries(Capy PRIVATE SDL3::SDL3)
 target_link_libraries(Capy PRIVATE SDL3_net::SDL3_net)
+target_link_libraries(Capy PRIVATE squirrel_static)
+target_link_libraries(Capy PRIVATE sqstdlib_static)
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   target_compile_definitions(Capy PRIVATE DEBUG)

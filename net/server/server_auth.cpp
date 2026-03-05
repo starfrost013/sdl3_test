@@ -20,6 +20,7 @@ namespace Capy
 
         NetHelloStatus helloStatus = NetHelloStatus::HELLO_OK;
 
+        // check if the client already exists
         if (!ClientIsNew(msg->addr))
         {
             Logging_LogChannel("Connection rejected: Duplicate client", LogChannel::Warning);
@@ -35,6 +36,10 @@ namespace Capy
             helloStatus = NetHelloStatus::HELLO_INVALID_VERSION;
         }
 
+        // read the username
+        const char* username = msg->Read<const char*>();
+
+        // create the server hello packet
         NetMsg serverHello = NetFactory_CreateServerHelloPacket();
 
         if (numClients >= netMaxPlayers->value)
@@ -47,22 +52,21 @@ namespace Capy
 
         if (helloStatus == NetHelloStatus::HELLO_OK)
         {
-            Logging_LogChannel("Connection accepted!", LogChannel::Debug, ip);
 
             Client* client = new Client();
             clients[numClients] = client;
 
+            strncpy(client->name, ip, CLIENT_NAME_LENGTH);
             client->serverOnly.address = msg->addr;
             strncpy(client->serverOnly.ipStr, ip, CLIENT_IP_LENGTH);
             client->serverOnly.port = msg->port;
             numClients++;
 
+            Logging_LogChannel("%s: Connection accepted from %s!", LogChannel::Debug, ip, username);
             SendMessage(serverHello, client);
         }
         else
-        {
             SendMessageToPort(NetFactory_CreateDisconnectPacket(), msg->addr, msg->port);
-        }
     }
 
     void Server::ClientRemove(Client* client)

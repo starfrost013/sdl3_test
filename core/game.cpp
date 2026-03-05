@@ -57,7 +57,8 @@ namespace Capy
         Game_PrintBuildInfo();
         Cmdline_Init(argc, argv);
         Command_Init();
-        Filesystem::Init();    
+        Filesystem::Init();  
+        Script_Init(); 
         CapyNet_Init();
 
         NetModeEnum mode = static_cast<NetModeEnum>(int(netMode->value));
@@ -102,17 +103,17 @@ namespace Capy
         NetModeEnum mode = static_cast<NetModeEnum>(int(netMode->value));
 
         /* Update the game world, using nanoseconds for more precision */
-        uint64_t time_now = SDL_GetTicksNS();
+        uint64_t timeNow = SDL_GetTicksNS();
 
         /* Now, pump the game's event queue */
         Game_PumpEvents();
 
-        if (time_now > (game.lastTickTime + (NS_PER_SECOND / game.tickrate)))
+        if (timeNow > (game.lastTickTime + (NS_PER_SECOND / game.tickrate)))
         {
             /* Update the world state and actually *HANDLE* those events */
             Game_Tick();
             //std::cout << "Last tick time: " << (float(time_now / 1000000.0f)) - (float(game.last_tick_time / 1000000.0f)) << "ms" << std::endl;
-            game.lastTickTime = time_now;
+            game.lastTickTime = timeNow;
         }
 
         Game_Frame();
@@ -168,6 +169,7 @@ namespace Capy
             server->Shutdown();
 
         CapyNet_Shutdown();
+        Script_Shutdown();
         Cvar_Shutdown();
 
         Logging_Shutdown();
