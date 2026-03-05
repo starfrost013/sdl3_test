@@ -15,11 +15,13 @@ March 2026
 CHANGELOG
 
 ==== Pre-Alpha 7.0 (March 2026) ====
-* Implemented start of Squirrel VM
+* Implemented start of Squirrel VM / scripting system
+* Implemented usernames
 * Implemented network identity system for asset replication
 * Implemented asset system and texture stuff
 * Get rid of "data" folder and split code out into its own thing
 * Remove unused "level" struct from DDATest era
-* Increase packet size to 1400 bytes from 512 (similar to Quake, Source, UNreal, etc)
+* Net v4: Increase packet size to 1400 bytes from 512 (similar to Quake, Source, UNreal, etc)
 * Make WorldEntity not an entity
 * Fix timing bugs with world downloading and client donwload phases
+* Fixed Msg::Read<char*> destroying all data and refactored the code to make more sense

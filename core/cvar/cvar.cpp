@@ -32,16 +32,15 @@ namespace Capy
         // if there is no head there are no items
         if (!cvarlist_head)
         {
-            cvarlist_head = cvar;
-            cvarlist_tail = cvar;
+            cvarlist_head = cvarlist_tail = cvar;
         }
         else
         {
             // optimisation: don't iterate through the entire list
             cvar->prev = cvarlist_tail;
-
-            cvarlist_tail->next = cvar;
+            cvar->prev->next = cvar;
             cvarlist_tail = cvar; 
+            cvarlist_tail->next = nullptr;
 
         }
 

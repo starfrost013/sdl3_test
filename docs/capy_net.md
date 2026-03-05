@@ -12,3 +12,12 @@ Capybara wars implements a buffered UDP network specification that is intended t
 ## 5. Updating the world
 
 ## 6. RPC for updating the game state
+
+## Appendix A: Protocol Versions
+
+| Protocol version | Game version        | Changes                             |
+| ---------------- | ------------------- | ----------------------------------- |
+| 1                | Pre-Alpha 4.0/5.0   | No protocol version. Initial        |
+| 2                | Pre-Alpha 6.0       | World downloading                   |
+| 3                | Pre-Alpha 7.0 (pre) | NetIdentities (edicts)              |
+| 4                | Pre-Alpha 7.0       | Usernames, RPCs|

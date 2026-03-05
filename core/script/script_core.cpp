@@ -44,5 +44,8 @@ namespace Capy
     {
         sq_close(scriptVm.handle);
         scriptVm.initialised = false; 
+        scriptVm.handle = nullptr; 
+
+        Logging_LogChannel("Script_Shutdown: Shut down scripting", LogChannel::Message);
     }
 }

@@ -57,6 +57,9 @@ namespace Capy
     // Finds a command by its name
     Command* Command_FindByName(const char* name)
     {
+        if (!name)
+            return nullptr;
+
         Command* current_command = commandHead;
 
         while (current_command)
@@ -130,7 +133,6 @@ namespace Capy
                 str[position] = '\0'; //terminate the string early
             }
             
-
             position--;
         }
 
@@ -151,24 +153,31 @@ namespace Capy
         strncpy(lastCommand, cmd, STRING_MAX);
         strncpy(lastToken, cmd, STRING_MAX);
 
-        char* cmd_name = strtok(lastToken, STRING_WHITESPACE_DELIMITERS);
+        char* cmdName = strtok(lastToken, STRING_WHITESPACE_DELIMITERS);
 
-        Command* command_ptr = Command_FindByName(cmd_name);
-
-        if (!command_ptr)
+        // silently return if no command is entered at all
+        if (!cmdName
+        || !strlen(cmdName))
         {
-            Logging_LogChannel("Command not found: %s", LogChannel::Warning, cmd_name);
+            return; 
+        }
+
+        Command* commandPtr = Command_FindByName(cmdName);
+
+        if (!commandPtr)
+        {
+            Logging_LogChannel("Command not found: %s", LogChannel::Warning, cmdName);
             return;
         }
 
-        if (!command_ptr->onExecute)
+        if (!commandPtr->onExecute)
         {
-            Logging_LogChannel("Command has no on-execute function: %s", LogChannel::Error, cmd_name);
+            Logging_LogChannel("Command has no on-execute function: %s", LogChannel::Error, cmdName);
             return;
         }
 
-        if (command_ptr->type & origin)
-            command_ptr->onExecute(origin);
+        if (commandPtr->type & origin)
+            commandPtr->onExecute(origin);
     }
 
     /* Executes global type commands*/
