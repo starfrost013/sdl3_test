@@ -19,6 +19,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
+/* 
+    This is Squirrel 3.2 master f9267f2f2a9afa1face89d8ea078c686331e30d1
+    + https://github.com/albertodemichelis/squirrel/pull/298
+    + https://github.com/albertodemichelis/squirrel/pull/128
+    + https://github.com/albertodemichelis/squirrel/pull/129 
+    + https://github.com/mingodad/squilu/commit/1d62218bab7fc495fc88f4c15614353b902a38b1
+    + https://github.com/FlutterTal/squirrel/tree/import_func
+
+*/
 #ifndef _SQUIRREL_H_
 #define _SQUIRREL_H_
 
@@ -65,10 +75,10 @@ struct SQOuter;
 
 #include "sqconfig.h"
 
-#define SQUIRREL_VERSION    _SC("Squirrel 3.2 stable")
-#define SQUIRREL_COPYRIGHT  _SC("Copyright (C) 2003-2024 Alberto Demichelis")
-#define SQUIRREL_AUTHOR     _SC("Alberto Demichelis")
-#define SQUIRREL_VERSION_NUMBER 320
+#define SQUIRREL_VERSION    _SC("Squirrel 3.2.1 (CapybaraWars)")
+#define SQUIRREL_COPYRIGHT  _SC("Copyright (C) 2003-2024 Alberto Demichelis\nCopyright (C) 2026 Connor Hyde")
+#define SQUIRREL_AUTHOR     _SC("Alberto Demichelis, Connor Hyde")
+#define SQUIRREL_VERSION_NUMBER 321
 
 #define SQ_VMSTATE_IDLE         0
 #define SQ_VMSTATE_RUNNING      1
@@ -309,6 +319,7 @@ SQUIRREL_API SQRESULT sq_rawdeleteslot(HSQUIRRELVM v,SQInteger idx,SQBool pushva
 SQUIRREL_API SQRESULT sq_newmember(HSQUIRRELVM v,SQInteger idx,SQBool bstatic);
 SQUIRREL_API SQRESULT sq_rawnewmember(HSQUIRRELVM v,SQInteger idx,SQBool bstatic);
 SQUIRREL_API SQRESULT sq_arrayappend(HSQUIRRELVM v,SQInteger idx);
+SQUIRREL_API SQRESULT sq_arrayshift(HSQUIRRELVM v,SQInteger idx,SQBool pushval);
 SQUIRREL_API SQRESULT sq_arraypop(HSQUIRRELVM v,SQInteger idx,SQBool pushval);
 SQUIRREL_API SQRESULT sq_arrayresize(HSQUIRRELVM v,SQInteger idx,SQInteger newsize);
 SQUIRREL_API SQRESULT sq_arrayreverse(HSQUIRRELVM v,SQInteger idx);

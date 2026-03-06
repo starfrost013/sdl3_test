@@ -16,7 +16,7 @@
 #include <sqstdmath.h>
 #include <sqstdstring.h>
 #include <sqstdaux.h>
-
+#include <sqstdimport.h>
 #ifdef SQUNICODE
 #define scfprintf fwprintf
 #define scvprintf vfwprintf
@@ -321,6 +321,7 @@ int main(int argc, char* argv[])
     sqstd_register_systemlib(v);
     sqstd_register_mathlib(v);
     sqstd_register_stringlib(v);
+    sqstd_register_importlib(v);
 
     //aux library
     //sets error handlers

@@ -17,6 +17,8 @@
 #include <sqstdmath.h>
 #include <sqstdstring.h>
 #include <sqstdaux.h>
+#include <sqstdimport.h>
+#include <sqstdmodule.h>
 
 namespace Capy
 {
