@@ -42,10 +42,10 @@ namespace Capy
     
     void Script_Shutdown()
     {
+        Logging_LogChannel("Script_Shutdown: Shutting down scripting...", LogChannel::Message);
+
         sq_close(scriptVm.handle);
         scriptVm.initialised = false; 
         scriptVm.handle = nullptr; 
-
-        Logging_LogChannel("Script_Shutdown: Shut down scripting", LogChannel::Message);
     }
 }
