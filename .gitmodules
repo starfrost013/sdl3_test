@@ -5,6 +5,3 @@
 [submodule "external/sdl3_net"]
 	path = external/sdl3_net
 	url = https://github.com/libsdl-org/SDL_net
-[submodule "external/squirrel"]
-	path = external/squirrel
-	url = https://github.com/albertodemichelis/squirrel.git
