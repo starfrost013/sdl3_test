@@ -10,11 +10,11 @@
  / .___/    /_/        \___/                \__,_/    /_/    / .___/    /_/ /_/     \__,_/          |___/     \___/    /_/     
 /_/                                                         /_/                                                                
 
-Pre-Alpha 7.0
+Pre-Alpha 8.0
 March 2026
 CHANGELOG
 
-==== Pre-Alpha 7.0 (March 2026) ====
+==== Pre-Alpha 8.0 (March 2026) ====
 * Implemented start of Squirrel VM / scripting system
 * Implemented usernames
 * Implemented network identity system for asset replication

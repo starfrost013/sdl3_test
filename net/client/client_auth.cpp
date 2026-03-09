@@ -65,7 +65,7 @@ namespace Capy
         }
     }
 
-    void Client::ConnectOnResolveDone(NetMsg* msg)
+    void Client::TickNetworkConnecting(NetMsg* msg)
     {
         switch (connectPhase)
         {
@@ -80,7 +80,7 @@ namespace Capy
                 {
                     if (msg->header.msgType != NetMsgType::NETMSG_SERVER_HELLO)
                     {
-                        Logging_LogChannel("Client::ConnectOnResolveDone - Server sent back non-server hello!", LogChannel::Warning);
+                        Logging_LogChannel("Client::TickNetworkConnecting - Server sent back non-server hello!", LogChannel::Warning);
                         return;
                     }
 

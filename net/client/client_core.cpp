@@ -47,6 +47,15 @@ namespace Capy
     }
 
     // Run while the client is connected
+    void Client::TickNetworkConnected(NetMsg* msg)
+    {
+        switch (msg->header.msgType)
+        {
+
+        }
+    }
+
+    // Run while the client is connected (or logging in)
     void Client::TickNetwork()
     {
         NetMsg* msg = GetMessage();    
@@ -68,14 +77,18 @@ namespace Capy
         switch (state)
         {
             case CLIENT_CONNECTING:
-                ConnectOnResolveDone(msg);
+                TickNetworkConnecting(msg);
                 break; 
+            case CLIENT_CONNECTED:
+                TickNetworkConnected(msg);
+                break;
         }   
 
         //delete the message
         if (msg)
             DoneMessage(msg);
     }
+
 
     void Client::Tick()
     {

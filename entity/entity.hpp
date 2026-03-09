@@ -20,15 +20,15 @@ namespace Capy
             // 
             // Events
             //
-            virtual void Create() { };                        // Called on object creation.
+            virtual void Create() { };                          // Called on object creation.
             virtual void Tick() { };                            // Called every tick.
-            virtual void Render() { };                         // Called every frame.
-            virtual void Destroy() { };                        // Called on object destruction
+            virtual void Render() { };                          // Called every frame.
+            virtual void Destroy() { };                         // Called on object destruction
 
-            static void CreateRequest(NetMsg* msg) { };
-            virtual void ReadRequest(NetMsg* msg) { };
-            virtual void UpdateRequest(NetMsg* msg) { };
-            virtual void DeleteRequest(NetMsg* msg) { };
+            static void CreateRequest(NetMsg* msg) { };         // Called on create RPC
+            virtual void ReadRequest(NetMsg* msg) { };          // Called on read RPC
+            virtual void UpdateRequest(NetMsg* msg) { };        // Called on update RPC
+            virtual void DeleteRequest(NetMsg* msg) { };        // Called on delete RPC
 
             // Checks if an entity has a network identity.
             static bool HasNetIdentity(const char* classname)

@@ -6,6 +6,9 @@
 
 namespace Capy 
 {
+    
+    class Client; 
+    
     #define CLIENT_NAME_LENGTH              64
     #define CLIENT_IP_LENGTH                32
 
@@ -14,6 +17,9 @@ namespace Capy
     //
 
     extern Cvar* playerName;
+
+
+    typedef void (Client::*ClientRpcMethod)(NetMsg* msg); 
 
     class Client : public NetMode
     {
@@ -69,9 +75,13 @@ namespace Capy
         // probably a tmeporary implementation
         size_t downloadProgress; 
 
-        void ConnectOnResolveDone(NetMsg* msg);
+        void TickNetworkConnecting(NetMsg* msg);
+        void TickNetworkConnected(NetMsg* msg);
         void ConnectDownloadWorldChunk(NetMsg* msg);
         void TickNetwork();
+
+        void OnRpcReceive(NetMsg* msg) override; 
+        void OnRpcClientCreate(NetMsg* msg);
 
         void SendMessage(NetMsg msg, NET_Address* address);
 
@@ -86,5 +96,10 @@ namespace Capy
 
         ServerOnlyClientInfo serverOnly;
 
+        // RPC method table
+        std::unordered_map<uint8_t, ClientRpcMethod> rpcReceiveMethods =
+        {
+            { NETMSG_RPC_REQUEST_CLIENT_CREATE, &Client::OnRpcClientCreate },
+        };
     };
 }

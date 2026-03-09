@@ -8,6 +8,7 @@
 
 // STL Includes
 #include <cstring>
+#include <functional>
 #include <future>
 #include <fstream>
 #include <iostream>
@@ -38,7 +39,7 @@ namespace Capy
     #define ARRAY_SIZE(x)                   sizeof(x)/sizeof(x[0])
 
     #define APP_NAME "Capybara Wars Project - CONFIDENTIAL"
-    #define APP_VERSION "Pre-Alpha 7.0"
+    #define APP_VERSION "Pre-Alpha 8.0"
     #define APP_BUILD_DATE __DATE__ " " __TIME__ 
 
     #define APP_SIGNON_STRING APP_NAME " " APP_VERSION " " APP_BUILD_DATE

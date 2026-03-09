@@ -19,7 +19,7 @@ namespace Capy
     #define NETMSG_MAGIC                0x00FF55AA      // basic check that the message was received (tcp but still)
     #define MAX_PACKET_SIZE             1400            // maximum reliable packet size for IP/Ethernet (1400 bytes)
     #define PACKET_RESIZE_FACTOR        1.5             // amount packets get resized by when they are full
-    #define NET_PROTOCOL_VERSION        4               // network protocol version (1 = pre-alpha 4.0/5.0, 2 = pre-alpha 6)
+    #define NET_PROTOCOL_VERSION        5               // network protocol version (1 = pre-alpha 4.0/5.0, 2 = pre-alpha 6)
     
     // 
     // CVARS
@@ -71,6 +71,10 @@ namespace Capy
         NETMSG_RPC_REQUEST_ENTITY_READ = 0x1,                       // Read entity
         NETMSG_RPC_REQUEST_ENTITY_UPDATE = 0x2,                     // Update entity 
         NETMSG_RPC_REQUEST_ENTITY_DELETE = 0x3,                     // Delete entity
+        
+        NETMSG_RPC_REQUEST_CLIENT_CREATE = NETMSG_IS_SERVER_MESSAGE | 0x0,
+        NETMSG_RPC_REQUEST_CLIENT_UPDATE = NETMSG_IS_SERVER_MESSAGE | 0x1,
+        NETMSG_RPC_REQUEST_CLIENT_DELETE = NETMSG_IS_SERVER_MESSAGE | 0x2,
     }; 
 
     // enumerates network hello response statuses from the server to the client
@@ -264,6 +268,9 @@ namespace Capy
             bool IsClient() { return (static_cast<NetModeEnum>(netMode->value) == NETMODE_CLIENT); }; 
             bool IsDedicated() { return (static_cast<NetModeEnum>(netMode->value) == NETMODE_SERVER_DEDICATED); }; 
             bool IsListen() { return (static_cast<NetModeEnum>(netMode->value) == NETMODE_SERVER_LISTEN); }; 
+
+            // Specific message parsers
+            virtual void OnRpcReceive(NetMsg* msg) { };
     };
 
     /* Net packet factory stuff */
@@ -275,5 +282,7 @@ namespace Capy
     NetMsg NetFactory_CreateDownloadStartPacket_Server(const char* mapName, Vector2<int32_t> size, uint32_t expectedBytes);
     NetMsg NetFactory_CreateDownloadPacket(uint32_t size);
 
+    NetMsg NetFactory_CreateRpcClientCreate();
+    NetMsg NetFactory_CreateRpcEntityCreate();
 
 }

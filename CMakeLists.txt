@@ -66,9 +66,11 @@ add_executable (Capy
 # Net - Client
 "net/client/client_auth.cpp"
 "net/client/client_core.cpp"
+"net/client/client_rpc.cpp"
 
 # Entity
 "entity/entity_netidentity.cpp"
+"entity/entity_physical.cpp"
 "entity/entity_player.cpp"
 
 # World
