@@ -8,7 +8,7 @@ namespace Capy
 {
     class Client; 
 
-    #define CLIENT_NAME_LENGTH              64
+    #define CLIENT_NAME_MAX              64
     #define CLIENT_IP_LENGTH                32
 
     //
@@ -63,7 +63,7 @@ namespace Capy
 
     private:
         int id;                         // client unique id
-        char name[CLIENT_NAME_LENGTH];  // client name
+        char name[CLIENT_NAME_MAX];  // client name
         NET_Address* serverAddress;
 
         ClientState state;
@@ -81,6 +81,7 @@ namespace Capy
 
         void OnRpcReceive(NetMsg* msg) override; 
         void OnRpcClientCreate(NetMsg* msg);
+        void OnRpcClientDelete(NetMsg* msg);
 
         void SendMessage(NetMsg msg, NET_Address* address);
 
@@ -99,6 +100,7 @@ namespace Capy
         std::unordered_map<uint8_t, ClientRpcMethod> rpcReceiveMethods =
         {
             { NETMSG_RPC_REQUEST_CLIENT_CREATE, &Client::OnRpcClientCreate },
+            { NETMSG_RPC_REQUEST_CLIENT_DELETE, &Client::OnRpcClientDelete },
         };
     };
 }

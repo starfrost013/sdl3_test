@@ -79,4 +79,13 @@ namespace Capy
 
         return msg; 
     }
+
+    NetMsg NetFactory_CreateRpcClientDelete(const char* username)
+    {
+        NetMsg msg = NetMsg(NetMsgType::NETMSG_SERVER_RPC, nullptr, sizeof(uint8_t) + strlen(username));
+        msg.Write<uint8_t>(NetMsgRpcType::NETMSG_RPC_REQUEST_CLIENT_DELETE);
+        msg.Write<const char*>(username);
+
+        return msg; 
+    }
 }

@@ -7,6 +7,7 @@
 #include <SDL3/SDL.h>
 
 // STL Includes
+#include <cassert>
 #include <cstring>
 #include <functional>
 #include <future>

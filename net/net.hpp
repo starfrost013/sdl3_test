@@ -9,6 +9,9 @@
 
 namespace Capy
 {
+    // forward declare 
+    class Client;
+
     //
     // DEFINES
     //
@@ -261,6 +264,10 @@ namespace Capy
 
             World world;              // replicated from server
 
+            // clients need to store this information so they can be aware of other clients
+            Client* clients[MAX_CLIENTS] = {0};
+            int32_t numClients; 
+            
             void GetAllIncomingMessages();  // add incoming messages to the buffer 
             void DoneMessage(NetMsg* msg);  // discards a message when done
             
@@ -282,7 +289,8 @@ namespace Capy
     NetMsg NetFactory_CreateDownloadStartPacket_Server(const char* mapName, Vector2<int32_t> size, uint32_t expectedBytes);
     NetMsg NetFactory_CreateDownloadPacket(uint32_t size);
 
-    NetMsg NetFactory_CreateRpcClientCreate();
-    NetMsg NetFactory_CreateRpcEntityCreate();
+    NetMsg NetFactory_CreateRpcClientCreate(const char* username);
+    NetMsg NetFactory_CreateRpcClientDelete(const char* username);
+    NetMsg NetFactory_CreateRpcEntityCreate(uint32_t edictId);
 
 }

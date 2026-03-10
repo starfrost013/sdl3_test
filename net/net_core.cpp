@@ -21,6 +21,7 @@ namespace Capy
         if (netMaxPlayers->value == 0
         || netMaxPlayers->value > MAX_CLIENTS)
             Cvar_Set("netMaxPlayers", "32", false);
+            
         NET_Init();
     }
 

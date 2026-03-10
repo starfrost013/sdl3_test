@@ -52,8 +52,7 @@ namespace Capy
 
     private: 
         ServerState state; 
-        Client* clients[MAX_CLIENTS] = {0};
-        int32_t numClients; 
+
         uint16_t port;
 
         // console input
@@ -62,23 +61,27 @@ namespace Capy
         std::future<char*> consoleInputProc;
 
         // send message
-        void SendMessage(NetMsg msg, Client* client);
-        void SendMessageToAll(NetMsg msg);
+        void SendMessage(NetMsg msg, Client* client);                       // Send a message to a client.
+        void SendMessageToAll(NetMsg msg);                                  // Send a message to all clients.
+        void SendMessageToAll(NetMsg msg, Client* exclude);                 // Send a message to all clients except the "exclude" client
 
         // intenral tick methods
         void TickNetwork();
-        void TickNetwork_ClientMessage(Client* client, NetMsg* msg);
-        void TickDownloads();
+        void TickNetwork_ClientMessage(Client* client, NetMsg* msg);        // Client message was received
+        void TickDownloads();                                               // Update world downloads
     
         // client related methods
-        bool ClientIsNew(NET_Address* address);
+        bool ClientIsNew(NET_Address* address, const char* username);
         void ClientNew(NetMsg* hello);
         void ClientRemove(Client* client);
         void ClientStartWorldDownload(Client* client);
         void ClientSendWorldChunk(Client* client);
+        Client* ClientByIp(NET_Address* address);
+
+        // CLient search functions
+        Client* ClientByUsername(const char* username);
         
         void SetMap();
-        Client* GetMessageSender(NET_Address* address);
-        
+
     };
 }

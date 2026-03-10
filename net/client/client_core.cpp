@@ -49,9 +49,14 @@ namespace Capy
     // Run while the client is connected
     void Client::TickNetworkConnected(NetMsg* msg)
     {
+        if (!msg)
+            return;
+            
         switch (msg->header.msgType)
         {
-
+            case NETMSG_SERVER_RPC:
+                OnRpcReceive(msg);
+                break; 
         }
     }
 

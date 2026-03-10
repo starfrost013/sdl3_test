@@ -121,13 +121,38 @@ namespace Capy
         SendMessageToPort(msg, client->serverOnly.address, client->serverOnly.port);
     }
 
+    // Send a message to all clients
     void Server::SendMessageToAll(NetMsg msg)
+    {
+        SendMessageToAll(msg, nullptr);
+    }
+
+    // Send a message to all clients, except that indicated with the "exclude"
+    void Server::SendMessageToAll(NetMsg msg, Client* exclude)
     {
         for (Client* client : clients)
         {
-            if (client)
+            if (client && 
+                client != exclude)
+            {
                 SendMessage(msg, client);
+            }
         }
+    }
+
+    // Get a client by its username.
+    Client* Server::ClientByUsername(const char* username)
+    {
+        for (Client* client : clients)
+        {
+            if (!client)
+                continue; 
+
+            if (!strncmp(client->name, username, CLIENT_NAME_MAX))
+                return client; 
+        }
+
+        return nullptr; 
     }
 
     // is this a good idea?
@@ -161,7 +186,7 @@ namespace Capy
                     ClientNew(msg);
                     break; 
                 default:
-                    Client* client = GetMessageSender(msg->addr);
+                    Client* client = ClientByIp(msg->addr);
 
                     if (!client)
                     {
@@ -182,7 +207,7 @@ namespace Capy
     }
 
     // Utility method that gets the client that sent a certain message frrom its address
-    Client* Server::GetMessageSender(NET_Address* address)
+    Client* Server::ClientByIp(NET_Address* address)
     {
         for (Client* client : clients)
         {
@@ -196,6 +221,7 @@ namespace Capy
         return nullptr;
     }
 
+    // Main server tick function (runs at a set tickrate)
     void Server::Tick()
     {
         switch (state)
@@ -211,6 +237,7 @@ namespace Capy
         }
     }
 
+    // Main server frame function (runs AFAP)
     void Server::Frame()
     {
         NetMode::Frame();

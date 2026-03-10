@@ -12,7 +12,7 @@ namespace Capy
     void Client::Connect(const char* addr)
     {
         // temp
-        strncpy(name, playerName->string, CLIENT_NAME_LENGTH);
+        strncpy(name, playerName->string, CLIENT_NAME_MAX);
 
         Logging_LogChannel("Client::Connect - Resolving server IP at %s...", LogChannel::Message, addr);
         SetState(ClientState::CLIENT_RESOLVING_ADDRESS);

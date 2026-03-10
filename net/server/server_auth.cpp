@@ -5,9 +5,18 @@ namespace Capy
 {
     // Evaluates a Client Hello from a client and sees if it is hopelessly confused or a real client.
     // TODO: Is this needed?
-    bool Server::ClientIsNew(NET_Address* address)
+    bool Server::ClientIsNew(NET_Address* address, const char* username)
     {
-        return (GetMessageSender(address) == nullptr);
+        // ip doesn't exist -> new client
+        if (!ClientByIp(address))
+            return true;
+        
+        // username exists -> not new client
+        if (ClientByUsername(username))
+            return false;
+
+        // otherwise multiple ip's on same clieent
+        return true;  
     }
 
     // Log in a new client
@@ -19,14 +28,6 @@ namespace Capy
         Logging_LogChannel("Client is attempting to connect from IP %s...", LogChannel::Debug, ip);
 
         NetHelloStatus helloStatus = NetHelloStatus::HELLO_OK;
-
-        // check if the client already exists
-        if (!ClientIsNew(msg->addr))
-        {
-            Logging_LogChannel("Connection rejected: Duplicate client", LogChannel::Warning);
-            helloStatus = NetHelloStatus::HELLO_DUPLICATE_CLIENT;
-        }
-
         uint8_t netVersion = msg->Read<uint8_t>();
 
         if (netVersion != NET_PROTOCOL_VERSION)
@@ -38,6 +39,13 @@ namespace Capy
 
         // read the username
         const char* username = msg->Read<const char*>();
+
+        // check if the client already exists
+        if (!ClientIsNew(msg->addr, username))
+        {
+            Logging_LogChannel("Connection rejected: Duplicate client (username and IP pair already exists)", LogChannel::Warning);
+            helloStatus = NetHelloStatus::HELLO_DUPLICATE_CLIENT;
+        }
 
         // create the server hello packet
         NetMsg serverHello = NetFactory_CreateServerHelloPacket();
@@ -55,7 +63,7 @@ namespace Capy
             Client* client = new Client();
             clients[numClients] = client;
 
-            strncpy(client->name, ip, CLIENT_NAME_LENGTH);
+            strncpy(client->name, ip, CLIENT_NAME_MAX);
             client->serverOnly.address = msg->addr;
             strncpy(client->serverOnly.ipStr, ip, CLIENT_IP_LENGTH);
             client->serverOnly.port = msg->port;
@@ -63,13 +71,17 @@ namespace Capy
 
             Logging_LogChannel("%s: Connection accepted from %s!", LogChannel::Debug, ip, username);
             SendMessage(serverHello, client);
+
+            // now tell all other clients except this client
+            SendMessageToAll(NetFactory_CreateRpcClientCreate(client->name), client);
         }
-        else
-            SendMessageToPort(NetFactory_CreateDisconnectPacket(), msg->addr, msg->port);
+        // the client will disconnect itself upon receiving the hello packet with a non OK reason
     }
 
     void Server::ClientRemove(Client* client)
     {
+        SendMessageToAll(NetFactory_CreateRpcClientDelete(client->name), client);
+
         if (!numClients)
             return;
 
