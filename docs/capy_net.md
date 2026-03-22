@@ -1,11 +1,13 @@
 # CapyNet - Capybara Wars Network Protocol v5 Specification
 
 ## 1. Notes
-Capybara wars implements a buffered UDP network specification that is intended to minimise data sent from server to client while being server-authoritative. It operates as a set of packets that are defined 
+Capybara wars implements a buffered UDP network specification that is intended to minimise data sent from server to client while being server-authoritative. It operates as a set of packets that are defined by the NetMsg enum; packets are created using a factory design pattern (the
+NetFactory_* functions)
 
 ## 2. Quickstart
 
 ## 3. Connection & Authentication
+Connection starts when the server receives a 
 
 ## 4. Heartbeat
 

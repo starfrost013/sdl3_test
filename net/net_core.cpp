@@ -99,8 +99,6 @@ namespace Capy
         //temp, slightly bad design
         NET_RefAddress(dgram->addr);
 
-        /* Known Address Identification here */
-
         // add to buffer
 
         netBufferPtr++;

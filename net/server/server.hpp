@@ -76,10 +76,12 @@ namespace Capy
         void ClientRemove(Client* client);
         void ClientStartWorldDownload(Client* client);
         void ClientSendWorldChunk(Client* client);
-        Client* ClientByIp(NET_Address* address);
 
-        // CLient search functions
-        Client* ClientByUsername(const char* username);
+        
+        // Client search functions
+        Client* ClientByIp(NetMsg msg);                                     // get client by ip given netmsg
+        Client* ClientByIpPort(NetMsg msg);                                 // get client by (ip, port) given netmsg
+        Client* ClientByUsername(const char* username);                     // get client by username
         
         void SetMap();
 

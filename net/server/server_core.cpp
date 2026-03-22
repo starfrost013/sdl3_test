@@ -99,7 +99,7 @@ namespace Capy
         //}
     }
 
-    // Ticks the network aft
+    // Ticks the network when the server receives a message from a client
     void Server::TickNetwork_ClientMessage(Client* client, NetMsg* msg)
     {  
         switch (msg->header.msgType)
@@ -207,18 +207,25 @@ namespace Capy
     }
 
     // Utility method that gets the client that sent a certain message frrom its address
-    Client* Server::ClientByIp(NET_Address* address)
+    Client* Server::ClientByIp(NetMsg msg)
     {
         for (Client* client : clients)
         {
             if (client != nullptr)
             {
-                if (!NET_CompareAddresses(client->serverOnly.address, address))
+                if (!NET_CompareAddresses(client->serverOnly.address, msg.addr))
                     return client;
             }
         }
 
         return nullptr;
+    }
+
+    Client* Server::ClientByIpPort(NetMsg msg)
+    {
+        Client* client = ClientByIp(msg);
+
+        return (client->serverOnly.port == msg.port) ? client : nullptr;
     }
 
     // Main server tick function (runs at a set tickrate)
