@@ -5,10 +5,10 @@ namespace Capy
 {
     // Evaluates a Client Hello from a client and sees if it is hopelessly confused or a real client.
     // TODO: Is this needed?
-    bool Server::ClientIsNew(NET_Address* address, const char* username)
+    bool Server::ClientIsNew(NetMsg* msg, const char* username)
     {
         // ip doesn't exist -> new client
-        if (!ClientByIp(address))
+        if (!ClientByIp(msg))
             return true;
         
         // username exists -> not new client
@@ -41,7 +41,7 @@ namespace Capy
         const char* username = msg->Read<const char*>();
 
         // check if the client already exists
-        if (!ClientIsNew(msg->addr, username))
+        if (!ClientIsNew(msg, username))
         {
             Logging_LogChannel("Connection rejected: Duplicate client (username and IP pair already exists)", LogChannel::Warning);
             helloStatus = NetHelloStatus::HELLO_DUPLICATE_CLIENT;

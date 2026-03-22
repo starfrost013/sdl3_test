@@ -186,7 +186,7 @@ namespace Capy
                     ClientNew(msg);
                     break; 
                 default:
-                    Client* client = ClientByIp(msg->addr);
+                    Client* client = ClientByIp(msg);
 
                     if (!client)
                     {
@@ -207,13 +207,13 @@ namespace Capy
     }
 
     // Utility method that gets the client that sent a certain message frrom its address
-    Client* Server::ClientByIp(NetMsg msg)
+    Client* Server::ClientByIp(NetMsg* msg)
     {
         for (Client* client : clients)
         {
             if (client != nullptr)
             {
-                if (!NET_CompareAddresses(client->serverOnly.address, msg.addr))
+                if (!NET_CompareAddresses(client->serverOnly.address, msg->addr))
                     return client;
             }
         }
@@ -221,11 +221,11 @@ namespace Capy
         return nullptr;
     }
 
-    Client* Server::ClientByIpPort(NetMsg msg)
+    Client* Server::ClientByIpPort(NetMsg* msg)
     {
         Client* client = ClientByIp(msg);
 
-        return (client->serverOnly.port == msg.port) ? client : nullptr;
+        return (client->serverOnly.port == msg->port) ? client : nullptr;
     }
 
     // Main server tick function (runs at a set tickrate)

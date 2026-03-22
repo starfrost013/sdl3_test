@@ -71,7 +71,7 @@ namespace Capy
         void TickDownloads();                                               // Update world downloads
     
         // client related methods
-        bool ClientIsNew(NET_Address* address, const char* username);
+        bool ClientIsNew(NetMsg* msg, const char* username);
         void ClientNew(NetMsg* hello);
         void ClientRemove(Client* client);
         void ClientStartWorldDownload(Client* client);
@@ -79,8 +79,8 @@ namespace Capy
 
         
         // Client search functions
-        Client* ClientByIp(NetMsg msg);                                     // get client by ip given netmsg
-        Client* ClientByIpPort(NetMsg msg);                                 // get client by (ip, port) given netmsg
+        Client* ClientByIp(NetMsg* msg);                                    // get client by ip given netmsg
+        Client* ClientByIpPort(NetMsg* msg);                                // get client by (ip, port) given netmsg
         Client* ClientByUsername(const char* username);                     // get client by username
         
         void SetMap();
