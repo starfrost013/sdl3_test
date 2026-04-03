@@ -15,7 +15,6 @@ namespace Capy
     // Maximum safe path length
     #define MAX_PATH                        260
     
-    
     #define FILESYSTEM_PACKAGE_NAMESPACE    "pak:"                  // Namespace for loading shit from a pak
     #define FILESYSTEM_PACKAGE_MAGIC        0x52454542              // 'BEER' (little endian)
 
@@ -29,7 +28,7 @@ namespace Capy
         FILE_BINARY = (1 << 1),
     };
 
-    // Package file that all 
+    // Package file that all game content is located in
     class FilesystemImage
     {
         struct FilesystemImageHeader

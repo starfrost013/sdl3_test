@@ -119,6 +119,7 @@ namespace Capy
         Game_Frame();
     }
 
+    // Temporary until input system
     void Game_PumpEvents()
     {
         SDL_Event next_event; 
@@ -133,6 +134,16 @@ namespace Capy
                     break; 
                 case SDL_EVENT_KEY_DOWN:
                     keyStates[next_event.key.scancode] = true;
+
+                    if (keyStates[SDL_SCANCODE_F9])
+                    {
+                        Logging_LogChannel("Saving this world so it can be loaded later...", LogChannel::Message);
+
+                        if (server)
+                            server->world.Serialise("Test.world");
+                        else if (client)
+                            client->world.Serialise("Test.world"); 
+                    }
                     break; 
                 case SDL_EVENT_QUIT:
                     game.running = false; 

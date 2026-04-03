@@ -242,6 +242,8 @@ namespace Capy
     class NetMode
     {
         public:
+            World world;              // replicated from server to client *** temporary - make protected when input system exists ***
+            
             virtual void Init() { };
             virtual void Frame();
             virtual void Tick() { };
@@ -263,7 +265,6 @@ namespace Capy
             NetMsg netBuffer[NET_BUFFER_SIZE];  
             int32_t netBufferPtr = -1;
 
-            World world;              // replicated from server
 
             // clients need to store this information so they can be aware of other clients
             Client* clients[MAX_CLIENTS] = {0};
