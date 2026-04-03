@@ -7,7 +7,7 @@ NetFactory_* functions)
 ## 2. Quickstart
 
 ## 3. Connection & Authentication
-Connection starts when the server receives a 
+Connection starts when the server receives a valid connection request from a client.
 
 ## 4. Heartbeat
 

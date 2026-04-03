@@ -102,7 +102,7 @@ namespace Capy
     // Ticks the network when the server receives a message from a client
     void Server::TickNetwork_ClientMessage(Client* client, NetMsg* msg)
     {  
-        switch (msg->header.msgType)
+        switch (msg->header.type)
         {
             case NetMsgType::NETMSG_WORLD_DOWNLOAD_START:
                 ClientStartWorldDownload(client);
@@ -179,7 +179,7 @@ namespace Capy
         if (msg 
             && msg->valid)
         {
-            switch (msg->header.msgType)
+            switch (msg->header.type)
             {
                 // Messages that don't require a client
                 case NetMsgType::NETMSG_HELLO:
@@ -256,12 +256,17 @@ namespace Capy
 
     void Server::Shutdown()
     {
+        SetState(ServerState::SERVER_SHUTTING_DOWN);
+
         for (auto client : clients)
         {
             // todo: send "server is shutting down..." message
             
             if (client != nullptr)
+            {
+                SendMessage(NetFactory_CreateShutdownPacket(), client);
                 ClientRemove(client);
+            }
         }
 
         Logging_LogChannel("Shutting down server...", LogChannel::Message);

@@ -87,8 +87,6 @@ set_property(TARGET Capy PROPERTY CXX_STANDARD 23)
 # Base include directories
 include_directories(".")
 
-message(${CMAKE_SOURCE_DIR})
-
 # Libraries and compiler specific stuff (prefer submodules)
 
 include_directories(${CMAKE_SOURCE_DIR}"/external/sdl3/include")

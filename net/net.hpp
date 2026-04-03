@@ -64,7 +64,8 @@ namespace Capy
         NETMSG_SERVER_HELLO = NETMSG_IS_SERVER_MESSAGE | 0x0,       // Server Hello
         NETMSG_SERVER_HEARTBEAT = NETMSG_IS_SERVER_MESSAGE | 0x1,   // Server heartbeat (if nothing for 5 seconds, disconnect)  
         NETMSG_SERVER_RPC = NETMSG_IS_SERVER_MESSAGE | 0x2,         // Server-to-Client RPC
-        NETMSG_LAST_VALID = NETMSG_SERVER_RPC,                      // Sentinel value
+        NETMSG_SERVER_SHUTDOWN = NETMSG_IS_SERVER_MESSAGE | 0x3,    // Server is shutting down
+        NETMSG_LAST_VALID = NETMSG_SERVER_SHUTDOWN,                 // Sentinel value
     };
 
     // Entity management packet
@@ -111,7 +112,7 @@ namespace Capy
             std::size_t seqNumber;          // sequence number for message re-ordering etc
             // these are not enums because they could theoretically be out of range
             uint32_t size;                  // size does not need to be 8 bytes (nobody will send 2 GB packet!)
-            uint8_t msgType;                // type of message
+            uint8_t type;                // type of message
         };
 
         NetHeader header;                   // header
@@ -140,7 +141,7 @@ namespace Capy
 
             header.magic = NETMSG_MAGIC;
             header.size = size;
-            header.msgType = msgType;
+            header.type = msgType;
             
             valid = true;
             msgPtrRead = msgPtrWrite = 0;
@@ -285,6 +286,7 @@ namespace Capy
     NetMsg NetFactory_CreateClientHelloPacket(const char* username);
     NetMsg NetFactory_CreateServerHelloPacket();
     NetMsg NetFactory_CreateDisconnectPacket();
+    NetMsg NetFactory_CreateShutdownPacket();
     NetMsg NetFactory_CreateDownloadStartPacket_Client();
     NetMsg NetFactory_CreateDownloadStartPacket_Server(const char* mapName, Vector2<int32_t> size, uint32_t expectedBytes);
     NetMsg NetFactory_CreateDownloadPacket(uint32_t size);

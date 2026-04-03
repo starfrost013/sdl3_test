@@ -47,6 +47,11 @@ namespace Capy
         return NetMsg(NetMsgType::NETMSG_WORLD_DOWNLOAD_PACKET, nullptr, size);
     }
 
+    NetMsg NetFactory_CreateShutdownPacket()
+    {
+        return NetMsg(NetMsgType::NETMSG_SERVER_SHUTDOWN, nullptr, 0);
+    }
+
     // Create an RPC create packet
     NetMsg NetFactory_CreateRpcCreatePacket_Client(const char* classname)
     {

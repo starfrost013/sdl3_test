@@ -263,9 +263,7 @@ namespace Capy
             if (currentQuadScaleY > TILE_SIZE_Y)
                 currentQuadScaleY >>= 1;
         }
-        /*
-       
-    */
+
     }
 
 

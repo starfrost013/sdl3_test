@@ -51,9 +51,9 @@ namespace Capy
             CLIENT_LETS_GO,
         };
         
-        void Init() override; 
+        void Init() override;                       // Called on init
         void Connect(const char* addr);
-        void Disconnect();
+        void Disconnect(const char* reason);
         void Tick() override;
         void Frame() override; 
         void Shutdown() override; 

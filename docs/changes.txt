@@ -11,13 +11,14 @@
 /_/                                                         /_/                                                                
 
 Pre-Alpha 8.0
-March 2026
+April 2026
 CHANGELOG
 
 ==== Pre-Alpha 8.0 (March 2026) ====
 * Implemented start of Squirrel VM / scripting system
 * Implemented usernames
 * Implemented network identity system for asset replication
+* Implemented server shutdown notification NETMSG_SERVER_SHUTDOWN, sent when the server is shutting down
 * Implemented asset system and texture stuff
 * Get rid of "data" folder and split code out into its own thing
 * Remove unused "level" struct from DDATest era

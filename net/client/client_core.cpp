@@ -52,7 +52,7 @@ namespace Capy
         if (!msg)
             return;
             
-        switch (msg->header.msgType)
+        switch (msg->header.type)
         {
             case NETMSG_SERVER_RPC:
                 OnRpcReceive(msg);
@@ -78,6 +78,18 @@ namespace Capy
 
         if (dontCare)
             return;
+
+        // First check that the server didn't shut down
+        if (msg 
+            && msg->header.type == NETMSG_SERVER_SHUTDOWN)
+        {
+            Disconnect("Server notified shutdown");
+
+            if (state != CLIENT_SHUTTING_DOWN)
+                SetState(CLIENT_DISCONNECTED);
+                
+            return;
+        }
 
         switch (state)
         {
@@ -153,7 +165,7 @@ namespace Capy
         if (state == CLIENT_CONNECTING 
         || state == CLIENT_CONNECTED)
         {
-            Disconnect();
+            Disconnect("Client is shutting down...");
         }
 
         // Test code

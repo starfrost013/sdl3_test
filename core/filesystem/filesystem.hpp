@@ -2,7 +2,8 @@
     Filesystem core code
     These classes are prefixed with "Capy" to avoid clashing with std::filesystem
 
-    Currently this just wraps C++ streams but could always be changed alter to something more interesting
+    Currently this just wraps C++ streams but could always be changed alter to something more interesting# 
+    Also implements a big file that is good for slow disks
 */
 
 #pragma once
@@ -12,7 +13,11 @@
 namespace Capy
 {
     // Maximum safe path length
-    #define MAX_PATH                260
+    #define MAX_PATH                        260
+    
+    
+    #define FILESYSTEM_PACKAGE_NAMESPACE    "pak:"                  // Namespace for loading shit from a pak
+    #define FILESYSTEM_PACKAGE_MAGIC        0x52454542              // 'BEER' (little endian)
 
     class Cvar;
 
@@ -22,6 +27,18 @@ namespace Capy
     {   
         FILE_TEXT = (1 << 0),
         FILE_BINARY = (1 << 1),
+    };
+
+    // Package file that all 
+    class FilesystemImage
+    {
+        struct FilesystemImageHeader
+        {
+            uint32_t magic;
+            uint32_t version;
+        };
+
+        FilesystemImageHeader header; 
     };
 
     // in the future this will load from a pakcage file

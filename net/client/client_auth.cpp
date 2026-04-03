@@ -27,9 +27,11 @@ namespace Capy
         }
     }
 
-    void Client::Disconnect()
+    void Client::Disconnect(const char* reason)
     {
+        // kicks are the same as disconnects 
         SendMessage(NetFactory_CreateDisconnectPacket(), serverAddress);
+        Logging_LogChannel("Disconnected: %s", LogChannel::Debug, reason);
     }
 
     void Client::ConnectDownloadWorldChunk(NetMsg* msg)
@@ -40,10 +42,10 @@ namespace Capy
         if (!msg)
             return;
 
-        if (msg->header.msgType != NETMSG_WORLD_DOWNLOAD_PACKET)
+        if (msg->header.type != NETMSG_WORLD_DOWNLOAD_PACKET)
         {
             Logging_LogChannel("ConnectPhase::CLIENT_DOWNLOADING_WORLD: Should be world download packet, but is type %0x :(",
-            LogChannel::Warning, msg->header.msgType);
+            LogChannel::Warning, msg->header.type);
         }
         else
         {
@@ -65,6 +67,7 @@ namespace Capy
         }
     }
 
+    // Update network before the connection has been fully completed.
     void Client::TickNetworkConnecting(NetMsg* msg)
     {
         switch (connectPhase)
@@ -78,7 +81,7 @@ namespace Capy
             case ConnectPhase::CLIENT_HELLO_SENT: // TODO: figure out a better way of doing this than extra states that prevents it being sent multiple times
                 if (msg)
                 {
-                    if (msg->header.msgType != NetMsgType::NETMSG_SERVER_HELLO)
+                    if (msg->header.type != NetMsgType::NETMSG_SERVER_HELLO)
                     {
                         Logging_LogChannel("Client::TickNetworkConnecting - Server sent back non-server hello!", LogChannel::Warning);
                         return;

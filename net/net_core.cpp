@@ -74,9 +74,9 @@ namespace Capy
         }
 
         // check for valid message type
-        if (msg.header.msgType > NETMSG_LAST_VALID)
+        if (msg.header.type > NETMSG_LAST_VALID)
         {
-            Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid msg type %d", LogChannel::Error, msg.header.msgType);
+            Logging_LogChannel("NetMode::GetAllIncomingMessages - invalid msg type %d", LogChannel::Error, msg.header.type);
             return;
         }
 
