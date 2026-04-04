@@ -32,12 +32,40 @@ namespace Capy
         Logging_LogChannel("Script_Init: Scripting initialised (VM Handle = 0x%lX, stack size = %d)", LogChannel::Message, 
             scriptVm.handle, int(scriptStackSize->value));
 
+        sq_setcompilererrorhandler(scriptVm.handle, Script_Fatal);
+
         scriptVm.initialised = true; 
     }
 
-    void Script_Fatal()
+    // send a character to the Squirrel VM
+    SQInteger Script_ReadCharacter(SQUserPointer file)           
     {
+        FilesystemFile* f = (FilesystemFile*)file;
 
+        if (f->stream.eof())
+            return 0x00;
+        else
+            return f->stream.get();
+    }    
+
+    // open and compile a script
+    void Script_Open(const char* filename)
+    {
+        Logging_LogChannel("Script_Open: %s", LogChannel::Debug, filename);
+        FilesystemFile* file = Filesystem::Open(filename, FILE_TEXT);
+
+        if (file)
+        {
+            sq_compile(scriptVm.handle, Script_ReadCharacter, file, filename, true);
+            Filesystem::Close(file); // todo: make a linked list so we can close stuff that fails e.g. if there is a Script_Fatal call
+        }
+    }
+
+    void Script_Fatal(HSQUIRRELVM vm, const SQChar* desc, const SQChar* source,
+                        SQInteger line, SQInteger column)
+    {
+        Logging_LogChannel("Script compilation failure: %s (BUG!)\nLine %s, Column %s, Script: %s", LogChannel::Fatal,
+        desc, line, column, source);
     }
     
     void Script_Shutdown()

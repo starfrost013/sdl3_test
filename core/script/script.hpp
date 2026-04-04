@@ -34,7 +34,10 @@ namespace Capy
     // determines if the scripting system is initialised
     extern ScriptVMState scriptVm;
 
-    void Script_Init();                     // initialise the squirrel bridge
-    void Script_Fatal();                    // fatal error reported by Squirrel VM
-    void Script_Shutdown();                 // SHutdown
+    void Script_Init();                                                         // initialise the squirrel bridge
+    SQInteger Script_ReadCharacter(SQUserPointer file);                         // send a character to the Squirrel VM
+    void Script_Open(const char* filename);                                     // open a script
+    void Script_Fatal(HSQUIRRELVM vm, const SQChar* ch, const SQChar* source,
+                      SQInteger line, SQInteger column);                        // fatal error reported by Squirrel VM
+    void Script_Shutdown();                                                     // SHutdown
 }

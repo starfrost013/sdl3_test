@@ -8,7 +8,7 @@ namespace Capy
 {
     class Client; 
 
-    #define CLIENT_NAME_MAX              64
+    #define CLIENT_NAME_MAX                 64
     #define CLIENT_IP_LENGTH                32
 
     //
