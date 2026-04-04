@@ -2,7 +2,7 @@
 // client_core.cpp: Client init, loop, network update & shutdown code
 //
 
-#include <core/game.hpp>
+#include <core/engine.hpp>
 #include <core/render/render.hpp>
 #include <world/world.hpp>
 #include <net/client/client.hpp>
@@ -18,7 +18,7 @@ namespace Capy
         if (!Render_Init())
         {
             // error will already be printed
-            Game_Shutdown();
+            Engine_Shutdown();
             return;
         }
 

@@ -6,7 +6,7 @@
 #include <net/net.hpp>
 #include <net/client/client.hpp>
 #include <net/server/server.hpp>
-#include <core/game.hpp>
+#include <core/engine.hpp>
 
 #include <iostream>
 
@@ -14,12 +14,12 @@ namespace Capy
 {
     void Capy_Main(int32_t argc, char** argv)
     {
-        Game_Init(argc, argv);
+        Engine_Init(argc, argv);
 
-        while (game.running)
-            Game_Run();
+        while (engine.running)
+            Engine_Run();
 
-        Game_Shutdown();
+        Engine_Shutdown();
     }
 }
 

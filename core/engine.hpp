@@ -12,7 +12,7 @@ namespace Capy
     #define NS_PER_SECOND               1000000000
 
     /* Game target platform */
-    enum GameTargetPlatform
+    enum EnginePlatforms
     {
         OS_WIN64 = 0,                   // 64-bit Microsoft Windows
         OS_LINUX64 = 1,                 // 64-bit Linux
@@ -25,20 +25,20 @@ namespace Capy
     };
 
     /* Game settings */
-    struct GameSettings
+    struct EngineSettings
     {  
         uint32_t screenX;
         uint32_t screenY;
     };
 
     /* Game information that changes on level change */
-    struct GameInfo 
+    struct EngineInfo 
     {
         uint32_t timer;
-        GameTargetPlatform targetPlatform;  // target platform
+        EnginePlatforms targetPlatform;  // target platform
     };
 
-    class Game
+    class Engine
     {
     public:
         SDL_Window* window;         // SDL Window
@@ -46,23 +46,22 @@ namespace Capy
         SDL_Texture* renderTarget;  // Texture that gets blited to the display
         uint32_t tickrate;          // The game's tickrate
         uint64_t lastTickTime;      // last frame time in nanoseconds (returned by SDL_GetTicksNS)
-        GameInfo info;              // Level-specific game information
-        GameSettings settings;      // Game settings
+        EngineInfo info;            // Level-specific game information
+        EngineSettings settings;    // Game settings
         bool running;               // Determines if the game is running.
     };
-
     
     extern Client* client;          // Valid if netmode is LISTEN_SERVER or CLIENT
     extern Server* server;          // Valid if netmode is LISTEN_SERVER Or DEDICATED_SERVER
-    extern Game game;               // Always valid, stuff shared between client and server
+    extern Engine engine;           // Always valid, stuff shared between client and server
 
     // Core functionality
-    bool Game_Init(int32_t argc, char** argv);               // Run on init
-    void Game_Run();                // Run while game is running
-    void Game_PumpEvents();         // Pump events for SDL
-    void Game_Tick();               // Run each tick
-    void Game_Frame();              // Run each frame
-    bool Game_Shutdown();           // RUn on shutdown
+    bool Engine_Init(int32_t argc, char** argv);               // Run on init
+    void Engine_Run();              // Run while game is running
+    void Engine_PumpEvents();       // Pump events for SDL
+    void Engine_Tick();             // Run each tick
+    void Engine_Frame();            // Run each frame
+    bool Engine_Shutdown();         // RUn on shutdown
 
 
     // scancodes are a terrible idea

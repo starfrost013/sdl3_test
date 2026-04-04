@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <core/game.hpp>
+#include <core/engine.hpp>
 
 namespace Capy
 {

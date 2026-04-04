@@ -2,7 +2,7 @@
 // client_auth.cpp: Client Authentication
 //
 
-#include <core/game.hpp>
+#include <core/engine.hpp>
 #include <core/render/render.hpp>
 #include <world/world.hpp>
 #include <net/client/client.hpp>

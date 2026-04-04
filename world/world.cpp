@@ -1,7 +1,7 @@
 // entity_world.cpp: World generation code
 
 #include <Capy.hpp>
-#include <core/game.hpp>
+#include <core/engine.hpp>
 #include <entity/entity.hpp>
 #include <world/world.hpp>
 #include <util/util.hpp>
@@ -284,24 +284,24 @@ namespace Capy
         uint32_t index; 
         int32_t pitch; 
 
-        SDL_Rect newRect = { 0, 0, (int32_t)game.settings.screenX, (int32_t)game.settings.screenY };
+        SDL_Rect newRect = { 0, 0, (int32_t)engine.settings.screenX, (int32_t)engine.settings.screenY };
 
         // mock 'sky' colour 
-        SDL_SetRenderDrawColor(game.renderer, 30, 50, 180, 255);
+        SDL_SetRenderDrawColor(engine.renderer, 30, 50, 180, 255);
 
         /* Todo: DETECT world change */
 
-        SDL_LockTexture(game.renderTarget, &newRect, (void**)&texturePixels, &pitch);
+        SDL_LockTexture(engine.renderTarget, &newRect, (void**)&texturePixels, &pitch);
 
         WorldTile* currentTile = heightData[0];
         
-        for (uint32_t x = 0; x < game.settings.screenX; x += TILE_SIZE_Y)
+        for (uint32_t x = 0; x < engine.settings.screenX; x += TILE_SIZE_Y)
         {
             // blit to texture
             bool hitGround = false; 
             uint32_t groundHeight = 0;
             
-            for (uint32_t y = 0; y < game.settings.screenY; y += TILE_SIZE_X)
+            for (uint32_t y = 0; y < engine.settings.screenY; y += TILE_SIZE_X)
             {
                 uint32_t xTile = x / TILE_SIZE_X;
                 uint32_t yTile = y / TILE_SIZE_Y;
@@ -368,8 +368,8 @@ namespace Capy
         }
 
 done:
-        SDL_UnlockTexture(game.renderTarget);
-        SDL_RenderTexture(game.renderer, game.renderTarget, NULL, NULL);
+        SDL_UnlockTexture(engine.renderTarget);
+        SDL_RenderTexture(engine.renderer, engine.renderTarget, NULL, NULL);
     }
 
     void World::Tick()

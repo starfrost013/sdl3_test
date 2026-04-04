@@ -1,5 +1,5 @@
 #include "command.hpp"
-#include <core/game.hpp>
+#include <core/engine.hpp>
 #include <core/command/command.hpp>
 
 //
@@ -92,6 +92,6 @@ namespace Capy
 
     void Command_Shutdown(CommandType origin)
     {
-        Game_Shutdown();
+        Engine_Shutdown();
     }
 }

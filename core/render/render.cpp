@@ -12,22 +12,22 @@ namespace Capy
 
         Logging_LogChannel("Initialising window and renderer...", LogChannel::Message);
 
-        game.settings.screenX = 1024;
-        game.settings.screenY = 768;
+        engine.settings.screenX = 1024;
+        engine.settings.screenY = 768;
 
-        if (!SDL_CreateWindowAndRenderer(APP_SIGNON_STRING, game.settings.screenX, game.settings.screenY, 0, &game.window, &game.renderer))
+        if (!SDL_CreateWindowAndRenderer(APP_SIGNON_STRING, engine.settings.screenX, engine.settings.screenY, 0, &engine.window, &engine.renderer))
             return false;
 
         Logging_LogChannel("Initialising render texture...", LogChannel::Message);
 
         // not really a render target, but w/e
-        game.renderTarget = SDL_CreateTexture(game.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, game.settings.screenX, game.settings.screenY);
+        engine.renderTarget = SDL_CreateTexture(engine.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, engine.settings.screenX, engine.settings.screenY);
 
-        if (!game.renderTarget)
+        if (!engine.renderTarget)
         {
             Logging_LogChannel("Failed to create render target: %s", LogChannel::Error, SDL_GetError());
 
-            Game_Shutdown();
+            Engine_Shutdown();
         }
 
         return true; 
@@ -35,25 +35,25 @@ namespace Capy
 
     void Render_Clear()
     {
-        SDL_RenderClear(game.renderer);
+        SDL_RenderClear(engine.renderer);
 
     }
 
     void Render_Present()
     {
         // flip the buffers
-        SDL_RenderPresent(game.renderer);
+        SDL_RenderPresent(engine.renderer);
     }
 
     void Render_SetWindowTitle(const char* wndTitle)
     {
-        SDL_SetWindowTitle(game.window, wndTitle);
+        SDL_SetWindowTitle(engine.window, wndTitle);
     }
 
     void Render_Shutdown()
     {
-        SDL_DestroyRenderer(game.renderer);
-        SDL_DestroyWindow(game.window);
+        SDL_DestroyRenderer(engine.renderer);
+        SDL_DestroyWindow(engine.window);
 
         SDL_Quit();
     }

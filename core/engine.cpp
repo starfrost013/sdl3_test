@@ -12,14 +12,14 @@
 #include <net/net.hpp>
 #include <net/client/client.hpp>
 #include <net/server/server.hpp>
-#include <core/game.hpp>
+#include <core/engine.hpp>
 #include <entity/entity_player.hpp>
 #include <world/world.hpp>
 
 namespace Capy
 {
 
-    Game game;                      // Core game strcture
+    Engine engine;                      // Core game strcture
     Client* client = nullptr;       // The client    
     Server* server = nullptr;       // The server
 
@@ -29,7 +29,7 @@ namespace Capy
 
 #ifdef __linux__
         Logging_LogChannel("64-bit Linux binary", LogChannel::Message);
-        game.info.targetPlatform = GameTargetPlatform::OS_LINUX64;
+        engine.info.targetPlatform = EnginePlatforms::OS_LINUX64;
 #elif _WIN32
         Logging_LogChannel("64-bit Windows binary", LogChannel::Message);
         game.info.targetPlatform = GameTargetPlatform::OS_WIN64;
@@ -42,7 +42,7 @@ namespace Capy
 #endif
     }
 
-    bool Game_Init(int32_t argc, char** argv)
+    bool Engine_Init(int32_t argc, char** argv)
     {
         logger.settings.channels = (LogChannel)(LogChannel::Debug | LogChannel::Message | LogChannel::Warning | LogChannel::Error | LogChannel::Fatal | LogChannel::SuperFatal);
         logger.settings.destination = (LogDestination)(LogDestination::File | LogDestination::Printf);
@@ -87,8 +87,8 @@ namespace Capy
         if (server)
             server->Init();
 
-        game.running = true; 
-        game.tickrate = 60; 
+        engine.running = true; 
+        engine.tickrate = 60; 
 
         if (mode == NETMODE_CLIENT)
         {
@@ -98,7 +98,7 @@ namespace Capy
         return true; 
     }
 
-    void Game_Run()
+    void Engine_Run()
     {
         NetModeEnum mode = static_cast<NetModeEnum>(int(netMode->value));
 
@@ -106,21 +106,21 @@ namespace Capy
         uint64_t timeNow = SDL_GetTicksNS();
 
         /* Now, pump the game's event queue */
-        Game_PumpEvents();
+        Engine_PumpEvents();
 
-        if (timeNow > (game.lastTickTime + (NS_PER_SECOND / game.tickrate)))
+        if (timeNow > (engine.lastTickTime + (NS_PER_SECOND / engine.tickrate)))
         {
             /* Update the world state and actually *HANDLE* those events */
-            Game_Tick();
+            Engine_Tick();
             //std::cout << "Last tick time: " << (float(time_now / 1000000.0f)) - (float(game.last_tick_time / 1000000.0f)) << "ms" << std::endl;
-            game.lastTickTime = timeNow;
+            engine.lastTickTime = timeNow;
         }
 
-        Game_Frame();
+        Engine_Frame();
     }
 
     // Temporary until input system
-    void Game_PumpEvents()
+    void Engine_PumpEvents()
     {
         SDL_Event next_event; 
 
@@ -146,14 +146,13 @@ namespace Capy
                     }
                     break; 
                 case SDL_EVENT_QUIT:
-                    game.running = false; 
+                    engine.running = false; 
                     break;
-
             }
         }
     }
 
-    void Game_Tick()
+    void Engine_Tick()
     {
         if (client)
             client->Tick();
@@ -162,7 +161,7 @@ namespace Capy
             server->Tick();
     }
     
-    void Game_Frame()
+    void Engine_Frame()
     {            
         if (client)
             client->Frame();
@@ -171,7 +170,7 @@ namespace Capy
             server->Frame();
     }
 
-    bool Game_Shutdown()
+    bool Engine_Shutdown()
     {
         if (client)
             client->Shutdown();

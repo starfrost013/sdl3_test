@@ -1,6 +1,6 @@
 // "Network Identities" are used to know what to spawn when a RPC to create an entity is receied
 
-#include <core/game.hpp>
+#include <core/engine.hpp>
 #include <entity/entity.hpp>
 #include <entity/entity_player.hpp>
 

@@ -26,8 +26,8 @@ add_executable (Capy
 "core/tier0/memory/memory.cpp"
 
 # Core
-"core/game.cpp"
-"core/game_input.cpp"
+"core/engine.cpp"
+"core/engine_input.cpp"
 
 # Core - command line
 "core/cmdline/cmdline.cpp"

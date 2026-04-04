@@ -2,7 +2,7 @@
 // client_rpc.cpp: Client RPC handling (e.g. updating other clients)
 //
 
-#include <core/game.hpp>
+#include <core/engine.hpp>
 #include <core/render/render.hpp>
 #include <world/world.hpp>
 #include <net/client/client.hpp>
