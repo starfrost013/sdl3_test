@@ -10,7 +10,7 @@ namespace Capy
     Cvar* scriptStackSize;
 
     // determines if the scripting system is initialised
-    ScriptVMState scriptVm = {0};
+    ScriptVMState script = {0};
 
     void Script_Init()
     {
@@ -24,17 +24,17 @@ namespace Capy
 
         Logging_LogChannel("Script_Init: Initialising Squirrel...", LogChannel::Debug);
 
-        scriptVm.handle = sq_open(int(scriptStackSize->value));
+        script.handle = sq_open(int(scriptStackSize->value));
 
-        if (!scriptVm.handle)
+        if (!script.handle)
             Logging_LogChannel("Failed to initialise Squirrel!", LogChannel::Fatal);
 
         Logging_LogChannel("Script_Init: Scripting initialised (VM Handle = 0x%lX, stack size = %d)", LogChannel::Message, 
-            scriptVm.handle, int(scriptStackSize->value));
+            script.handle, int(scriptStackSize->value));
 
-        sq_setcompilererrorhandler(scriptVm.handle, Script_Fatal);
-
-        scriptVm.initialised = true; 
+        sq_setcompilererrorhandler(script.handle, Script_CompileFatal);
+        
+        script.initialised = true; 
     }
 
     // send a character to the Squirrel VM
@@ -56,12 +56,13 @@ namespace Capy
 
         if (file)
         {
-            sq_compile(scriptVm.handle, Script_ReadCharacter, file, filename, true);
+            sq_compile(script.handle, Script_ReadCharacter, file, filename, true);
             Filesystem::Close(file); // todo: make a linked list so we can close stuff that fails e.g. if there is a Script_Fatal call
         }
+
     }
 
-    void Script_Fatal(HSQUIRRELVM vm, const SQChar* desc, const SQChar* source,
+    void Script_CompileFatal(HSQUIRRELVM vm, const SQChar* desc, const SQChar* source,
                         SQInteger line, SQInteger column)
     {
         Logging_LogChannel("Script compilation failure: %s (BUG!)\nLine %s, Column %s, Script: %s", LogChannel::Fatal,
@@ -72,8 +73,8 @@ namespace Capy
     {
         Logging_LogChannel("Script_Shutdown: Shutting down scripting...", LogChannel::Message);
 
-        sq_close(scriptVm.handle);
-        scriptVm.initialised = false; 
-        scriptVm.handle = nullptr; 
+        sq_close(script.handle);
+        script.initialised = false; 
+        script.handle = nullptr; 
     }
 }
