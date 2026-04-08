@@ -9,6 +9,8 @@ namespace Brewery
 {
     void Brewery_Main(int32_t argc, char** argv)
     {
+        Logging_Init();
+        
         Logging_LogChannel(APP_SIGNON_STRING, LogChannel::Debug);
     }
 }
