@@ -1,4 +1,4 @@
-/* A basic 2D vector */
+// Implements a basic 2D vector class with basic operations.
 #pragma once
 
 #include <iostream>

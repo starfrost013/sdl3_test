@@ -117,25 +117,24 @@ add_compile_options(Capy -static-libstdc++ -static-libgcc)
 add_compile_options(SDL3::SDL3 -static-libstdc++ -static-libgcc)
 add_compile_options(SDL3::SDL3_net -static-libstdc++ -static-libgcc)
 
-#todo: linux
 if (WIN32)  
-  set(CAPY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/build/output/win64)
+  set(CAPY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/../../build/output/win64)
   install(TARGETS Capy DESTINATION ${CAPY_INSTALL_DIR}) # probably easier to duplicate for now
 
   # horrible until we figure out how to statically link sdl3
-  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/SDL3.dll DESTINATION ${CAPY_INSTALL_DIR})
-  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/SDL3_net.dll DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/../../build/external/sdl3/SDL3.dll DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/../../build/external/sdl3_net/SDL3_net.dll DESTINATION ${CAPY_INSTALL_DIR})
 
 elseif (LINUX)
-  set(CAPY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/build/output/linux64)
+  set(CAPY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/../../build/output/linux64)
   install(TARGETS Capy DESTINATION ${CAPY_INSTALL_DIR}) # probably easier to duplicate for now
 
   # horrible hack for origin rpath (TEMP, we will static link everything)
-  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so DESTINATION ${CAPY_INSTALL_DIR})
-  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so.0 DESTINATION ${CAPY_INSTALL_DIR})
-  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3/libSDL3.so.0.4.3 DESTINATION ${CAPY_INSTALL_DIR}) #ireally need to fix this (SDL 3.4.3)
-  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/libSDL3_net.so DESTINATION ${CAPY_INSTALL_DIR})
-  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/libSDL3_net.so.0 DESTINATION ${CAPY_INSTALL_DIR})
-  install(FILES ${CMAKE_SOURCE_DIR}/build/external/sdl3_net/libSDL3_net.so.0.0.0 DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/../../build/external/sdl3/libSDL3.so DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/../../build/external/sdl3/libSDL3.so.0 DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/../../build/external/sdl3/libSDL3.so.0.4.5 DESTINATION ${CAPY_INSTALL_DIR}) #ireally need to fix this (SDL 3.4.3)
+  install(FILES ${CMAKE_SOURCE_DIR}/../../build/external/sdl3_net/libSDL3_net.so DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/../../build/external/sdl3_net/libSDL3_net.so.0 DESTINATION ${CAPY_INSTALL_DIR})
+  install(FILES ${CMAKE_SOURCE_DIR}/../../build/external/sdl3_net/libSDL3_net.so.0.0.0 DESTINATION ${CAPY_INSTALL_DIR})
 endif()
 
