@@ -18,6 +18,7 @@ namespace Brewery
     #define FILESYSTEM_PACKAGE_NAMESPACE    "pak:"                  // Namespace for loading shit from a pak
     #define FILESYSTEM_PACKAGE_EXTENSION    ".beer"                 // BEER
     #define FILESYSTEM_PACKAGE_MAGIC        0x52454542              // 'BEER' (little endian)
+    #define FILESYSTEM_PACKAGE_VERSION      1                       // Beerfile version
 
     class Cvar;
 
@@ -32,6 +33,7 @@ namespace Brewery
     // Package file that all game content is located in
     class FilesystemImage
     {
+  
         struct FilesystemImageHeader
         {
             uint32_t magic;
@@ -39,22 +41,51 @@ namespace Brewery
             uint32_t numFiles;
         };
 
-        struct FilesystemImageFileList
+        struct FilesystemImageFileEntry
         {
             const char* path; 
             size_t location;
             size_t size; 
         };
-
+  public: 
         FilesystemImageHeader header; 
-        FilesystemImageFileList fileList;
+        std::vector<FilesystemImageFileEntry> fileList;
 
-        // next image in the chain
-        FilesystemImage* next; 
+        std::fstream stream;
+
+        bool Write(const char* path)
+        {
+            if (!strstr(path, FILESYSTEM_PACKAGE_EXTENSION))
+            {
+                Logging_LogChannel("Beerfiles must have the .BEER extension", LogChannel::Error);
+                return false; 
+            }
+
+            stream.open(path, std::ios_base::binary);
+
+            if (stream.bad())
+            {
+                Logging_LogChannel("Failed to open beerfile: Could not open file", LogChannel::Error);
+                return false;
+            }
+
+            //ensure the magic is there
+            header.magic = FILESYSTEM_PACKAGE_MAGIC;
+            header.version = FILESYSTEM_PACKAGE_VERSION;
+
+            stream.write((char*)(&header), sizeof(header));
+
+            // write the image header
+            for (FilesystemImageFileEntry entry : fileList)
+            {
+                stream.write((char*)(&entry), sizeof(FilesystemImageFileEntry));
+            }
+            
+            stream.close();
+
+            return true; 
+        }
     };
-
-    // first member of filesystem image chain
-    extern FilesystemImage* firstImage;
 
     // in the future this will load from a pakcage file
     class FilesystemFile
@@ -77,8 +108,6 @@ namespace Brewery
         //
 
         static void Init();
-        static void OpenImage(const char* path);
-        static void CloseImage(FilesystemImage* image);
     private: 
 
 

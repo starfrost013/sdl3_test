@@ -17,15 +17,4 @@ namespace Brewery
     {
 
     }
-
-    void Filesystem::OpenImage(const char* path)
-    {
-        Logging_LogChannel("Mounting beer image... %s", LogChannel::Message, path); 
-
-    }
-
-    void Filesystem::CloseImage(FilesystemImage* image)
-    {
-    
-    }
 };
