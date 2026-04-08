@@ -167,9 +167,6 @@ namespace Capy
         {
             Disconnect("Client is shutting down...");
         }
-
-        // Test code
-        world.Serialise("Test.world");
         
         Render_Shutdown();
 

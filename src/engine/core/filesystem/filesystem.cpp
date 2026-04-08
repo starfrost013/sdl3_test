@@ -39,7 +39,7 @@ namespace Capy
     {
         // get beered
         // worst ever code
-        if (!strstr(path, FILESYSTEM_PACKAGE_EXTENSION))
+        if (strstr(path, FILESYSTEM_PACKAGE_EXTENSION))
         {
             OpenImage(path);
             return nullptr;  // don't use the return value

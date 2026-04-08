@@ -1,7 +1,6 @@
 # Brewery 
 # Generates beerfiles for Capybara Wars
 # Copyright © 2025, 2026 starfrost
-# A game for Windows & Linux - Copyright © 2025, 2026 starfrost
 
 # CMakeLists.txt: Core CMake file
 
