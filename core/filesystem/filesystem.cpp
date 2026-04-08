@@ -3,7 +3,17 @@
 
 namespace Capy
 {
+    //
+    // GLOBALS
+    //
+
     Cvar* fsBasedir; 
+    // first member of filesystem image chain
+    FilesystemImage* firstImage;
+    
+    //
+    // METHODS
+    //
 
     void Filesystem::Init()
     {
@@ -18,7 +28,7 @@ namespace Capy
         }
 
     }
-    
+
     void Filesystem::OpenImage(const char* path)
     {
         Logging_LogChannel("Mounting beer image... %s", LogChannel::Message, path); 
@@ -28,6 +38,7 @@ namespace Capy
     FilesystemFile* Filesystem::Open(const char* path, FilesystemFileMode mode)
     {
         // get beered
+        // worst ever code
         if (!strstr(path, FILESYSTEM_PACKAGE_EXTENSION))
         {
             OpenImage(path);

@@ -16,7 +16,7 @@ namespace Capy
     #define MAX_PATH                        260
     
     #define FILESYSTEM_PACKAGE_NAMESPACE    "pak:"                  // Namespace for loading shit from a pak
-    #define FILESYSTEM_PACKAGE_EXTENSION    ".BEER"                 // BEER
+    #define FILESYSTEM_PACKAGE_EXTENSION    ".beer"                 // BEER
     #define FILESYSTEM_PACKAGE_MAGIC        0x52454542              // 'BEER' (little endian)
 
     class Cvar;
@@ -53,8 +53,8 @@ namespace Capy
         FilesystemImage* next; 
     };
 
-    // first filesystem image chain
-    FilesystemImage* fs;
+    // first member of filesystem image chain
+    extern FilesystemImage* firstImage;
 
     // in the future this will load from a pakcage file
     class FilesystemFile
@@ -87,7 +87,5 @@ namespace Capy
 
     };
 
-    
-    
 };
 
