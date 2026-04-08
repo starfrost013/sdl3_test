@@ -16,6 +16,7 @@ namespace Capy
     #define MAX_PATH                        260
     
     #define FILESYSTEM_PACKAGE_NAMESPACE    "pak:"                  // Namespace for loading shit from a pak
+    #define FILESYSTEM_PACKAGE_EXTENSION    ".BEER"                 // BEER
     #define FILESYSTEM_PACKAGE_MAGIC        0x52454542              // 'BEER' (little endian)
 
     class Cvar;
@@ -35,10 +36,25 @@ namespace Capy
         {
             uint32_t magic;
             uint32_t version;
+            uint32_t numFiles;
+        };
+
+        struct FilesystemImageFileList
+        {
+            const char* path; 
+            size_t location;
+            size_t size; 
         };
 
         FilesystemImageHeader header; 
+        FilesystemImageFileList fileList;
+
+        // next image in the chain
+        FilesystemImage* next; 
     };
+
+    // first filesystem image chain
+    FilesystemImage* fs;
 
     // in the future this will load from a pakcage file
     class FilesystemFile
@@ -64,6 +80,10 @@ namespace Capy
 
         static FilesystemFile* Open(const char* path, FilesystemFileMode mode = FilesystemFileMode::FILE_TEXT);
         static void Close(FilesystemFile* ff);
+
+    private: 
+
+        static void OpenImage(const char* path);
 
     };
 

@@ -18,9 +18,22 @@ namespace Capy
         }
 
     }
+    
+    void Filesystem::OpenImage(const char* path)
+    {
+        Logging_LogChannel("Mounting beer image... %s", LogChannel::Message, path); 
+
+    }
 
     FilesystemFile* Filesystem::Open(const char* path, FilesystemFileMode mode)
     {
+        // get beered
+        if (!strstr(path, FILESYSTEM_PACKAGE_EXTENSION))
+        {
+            OpenImage(path);
+            return nullptr;  // don't use the return value
+        }
+
         char finalPathBuf[STRING_MAX] = {0};
 
         snprintf(finalPathBuf, STRING_MAX, "%s%s", fsBasedir->string, path);
