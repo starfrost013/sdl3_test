@@ -1,4 +1,5 @@
 /* Entry point and main function for Brewery */
+#include "cmdline/cmdline.hpp"
 #include <Brewery.hpp>
 
 
@@ -12,18 +13,6 @@ namespace Brewery
         Logging_LogChannel("Brewery <input folder> <destination beerfile> args", LogChannel::Message);
     }
 
-    bool Brewery_AddFile(const char* file)
-    {
-        if (!std::filesystem::exists(file))
-        {
-            Logging_LogChannel("The file %s does not exist!", LogChannel::Warning);
-            return false;
-        }
-        std::fstream fileStream;
-
-        
-        return true;
-    }
 
     int32_t Brewery_Main(int32_t argc, char** argv)
     {
@@ -39,12 +28,18 @@ namespace Brewery
             return EXIT_FAILURE;
         }
 
+        
         FilesystemImage image; 
+
+        // copy the base dir
+        strncpy(image.basedir, Cmdline_Argv(1), MAX_PATH);
 
         image.header.magic = FILESYSTEM_PACKAGE_MAGIC;
         image.header.version = FILESYSTEM_PACKAGE_VERSION;
         
         uint32_t numFiles = 0;
+
+        
 
         return EXIT_SUCCESS;
     }

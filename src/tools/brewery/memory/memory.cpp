@@ -74,7 +74,6 @@ void operator delete[](void *p) _GLIBCXX_TXN_SAFE _GLIBCXX_USE_NOEXCEPT
     sysNumAllocs--;
     sysTotalRam -= sizeof(p);
 #ifdef DEBUG
-
     if (Brewery::Cmdline_Check("-memdebug"))
         Brewery::Logging_LogChannel("operator delete[]: Freed %d bytes (total is now %d)", Brewery::LogChannel::Debug, sizeof(p), sysTotalRam);
 #endif

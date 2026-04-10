@@ -33,7 +33,7 @@ namespace Brewery
     // Package file that all game content is located in
     class FilesystemImage
     {
-  
+    public: 
         struct FilesystemImageHeader
         {
             uint32_t magic;
@@ -43,15 +43,54 @@ namespace Brewery
 
         struct FilesystemImageFileEntry
         {
-            const char* path; 
+            char path[MAX_PATH];
             size_t location;
             size_t size; 
         };
-  public: 
+
         FilesystemImageHeader header; 
         std::vector<FilesystemImageFileEntry> fileList;
 
         std::fstream stream;
+
+        //
+        // Brewery only
+        //
+        char basedir[MAX_PATH];
+
+        bool AddFile(const char* path)
+        {
+            if (!std::filesystem::exists(path))
+            {
+                Logging_LogChannel("The file %s does not exist!", LogChannel::Warning);
+                return false;
+            }
+
+            FilesystemImage::FilesystemImageFileEntry entry; 
+      
+            strncpy(entry.path, path, MAX_PATH);
+            entry.size = std::filesystem::file_size(path);
+            //entry.location is determined later
+
+             // get the index of the basedir 
+            const char* strBasedir = strstr(entry.path, basedir);
+
+            size_t initialLength = strlen(entry.path);
+            size_t basedirLength = strlen(strBasedir);
+            size_t basedirPosition = strBasedir - entry.path;
+            size_t remainingCharacters = strlen(entry.path) - basedirPosition + basedirLength;
+
+            strncpy(entry.path, entry.path + basedirPosition + basedirLength, remainingCharacters);
+
+            //assume it starts with the basedir...would bew eird if it didn't
+            if ((basedirLength + basedirPosition) < MAX_PATH)
+                entry.path[initialLength - (basedirLength + basedirPosition)] = '\0';
+
+      
+            fileList.push_back(entry);
+
+            return true; 
+        }
 
         bool Write(const char* path)
         {
@@ -83,35 +122,10 @@ namespace Brewery
             
             stream.close();
 
+            // TODO; WRITE FILES 
+
             return true; 
         }
     };
-
-    // in the future this will load from a pakcage file
-    class FilesystemFile
-    {
-        friend class Filesystem;
-
-        public:
-            std::fstream stream;                // the backing stream of the file
-            char path[MAX_PATH];                // the path to the file (full)
-            bool open;                          // is the file open?
-
-    };
-
-    class Filesystem
-    {
-    public: 
-    
-        //
-        // METHODS
-        //
-
-        static void Init();
-    private: 
-
-
-    };
-
 };
 

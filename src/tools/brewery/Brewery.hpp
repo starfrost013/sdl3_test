@@ -24,6 +24,7 @@ namespace Brewery
     #define STRING_EMPTY                    ""
     #define STRING_WHITESPACE_DELIMITERS    " \n\r\t\f\v"
     #define STRING_MAX                      256     // Generic max string length
+    #define MAX_PATH                        260     // Damn WinDoze!
     #define ARRAY_SIZE(x)                   sizeof(x)/sizeof(x[0])
 
     #define APP_NAME "Brewery"
