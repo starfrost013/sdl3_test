@@ -123,7 +123,7 @@ namespace Brewery
                 return false; 
             }
 
-            stream.open(path, std::ios_base::binary);
+            stream.open(path, std::ios_base::out | std::ios_base::trunc | std::ios_base::binary);
 
             if (stream.bad())
             {
@@ -137,14 +137,20 @@ namespace Brewery
 
             stream.write((char*)(&header), sizeof(header));
 
+            size_t currentLocation = 0;
+
             // write the image header
             for (FilesystemImageFileEntry entry : fileList)
             {
-                stream.write((char*)(&entry), sizeof(FilesystemImageFileEntry));
+                // only write the actual length of things
+                stream.write((char*)(&entry.size), sizeof(size_t));
+                // now write the location
+                entry.location = currentLocation;
+                currentLocation += entry.size;
+                stream.write((char*)(&entry.location), sizeof(size_t));
+                stream.write((char*)(&entry.path), strlen(entry.path) + 1); // include the null terminator. should we change this
             }
             
-            stream.close();
-
             std::fstream tempStream; 
 
             // allocate the temporary buffer
@@ -162,7 +168,7 @@ namespace Brewery
                 // we aget rid of the thing earlier so insert the correct path separator
                 snprintf(realFileName, MAX_PATH * 2, "%s%c%s", basedir, std::filesystem::path::preferred_separator, entry.path);
 
-                tempStream.open(realFileName, std::ios_base::binary);
+                tempStream.open(realFileName, std::ios_base::in | std::ios_base::binary);
                 
                 if (tempStream.bad())
                 {
@@ -171,24 +177,29 @@ namespace Brewery
                     return false; 
                 } 
 
+                auto gcount = 0;
+
                 while (!tempStream.eof()
                 && !tempStream.fail())
                 {
                     tempStream.read(fileBuf, FILESYSTEM_PACKAGE_CHUNK_SIZE);
 
-                    auto gcount = tempStream.gcount();
+                    gcount = tempStream.gcount();
                     stream.write(fileBuf, gcount); // only write what was really written so we don't get junk from older files in there
                 }
 
-                if (tempStream.fail())
+                // not the best code but we depend on failbit
+                if (tempStream.fail()
+                && gcount == 0)
                     Logging_LogChannel("Error while writing file %s", LogChannel::Warning, realFileName);
 
                 tempStream.close();
             }
 
             delete[] fileBuf; 
-
             stream.close();
+
+            Logging_LogChannel("Successfully wrote %d files to beerfile %s!", LogChannel::Message, fileList.size(), path);
             return true;
         }
     };
