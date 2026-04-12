@@ -68,24 +68,41 @@ namespace Brewery
 
             FilesystemImage::FilesystemImageFileEntry entry; 
       
-            strncpy(entry.path, path, MAX_PATH);
             entry.size = std::filesystem::file_size(path);
-            //entry.location is determined later
 
-            // get theLAST index of the basedir 
-            // assume the basedir is at the start....
-            char* strBasedir = strstr(entry.path, basedir);
-            char* found = NULL; 
-            while ((strBasedir = strstr(strBasedir, basedir)) != NULL)
-                found = strBasedir++;
-     
-            size_t pathLength = strlen(entry.path);
-            size_t basedirPosition = found - entry.path;
-            size_t basedirLength = pathLength - basedirPosition;
+            //first copy in the path including basedir
+            strncpy(entry.path, path, MAX_PATH);
 
-            strncpy(entry.path, entry.path + basedirPosition, basedirLength);
-            
-            entry.path[pathLength - basedirPosition] = '\0';
+            // find the end of the basedir
+            size_t entryLength = strlen(entry.path);
+            size_t basedirLength = strlen(basedir);
+
+            size_t endOfBasedirPos = 0;
+
+            for (endOfBasedirPos = 0; endOfBasedirPos < entryLength; endOfBasedirPos++)
+            {
+                // don't start comparing garbage
+                if (endOfBasedirPos >= basedirLength)
+                    break;
+
+                if (entry.path[endOfBasedirPos] != basedir[endOfBasedirPos])
+                    break;
+
+                endOfBasedirPos++;
+            }
+
+            //ensure there are no leading slashes
+            if (entry.path[endOfBasedirPos] == '\\'
+            || entry.path[endOfBasedirPos] == '/')
+            {
+                endOfBasedirPos++;
+            }
+
+            auto newStringLength = entryLength - endOfBasedirPos;
+            strncpy(entry.path, entry.path + endOfBasedirPos, newStringLength);
+
+            // reinsert the trailing zero
+            entry.path[newStringLength] = '\0';
 
             fileList.push_back(entry);
 
@@ -132,7 +149,7 @@ namespace Brewery
 
             // allocate the temporary buffer
 
-            uint8_t* fileBuf = new uint8_t[FILESYSTEM_PACKAGE_CHUNK_SIZE];
+            char* fileBuf = new char[FILESYSTEM_PACKAGE_CHUNK_SIZE];
 
             // TODO; WRITE FILES 
             for (FilesystemImageFileEntry entry : fileList)
@@ -142,7 +159,8 @@ namespace Brewery
                 // TODO: truncate( better things to do)
                 char realFileName[MAX_PATH * 2] = {0};
 
-                snprintf(realFileName, MAX_PATH * 2, "%s%s", basedir, entry.path);
+                // we aget rid of the thing earlier so insert the correct path separator
+                snprintf(realFileName, MAX_PATH * 2, "%s%c%s", basedir, std::filesystem::path::preferred_separator, entry.path);
 
                 tempStream.open(realFileName, std::ios_base::binary);
                 
@@ -153,14 +171,17 @@ namespace Brewery
                     return false; 
                 } 
 
-                while (!tempStream.eof())
+                while (!tempStream.eof()
+                && !tempStream.fail())
                 {
-                    tempStream.read((char*)fileBuf, FILESYSTEM_PACKAGE_CHUNK_SIZE);
+                    tempStream.read(fileBuf, FILESYSTEM_PACKAGE_CHUNK_SIZE);
+
                     auto gcount = tempStream.gcount();
-                    stream.write((char*)fileBuf, gcount); // only write what was really written so we don't get junk from older files in there
-                
-                    Logging_LogChannel("Wrote %d bytes", LogChannel::Debug, gcount);
+                    stream.write(fileBuf, gcount); // only write what was really written so we don't get junk from older files in there
                 }
+
+                if (tempStream.fail())
+                    Logging_LogChannel("Error while writing file %s", LogChannel::Warning, realFileName);
 
                 tempStream.close();
             }
