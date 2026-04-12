@@ -8,7 +8,6 @@
 
 #pragma once
 #include <Brewery.hpp>
-#include <filesystem>
 
 namespace Brewery
 {
@@ -19,6 +18,7 @@ namespace Brewery
     #define FILESYSTEM_PACKAGE_EXTENSION    ".beer"                 // BEER
     #define FILESYSTEM_PACKAGE_MAGIC        0x52454542              // 'BEER' (little endian)
     #define FILESYSTEM_PACKAGE_VERSION      1                       // Beerfile version
+    #define FILESYSTEM_PACKAGE_CHUNK_SIZE   1048576                 // 1 MB, should be reasonably fast?
 
     class Cvar;
 
@@ -72,21 +72,21 @@ namespace Brewery
             entry.size = std::filesystem::file_size(path);
             //entry.location is determined later
 
-             // get the index of the basedir 
-            const char* strBasedir = strstr(entry.path, basedir);
+            // get theLAST index of the basedir 
+            // assume the basedir is at the start....
+            char* strBasedir = strstr(entry.path, basedir);
+            char* found = NULL; 
+            while ((strBasedir = strstr(strBasedir, basedir)) != NULL)
+                found = strBasedir++;
+     
+            size_t pathLength = strlen(entry.path);
+            size_t basedirPosition = found - entry.path;
+            size_t basedirLength = pathLength - basedirPosition;
 
-            size_t initialLength = strlen(entry.path);
-            size_t basedirLength = strlen(strBasedir);
-            size_t basedirPosition = strBasedir - entry.path;
-            size_t remainingCharacters = strlen(entry.path) - basedirPosition + basedirLength;
+            strncpy(entry.path, entry.path + basedirPosition, basedirLength);
+            
+            entry.path[pathLength - basedirPosition] = '\0';
 
-            strncpy(entry.path, entry.path + basedirPosition + basedirLength, remainingCharacters);
-
-            //assume it starts with the basedir...would bew eird if it didn't
-            if ((basedirLength + basedirPosition) < MAX_PATH)
-                entry.path[initialLength - (basedirLength + basedirPosition)] = '\0';
-
-      
             fileList.push_back(entry);
 
             return true; 
@@ -94,6 +94,12 @@ namespace Brewery
 
         bool Write(const char* path)
         {
+            if (!path)
+            {
+                Logging_LogChannel("Beerfiles must have a path!", LogChannel::Error);
+                return false;
+            }
+
             if (!strstr(path, FILESYSTEM_PACKAGE_EXTENSION))
             {
                 Logging_LogChannel("Beerfiles must have the .BEER extension", LogChannel::Error);
@@ -122,9 +128,47 @@ namespace Brewery
             
             stream.close();
 
-            // TODO; WRITE FILES 
+            std::fstream tempStream; 
 
-            return true; 
+            // allocate the temporary buffer
+
+            uint8_t* fileBuf = new uint8_t[FILESYSTEM_PACKAGE_CHUNK_SIZE];
+
+            // TODO; WRITE FILES 
+            for (FilesystemImageFileEntry entry : fileList)
+            {
+                // get the full path of the file
+                // needs to be * 2 because two max_path strings could theoretically be in here.
+                // TODO: truncate( better things to do)
+                char realFileName[MAX_PATH * 2] = {0};
+
+                snprintf(realFileName, MAX_PATH * 2, "%s%s", basedir, entry.path);
+
+                tempStream.open(realFileName, std::ios_base::binary);
+                
+                if (tempStream.bad())
+                {
+                    Logging_LogChannel("Cannot write image: Failed to open %s", LogChannel::Debug, realFileName);
+                    delete[] fileBuf;
+                    return false; 
+                } 
+
+                while (!tempStream.eof())
+                {
+                    tempStream.read((char*)fileBuf, FILESYSTEM_PACKAGE_CHUNK_SIZE);
+                    auto gcount = tempStream.gcount();
+                    stream.write((char*)fileBuf, gcount); // only write what was really written so we don't get junk from older files in there
+                
+                    Logging_LogChannel("Wrote %d bytes", LogChannel::Debug, gcount);
+                }
+
+                tempStream.close();
+            }
+
+            delete[] fileBuf; 
+
+            stream.close();
+            return true;
         }
     };
 };

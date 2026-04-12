@@ -5,6 +5,7 @@
 // STL Includes
 #include <cassert>
 #include <cstring>
+#include <filesystem>
 #include <functional>
 #include <future>
 #include <fstream>

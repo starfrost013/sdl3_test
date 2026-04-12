@@ -16,6 +16,7 @@ namespace Brewery
 
     int32_t Brewery_Main(int32_t argc, char** argv)
     {
+        Cmdline_Init(argc, argv);
         Logging_Init();
         
         Logging_LogChannel(APP_SIGNON_STRING, LogChannel::Debug);
@@ -27,7 +28,6 @@ namespace Brewery
 
             return EXIT_FAILURE;
         }
-
         
         FilesystemImage image; 
 
@@ -39,9 +39,33 @@ namespace Brewery
         
         uint32_t numFiles = 0;
 
-        
+        bool success = false; 
+        try
+        {
+            std::filesystem::recursive_directory_iterator fileIterator(image.basedir, std::filesystem::directory_options::skip_permission_denied);
 
+            for (const auto& dirEntry : fileIterator)
+            {
+                success = image.AddFile(reinterpret_cast<const char*>(dirEntry.path().c_str())); // bad idea
+            
+                if (!success)
+                    goto exit_failure;
+                    
+                numFiles++;
+            }
+        }
+        catch(const std::filesystem::filesystem_error& e)
+        {
+            Logging_LogChannel("Failed to create image: %s", LogChannel::Error, e.what());
+            goto exit_failure; 
+        }
+
+        image.Write(Cmdline_Argv(2));
         return EXIT_SUCCESS;
+    
+    exit_failure:
+
+        return EXIT_FAILURE;
     }
 }
 

@@ -26,9 +26,6 @@ add_executable (Brewery
 # Core - command line
 "cmdline/cmdline.cpp"
 
-# Core - FS
-"filesystem/filesystem.cpp"
-
 "util/util.cpp"
 "util/logging.cpp"
 )
