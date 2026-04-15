@@ -20,10 +20,6 @@ namespace Brewery
     #define FILESYSTEM_PACKAGE_VERSION      1                       // Beerfile version
     #define FILESYSTEM_PACKAGE_CHUNK_SIZE   1048576                 // 1 MB, should be reasonably fast?
 
-    class Cvar;
-
-    extern Cvar* baseDirectory; 
-
     enum FilesystemFileMode
     {   
         FILE_TEXT = (1 << 0),

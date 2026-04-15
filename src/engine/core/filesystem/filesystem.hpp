@@ -18,10 +18,12 @@ namespace Capy
     #define FILESYSTEM_PACKAGE_NAMESPACE    "pak:"                  // Namespace for loading shit from a pak
     #define FILESYSTEM_PACKAGE_EXTENSION    ".beer"                 // BEER
     #define FILESYSTEM_PACKAGE_MAGIC        0x52454542              // 'BEER' (little endian)
+    #define FILESYSTEM_PACKAGE_VERSION      1                       // Beerfile version
+    #define FILESYSTEM_PACKAGE_CHUNK_SIZE   1048576                 // 1 MB, should be reasonably fast?
 
     class Cvar;
 
-    extern Cvar* baseDirectory; 
+    extern Cvar* fsBasedir; 
 
     enum FilesystemFileMode
     {   
@@ -32,6 +34,7 @@ namespace Capy
     // Package file that all game content is located in
     class FilesystemImage
     {
+    public: 
         struct FilesystemImageHeader
         {
             uint32_t magic;
@@ -39,20 +42,26 @@ namespace Capy
             uint32_t numFiles;
         };
 
-        struct FilesystemImageFileList
+        struct FilesystemImageFileEntry
         {
-            const char* path; 
+            char path[MAX_PATH];
             size_t location;
             size_t size; 
         };
 
         FilesystemImageHeader header; 
-        FilesystemImageFileList fileList;
+        std::vector<FilesystemImageFileEntry> fileList;
 
-        // next image in the chain
-        FilesystemImage* next; 
+        std::fstream stream;
+
+        // Engine only
+        FilesystemImage* nextImage;
+
+        bool AddFile(const char* path);
+        bool Write(const char* path);
+
+
     };
-
     // first member of filesystem image chain
     extern FilesystemImage* firstImage;
 
