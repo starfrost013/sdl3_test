@@ -15,7 +15,7 @@ namespace Capy
     // Maximum safe path length
     #define MAX_PATH                        260
     
-    #define FILESYSTEM_PACKAGE_NAMESPACE    "pak:"                  // Namespace for loading shit from a pak
+    #define FILESYSTEM_PACKAGE_NAMESPACE    "beer:"                  // Namespace for loading shit from a pak
     #define FILESYSTEM_PACKAGE_EXTENSION    ".beer"                 // BEER
     #define FILESYSTEM_PACKAGE_MAGIC        0x52454542              // 'BEER' (little endian)
     #define FILESYSTEM_PACKAGE_VERSION      1                       // Beerfile version
@@ -29,6 +29,13 @@ namespace Capy
     {   
         FILE_TEXT = (1 << 0),
         FILE_BINARY = (1 << 1),
+    };
+
+    // filesystem file type
+    enum FilesystemFileType
+    {
+        FILETYPE_FS = 0,            // This file is in the real filesystem
+        FILETYPE_PAK = 1,           // THis file is in the virtual beer filesystem
     };
 
     // Package file that all game content is located in
@@ -56,14 +63,18 @@ namespace Capy
 
         // Engine only
         FilesystemImage* nextImage;
+        char path[MAX_PATH] = {0};              // the path 
 
-        bool AddFile(const char* path);
-        bool Write(const char* path);
+        bool AddFile(const char* path);         // Add a file to a beerfile to be written.  
+        bool Read(const char* path);            // Read a beerfile.
+        bool Write(const char* path);           // Write out a beerfile.
 
-
+    private: 
+        bool Open(const char* path);            // open the mage
     };
+
     // first member of filesystem image chain
-    extern FilesystemImage* firstImage;
+    extern FilesystemImage* imageListHead;
 
     // in the future this will load from a pakcage file
     class FilesystemFile
@@ -74,6 +85,7 @@ namespace Capy
             std::fstream stream;                // the backing stream of the file
             char path[MAX_PATH];                // the path to the file (full)
             bool open;                          // is the file open?
+
 
     };
 
@@ -90,10 +102,8 @@ namespace Capy
         static FilesystemFile* Open(const char* path, FilesystemFileMode mode = FilesystemFileMode::FILE_TEXT);
         static void Close(FilesystemFile* ff);
 
-    private: 
-
-        static void OpenImage(const char* path);
-
+    private:
+        static FilesystemFile* OpenInternal(const char* path, FilesystemFileMode mode, FilesystemFileType type);
     };
 
 };

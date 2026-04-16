@@ -10,7 +10,8 @@ namespace Capy
 
     Cvar* fsBasedir; 
     // first member of filesystem image chain
-    FilesystemImage* firstImage;
+    FilesystemImage* imageListHead;
+    FilesystemImage* imageListTail;
     
     //
     // METHODS
@@ -30,22 +31,16 @@ namespace Capy
 
     }
 
-    void Filesystem::OpenImage(const char* path)
+    FilesystemFile* Filesystem::OpenInternal(const char* path, FilesystemFileMode mode, FilesystemFileType type)
     {
-        Logging_LogChannel("Mounting beer image... %s", LogChannel::Message, path); 
+        switch (type)
+        {
 
+        }
     }
 
     FilesystemFile* Filesystem::Open(const char* path, FilesystemFileMode mode)
     {
-        // get beered
-        // worst ever code
-        if (strstr(path, FILESYSTEM_PACKAGE_EXTENSION))
-        {
-            OpenImage(path);
-            return nullptr;  // don't use the return value
-        }
-
         char finalPathBuf[STRING_MAX] = {0};
 
         snprintf(finalPathBuf, STRING_MAX, "%s%s", fsBasedir->string, path);
@@ -69,9 +64,7 @@ namespace Capy
         }
 
         strncpy(ff->path, finalPathBuf, MAX_PATH);
-
         ff->open = true;
-
         return ff;
     }
 
@@ -143,7 +136,7 @@ namespace Capy
         return true; 
     }
 
-    bool FilesystemImage::Write(const char* path)
+    bool FilesystemImage::Open(const char* path)
     {
         if (!path)
         {
@@ -164,6 +157,73 @@ namespace Capy
             Logging_LogChannel("Failed to open beerfile: Could not open file", LogChannel::Error);
             return false;
         }
+
+        strncpy(this->path, path, MAX_PATH);
+
+        return true; 
+    }
+
+    bool FilesystemImage::Read(const char* path)
+    {
+        if (!Open(path))
+            return false;
+
+        stream.read((char*)(&header), sizeof(FilesystemImageHeader));
+        
+        if (header.magic != FILESYSTEM_PACKAGE_MAGIC)
+        {
+            Logging_LogChannel("Failed to read beerfile: Invalid header: Magic is not %4c", LogChannel::Error, header.magic);
+            return false;
+        }
+
+        if (header.version != FILESYSTEM_PACKAGE_MAGIC)
+        {
+            Logging_LogChannel("Failed to read beerfile: File is version %d, %d expected", LogChannel::Error, header.version, FILESYSTEM_PACKAGE_VERSION);
+            return false;
+        }
+
+        if (!header.numFiles)
+        {
+            Logging_LogChannel("This beerfile has no files. No point reading it.", LogChannel::Warning, header.version, FILESYSTEM_PACKAGE_VERSION);
+            return false;
+        }
+
+        // seems slow, must be a faster way to do this, can improve later. is it really worth saving the space ?
+        // problem: long paths ( > 255 chars). COuld write a 16-bit...hmmm...would use more space...
+        int32_t len = 0;
+        char curByte = 0;
+
+        /* Read the file headers */
+        for (auto i = 0; i < header.numFiles; i++)
+        {
+            FilesystemImageFileEntry fileEntry = {0};
+
+            while (len < MAX_PATH && curByte != '\0')
+            {
+                curByte = stream.get();
+                len++;
+            }
+
+            // go back
+            stream.seekg(-len, std::ios_base::cur);
+            stream.read(fileEntry.path, len);            
+        }
+
+        // add this image to the linked list of images (Capy only)
+        // can't unload them
+        if (!imageListHead)
+            imageListHead = imageListTail = this;
+        else 
+        {
+            imageListTail->nextImage = this;
+            imageListTail = this;
+        }
+    }
+
+    bool FilesystemImage::Write(const char* path)
+    {
+        if (!Open(path))
+            return false; 
 
         //ensure the magic is there
         header.magic = FILESYSTEM_PACKAGE_MAGIC;
