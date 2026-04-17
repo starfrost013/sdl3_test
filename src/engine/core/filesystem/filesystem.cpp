@@ -31,12 +31,24 @@ namespace Capy
 
     }
 
+    /// @brief Internal open method. Allows files to be opened from a pak file or filesystem.
+    /// @param path 
+    /// @param mode 
+    /// @param type 
+    /// @return A pointer to a FilesystemFile object.
     FilesystemFile* Filesystem::OpenInternal(const char* path, FilesystemFileMode mode, FilesystemFileType type)
     {
+        FilesystemFile* ff = new FilesystemFile;
+
         switch (type)
         {
+            case FilesystemFileType::FILETYPE_FS:
+                
+                break;
 
         }
+
+        return ff; 
     }
 
     FilesystemFile* Filesystem::Open(const char* path, FilesystemFileMode mode)

@@ -13,6 +13,9 @@ add_subdirectory(external/sdl3 EXCLUDE_FROM_ALL)
 add_subdirectory(external/sdl3_net EXCLUDE_FROM_ALL)
 add_subdirectory(external/squirrel EXCLUDE_FROM_ALL)
 
+# Mandate 64-bit Squirrel
+add_compile_definitions(_SQ64)
+
 if (LINUX)
     set(CMAKE_INSTALL_RPATH $ORIGIN)
 endif()

@@ -32,7 +32,7 @@ namespace Capy
         engine.info.targetPlatform = EnginePlatforms::OS_LINUX64;
 #elif _WIN32
         Logging_LogChannel("64-bit Windows binary", LogChannel::Message);
-        game.info.targetPlatform = GameTargetPlatform::OS_WIN64;
+        engine.info.targetPlatform = EnginePlatforms::OS_WIN64;
 #endif
 
 #ifdef DEBUG

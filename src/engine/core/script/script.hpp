@@ -25,6 +25,11 @@ namespace Capy
     // convars
     extern Cvar* scriptStackSize;
 
+    struct ScriptVMPointers
+    {
+
+    };
+
     struct ScriptVMState
     {
         bool initialised;
