@@ -25,9 +25,13 @@ namespace Capy
     // convars
     extern Cvar* scriptStackSize;
 
+    /// @brief Generic Script VM pointers
     struct ScriptVMPointers
     {
-
+        // Mirror
+        void (*Game_Init)(HSQUIRRELVM vm);              // Initlaises the game
+        void (*Game_Shutdown)(HSQUIRRELVM vm);          // SHUT down the gaem
+        
     };
 
     struct ScriptVMState
