@@ -10,7 +10,7 @@ namespace Capy
     Cvar* scriptStackSize;
 
     // determines if the scripting system is initialised
-    ScriptVMState script = {0};
+    ScriptVM script = {0};
 
     void Script_Init()
     {
@@ -34,6 +34,8 @@ namespace Capy
 
         sq_setcompilererrorhandler(script.handle, Script_CompileFatal);
         
+        script.sqratTable = Sqrat::Table(script.handle);
+
         script.initialised = true; 
     }
 
@@ -59,6 +61,21 @@ namespace Capy
             sq_compile(script.handle, Script_ReadCharacter, file, filename, true);
             Filesystem::Close(file); // todo: make a linked list so we can close stuff that fails e.g. if there is a Script_Fatal call
         }
+
+    }
+  
+    template <typename T> Sqrat::Class<T> Script_ExposeClass(const char* name)
+    {
+        
+    }
+    
+    template <class F> void Script_ExposeMethod(const char* name, F method)
+    {
+
+    }
+    
+    template <class V> void Script_ExposeVar(const char* name, V var)
+    {
 
     }
 

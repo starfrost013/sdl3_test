@@ -172,3 +172,4 @@ inline SQInteger BytecodeWriter(SQUserPointer user_data, SQUserPointer data, SQI
 }
 
 #endif //_SCRAT_BYTECODE_H_
+

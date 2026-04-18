@@ -26,19 +26,28 @@ namespace Capy
     // convars
     extern Cvar* scriptStackSize;
 
-    struct ScriptVMState
+    class ScriptVM
     {
+    public: 
         bool initialised;
         HSQUIRRELVM handle;
+        Sqrat::Table sqratTable;
+        
     };
 
     // determines if the scripting system is initialised
-    extern ScriptVMState script;
+    extern ScriptVM script;
 
     void Script_Init();                                                         // initialise the squirrel bridge
     SQInteger Script_ReadCharacter(SQUserPointer file);                         // send a character to the Squirrel VM
     void Script_Open(const char* filename);                                     // open a script
     void Script_CompileFatal(HSQUIRRELVM vm, const SQChar* ch, const SQChar* source,
                       SQInteger line, SQInteger column);                        // fatal error reported by Squirrel VM
+    
+    template <typename T> Sqrat::Class<T> Script_ExposeClass(const char* name);
+    template <class F> void Script_ExposeMethod(const char* name, F method);
+    template <class V> void Script_ExposeVar(const char* name, V var);
+
+
     void Script_Shutdown();                                                     // SHutdown
 }
