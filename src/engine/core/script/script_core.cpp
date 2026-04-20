@@ -64,19 +64,26 @@ namespace Capy
 
     }
   
-    template <typename T> Sqrat::Class<T> Script_ExposeClass(const char* name)
+    template <typename T> Sqrat::Class<T> Script_ExposeClass()
     {
-        
+        Sqrat::Class<T> theClass(script.handle);
+        return theClass; 
     }
     
-    template <class F> void Script_ExposeMethod(const char* name, F method)
+    template <typename T, class F> void Script_ExposeMethod(const char* name, Sqrat::Class<T> sqratClass, F method)
     {
-
+        sqratClass.Func(name, method);
     }
     
-    template <class V> void Script_ExposeVar(const char* name, V var)
+    template <typename T, class V> void Script_ExposeVar(const char* name,  Sqrat::Class<T> sqratClass, V var)
     {
+        sqratClass.Var(name, var);
+    }
 
+    // call after calls above
+    template <typename T> void Script_ClassDone(const char* name, Sqrat::Class<T> sqratClass)
+    {
+        script.sqratTable.Bind(name, sqratClass);
     }
 
     void Script_CompileFatal(HSQUIRRELVM vm, const SQChar* desc, const SQChar* source,

@@ -26,6 +26,7 @@
 
 // Some base systems that are useful to have everywhere, as long as they don't have any other dependencies,
 // or those dependencies can be resolved by using forward declarations
+#include <core/engine_scriptableobject.hpp>
 #include <core/cmdline/cmdline.hpp>
 #include <core/command/command.hpp>
 #include <core/cvar/cvar.hpp>

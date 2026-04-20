@@ -1,9 +1,10 @@
+#include <Capy.hpp>
 
 namespace Capy
 {
     template <typename T>
-    class Component
+    class Component : CapyScriptableObject
     {
-
+        virtual void RegisterClass() override;
     };
 }
