@@ -25,7 +25,7 @@ namespace Capy
             return name;
         }
 
-        void SetName(char* buf)
+        void SetName(const char* buf)
         {
             strncpy(this->name, name, OBJECT_MAX_NAME_LENGTH);
         }

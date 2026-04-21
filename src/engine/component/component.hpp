@@ -4,7 +4,7 @@ namespace Capy
 {
     /// @brief AN 
     /// @tparam THe type of the component...
-    class Component : CapyScriptableObject
+    class Component : public CapyScriptableObject
     {
     public:
         virtual void Start() { };                       // Called on Entity initialisation

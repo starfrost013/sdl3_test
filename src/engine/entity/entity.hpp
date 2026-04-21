@@ -11,7 +11,7 @@ namespace Capy
     // Based on observation of unity, this seems to be the largest reasonable number. 
     #define INITIAL_COMPONENT_LIST_SIZE         8 
 
-    class Entity : CapyScriptableObject
+    class Entity : public CapyScriptableObject
     { 
         private: 
             static std::unordered_map<const char*, Entity* (*)()> netIdentities;
@@ -51,9 +51,20 @@ namespace Capy
             {
                 for (Component* component : components)
                 {
-                    if (std::is_same(decltype(component), T))
+                    if (std::is_same<decltype(component), T>::value)
                         return component; 
                 }
+            }
+
+            Component* GetComponentByName(char* name)
+            {
+                for (Component* component : components)
+                {
+                    if (component->GetName() == name)
+                        return component;
+                }
+
+                return nullptr;
             }
 
             template <std::derived_from<Component> T>
@@ -62,6 +73,9 @@ namespace Capy
                 T component = new T();
 
                 components.push_back(&component);
+                
+                return component;
+
             }
 
             // Checks if an entity has a network identity.
