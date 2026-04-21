@@ -75,7 +75,7 @@ namespace Capy
         sqratClass.Func(name, method);
     }
     
-    template <typename T, class V> void Script_ExposeVar(const char* name,  Sqrat::Class<T> sqratClass, V var)
+    template <typename T, class V> void Script_ExposeVar(const char* name, Sqrat::Class<T> sqratClass, V var)
     {
         sqratClass.Var(name, var);
     }

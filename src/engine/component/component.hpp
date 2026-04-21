@@ -2,9 +2,14 @@
 
 namespace Capy
 {
-    template <typename T>
+    /// @brief AN 
+    /// @tparam THe type of the component...
     class Component : CapyScriptableObject
     {
-        virtual void RegisterClass() override;
+    public:
+        virtual void Start() { };                       // Called on Entity initialisation
+        virtual void Frame() { };                       // Called on Frame
+        virtual void Tick() { };                        // Called on Tick 
+        virtual void Destroy() { };                     // Called on Destroy
     };
 }
