@@ -358,10 +358,14 @@ namespace Capy
     /// @return the FilesystemImageFileEntry for the name name, or nullptr if not found
     FilesystemImageFileEntry* FilesystemImage::GetFileByPath(const char* name)
     {
+        int32_t i = 0;
+        
         for (FilesystemImageFileEntry fileEntry : fileList)
         {
             if (!strncmp(fileEntry.path, name, MAX_PATH))
-                return &fileEntry;
+                return &fileList[i];
+
+            i++;
         }
 
         return nullptr; 
@@ -397,7 +401,8 @@ namespace Capy
 
         file->open = true;
         // of the format "beer!pak0.pak:hhehehe" so that we only have to look for one character
-        snprintf(file->path, MAX_PATH, "%s%s:%s", FILESYSTEM_PACKAGE_NAMESPACE, this->path, name);
+        snprintf(file->path, MAX_PATH + strlen(FILESYSTEM_PACKAGE_NAMESPACE) + 1, 
+        "%s%s:%s", FILESYSTEM_PACKAGE_NAMESPACE, this->path, name);
         file->stream = stream;
 
         return file; 

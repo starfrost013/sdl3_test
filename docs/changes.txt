@@ -26,6 +26,8 @@ CHANGELOG
    * File management API is abstracted away using C++ streams
    * Started implementing component system
    * Streams are a separate object with their own lifetime now
+* Started implementing world system
+* Updated to SDL 3.4.5
 * Get rid of "data" folder and split code out into its own thing
 * Remove unused "level" struct from DDATest era
 * Net v4: Increase packet size to 1400 bytes from 512 (similar to Quake, Source, UNreal, etc)
