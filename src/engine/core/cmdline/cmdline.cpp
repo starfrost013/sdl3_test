@@ -78,7 +78,7 @@ namespace Capy
 	/* See if +exec was provided, so we can create the machine right after init */
 	void Cmdline_ParseExec()
 	{
-		char exec_buf[STRING_MAX] = {0};
+		char exec_buf[MAX_STRING] = {0};
 
 		/* -2 because we need to provide a "+set", cvar name, and the value*/
 		for (uint32_t arg = 0; arg < cmdline_argc - 1; arg++)

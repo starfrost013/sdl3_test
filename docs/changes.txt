@@ -14,12 +14,18 @@ Pre-Alpha 8.0
 April 2026
 CHANGELOG
 
-==== Pre-Alpha 8.0 (March 2026) ====
+==== Pre-Alpha 8.0 (April 23, 2026) ====
 * Implemented start of Squirrel VM / scripting system
+   * Added Sqrat for implementation
 * Implemented usernames
 * Implemented network identity system for asset replication
 * Implemented server shutdown notification NETMSG_SERVER_SHUTDOWN, sent when the server is shutting down
 * Implemented asset system and texture stuff
+* Implemented pakfile system
+   * "beer" files generated using "Brewery" tool
+   * File management API is abstracted away using C++ streams
+   * Started implementing component system
+   * Streams are a separate object with their own lifetime now
 * Get rid of "data" folder and split code out into its own thing
 * Remove unused "level" struct from DDATest era
 * Net v4: Increase packet size to 1400 bytes from 512 (similar to Quake, Source, UNreal, etc)

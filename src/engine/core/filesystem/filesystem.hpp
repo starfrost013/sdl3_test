@@ -39,6 +39,27 @@ namespace Capy
         FILETYPE_PAK = 1,           // THis file is in the virtual beer filesystem
     };
 
+        // in the future this will load from a pakcage file
+    class FilesystemFile
+    {
+        friend class Filesystem;
+
+        public:
+            std::fstream* stream;               // the backing stream of the file
+            char path[MAX_PATH];                // the path to the file (full)
+            bool open;                          // is the file open?
+
+        FilesystemFile()
+        {
+            stream = new std::fstream;
+        }
+
+        ~FilesystemFile()
+        {
+            delete stream;
+        }
+    };
+    
     // Package file that all game content is located in
     class FilesystemImage
     {
@@ -93,26 +114,7 @@ namespace Capy
     // first member of filesystem image chain
     extern FilesystemImage* imageListHead;
 
-    // in the future this will load from a pakcage file
-    class FilesystemFile
-    {
-        friend class Filesystem;
 
-        public:
-            std::fstream* stream;               // the backing stream of the file
-            char path[MAX_PATH];                // the path to the file (full)
-            bool open;                          // is the file open?
-
-        FilesystemFile()
-        {
-            stream = new std::fstream;
-        }
-
-        ~FilesystemFile()
-        {
-            delete stream;
-        }
-    };
 
     class Filesystem
     {

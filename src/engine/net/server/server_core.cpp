@@ -57,7 +57,7 @@ namespace Capy
 
     void Server::ClientStartWorldDownload(Client* client)
     {
-        World::WorldHeader header = world.GetHeader();
+        WorldGenerator::WorldHeader header = world.GetHeader();
         SendMessage(NetFactory_CreateDownloadStartPacket_Server(map->name, header.size, world.GetSizeInBytes()), client);
 
         client->connectPhase = Client::ConnectPhase::CLIENT_DOWNLOADING_WORLD;

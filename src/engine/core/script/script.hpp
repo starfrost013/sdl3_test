@@ -9,6 +9,7 @@
 #pragma once 
 
 // includes
+#include <core/filesystem/filesystem.hpp>
 #include <Capy.hpp>
 #include <squirrel.h>
 #include <sqstdblob.h>

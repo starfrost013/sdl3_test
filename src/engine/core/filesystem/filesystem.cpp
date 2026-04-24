@@ -38,19 +38,20 @@ namespace Capy
     /// @return A pointer to a FilesystemFile object.
     FilesystemFile* Filesystem::OpenInternal(const char* path, FilesystemFileMode mode, FilesystemFileType type)
     {
+        FilesystemFile* ff = nullptr;
+        auto iosMode = std::ios_base::in | std::ios_base::out | std::ios_base::trunc;
+        char finalPathBuf[MAX_PATH] = {0};
+
         switch (type)
         {
             case FilesystemFileType::FILETYPE_FS:
-                char finalPathBuf[STRING_MAX] = {0};
 
-                snprintf(finalPathBuf, STRING_MAX, "%s%s", fsBasedir->string, path);
+                snprintf(finalPathBuf, MAX_PATH, "%s%s", fsBasedir->string, path);
 
-                FilesystemFile* ff = new FilesystemFile;
+                ff = new FilesystemFile;
                 
                 // just trunc the file
                 // we already have the version from deserialisation
-
-                auto iosMode = std::ios_base::in | std::ios_base::out | std::ios_base::trunc;
 
                 if (mode & FILE_BINARY)
                     iosMode |= std::ios_base::binary;
@@ -67,7 +68,6 @@ namespace Capy
                 ff->open = true;
                 return ff;
             case FilesystemFileType::FILETYPE_PAK:
-                char buf[MAX_PATH] = {0}; //allocate a temporary buffer to find the image
 
                 const char* firstColon = strchr(path, FILESYSTEM_PACKAGE_SEPARATOR);
 
@@ -83,7 +83,7 @@ namespace Capy
                 size_t bufLength = firstColon - initial;
                 const char* filenameWithinPak = path + bufLength;
 
-                strncpy(buf, initial, bufLength);
+                strncpy(finalPathBuf, initial, bufLength);
                 FilesystemImage* image = FS_GetImageByName(path);
 
                 if (!image)
@@ -94,8 +94,8 @@ namespace Capy
                 }
 
                 // copy the rest of the string back in
-                strncpy(buf, filenameWithinPak, MAX_PATH);
-                FilesystemFile* ff = image->OpenFile(buf);
+                strncpy(finalPathBuf, filenameWithinPak, MAX_PATH);
+                ff = image->OpenFile(finalPathBuf);
 
                 return ff; 
         }
@@ -243,10 +243,10 @@ namespace Capy
         /* Read the file headers */
         for (auto i = 0; i < header.numFiles; i++)
         {
-            FilesystemImageFileEntry fileEntry = {0};
+            FilesystemImageFileEntry entry = {0};
 
-            stream->read((char*)(&fileEntry.size), sizeof(size_t));          
-            stream->read((char*)(&fileEntry.location), sizeof(size_t));
+            stream->read((char*)(&entry.size), sizeof(size_t));          
+            stream->read((char*)(&entry.location), sizeof(size_t));
 
             while (len < MAX_PATH && curByte != '\0')
             {
@@ -254,11 +254,13 @@ namespace Capy
                 len++;
             }
 
-            fileEntry.id = i;
+            entry.id = i;
 
             // go back
             stream->seekg(-len, std::ios_base::cur);
-            stream->read(fileEntry.path, len);  
+            stream->read(entry.path, len);  
+
+            fileList.push_back(entry);
         }
 
         // add this image to the linked list of images (Capy only)
@@ -270,6 +272,8 @@ namespace Capy
             imageListTail->next = this;
             imageListTail = this;
         }
+
+        return true; 
     }
 
     bool FilesystemImage::Write(const char* path)

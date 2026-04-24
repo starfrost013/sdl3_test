@@ -14,7 +14,7 @@ namespace Capy
 
         void RegisterClass() override
         {
-            Script_ExposeClass<Component>();
+            //Script_ExposeClass<Component>();
         };
     };
 }

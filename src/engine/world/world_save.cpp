@@ -46,11 +46,11 @@ namespace Capy
         || !strlen(header.name)) // empty string name also counts   
             strncpy(header.name, fileName, WORLD_NAME_LENGTH);
 
-        file->stream.write(reinterpret_cast<char*>(&header), sizeof(header));
+        file->stream->write(reinterpret_cast<char*>(&header), sizeof(header));
 
         auto finalSize = header.size.x * header.size.y; // really need to create a property that automates ths
 
-        file->stream.write((char*)tileData, finalSize);
+        file->stream->write((char*)tileData, finalSize);
         
         CloseWorldFile();
         return true; 
@@ -68,7 +68,7 @@ namespace Capy
         if (!OpenWorldFile(fileName, false))
             goto done;
 
-        file->stream.read(reinterpret_cast<char*>(&header), sizeof(header));
+        file->stream->read(reinterpret_cast<char*>(&header), sizeof(header));
 
         size = header.size.x * header.size.y;
 
@@ -97,9 +97,9 @@ namespace Capy
         );
 
         // read in the world
-        file->stream.read((char*)tileData, size);
+        file->stream->read((char*)tileData, size);
 
-        if (file->stream.bad())
+        if (file->stream->bad())
         {
             Logging_LogChannel("The data of this world is truncated!", LogChannel::Error);
             goto done; 

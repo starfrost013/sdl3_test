@@ -12,9 +12,9 @@ namespace Capy
     Command* commandTail = nullptr;
 
     /* This is probably not threadsafe */
-    char lastCommand[STRING_MAX] = {0};
+    char lastCommand[MAX_STRING] = {0};
     /* This is so we can do stuff like strtok */
-    char lastToken[STRING_MAX] = {0};
+    char lastToken[MAX_STRING] = {0};
 
     void Command_Init()
     {
@@ -76,7 +76,7 @@ namespace Capy
     uint32_t Command_Argc()
     {
         // restore the original
-        strncpy(lastToken, lastCommand, STRING_MAX);
+        strncpy(lastToken, lastCommand, MAX_STRING);
 
         char* cmd_name = strtok(lastToken, STRING_WHITESPACE_DELIMITERS);
 
@@ -99,13 +99,13 @@ namespace Capy
     const char* Command_AllTextAfterName()
     {
         // restore the original
-        strncpy(lastToken, lastCommand, STRING_MAX);
+        strncpy(lastToken, lastCommand, MAX_STRING);
         char* cmd_name = strtok(lastToken, STRING_WHITESPACE_DELIMITERS);
         // skip the command name
 
         uint32_t name_length = strlen(cmd_name);
 
-        if (name_length >= STRING_MAX)
+        if (name_length >= MAX_STRING)
             return lastToken; 
 
         char* tok = lastToken + name_length + 1;
@@ -116,7 +116,7 @@ namespace Capy
     const char* Command_Argv(uint32_t argv)
     {
         // restore the original
-        strncpy(lastToken, lastCommand, STRING_MAX);
+        strncpy(lastToken, lastCommand, MAX_STRING);
 
         char* str = Util_GetTokenSeparatedPart(lastToken, " ", argv);
         
@@ -146,12 +146,12 @@ namespace Capy
     {
         auto len = strlen(cmd);
 
-        if (len > STRING_MAX)
+        if (len > MAX_STRING)
             Logging_LogChannel("Command_Execute: Command string above %d characters. The command will be executed, but you won't be able to access parameters after the cutoff",
-            LogChannel::Warning, STRING_MAX);
+            LogChannel::Warning, MAX_STRING);
 
-        strncpy(lastCommand, cmd, STRING_MAX);
-        strncpy(lastToken, cmd, STRING_MAX);
+        strncpy(lastCommand, cmd, MAX_STRING);
+        strncpy(lastToken, cmd, MAX_STRING);
 
         char* cmdName = strtok(lastToken, STRING_WHITESPACE_DELIMITERS);
 
