@@ -80,6 +80,7 @@ add_executable (Capy
 
 # World
 "world/world.cpp"
+"world/world_generator.cpp"
 "world/world_save.cpp"
 
 "util/util.cpp"

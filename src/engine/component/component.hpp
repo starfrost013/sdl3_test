@@ -11,5 +11,10 @@ namespace Capy
         virtual void Frame() { };                       // Called on Frame
         virtual void Tick() { };                        // Called on Tick 
         virtual void Destroy() { };                     // Called on Destroy
+
+        void RegisterClass() override
+        {
+            Script_ExposeClass<Component>();
+        };
     };
 }

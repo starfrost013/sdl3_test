@@ -15,8 +15,9 @@ namespace Capy
     // Maximum safe path length
     #define MAX_PATH                        260
     
-    #define FILESYSTEM_PACKAGE_NAMESPACE    "beer:"                  // Namespace for loading shit from a pak
+    #define FILESYSTEM_PACKAGE_NAMESPACE    "beer!"                 // Namespace for loading shit from a pak
     #define FILESYSTEM_PACKAGE_EXTENSION    ".beer"                 // BEER
+    #define FILESYSTEM_PACKAGE_SEPARATOR    ':'                     // COLON
     #define FILESYSTEM_PACKAGE_MAGIC        0x52454542              // 'BEER' (little endian)
     #define FILESYSTEM_PACKAGE_VERSION      1                       // Beerfile version
     #define FILESYSTEM_PACKAGE_CHUNK_SIZE   1048576                 // 1 MB, should be reasonably fast?
@@ -54,20 +55,36 @@ namespace Capy
             char path[MAX_PATH];
             size_t location;
             size_t size; 
+
+            // stored to make iteration slightly more efficient
+            int id; 
         };
 
         FilesystemImageHeader header; 
         std::vector<FilesystemImageFileEntry> fileList;
 
-        std::fstream stream;
+        std::fstream* stream;
 
         // Engine only
-        FilesystemImage* nextImage;
-        char path[MAX_PATH] = {0};              // the path 
+        FilesystemImage* next;
+        char path[MAX_PATH] = {0};                              // the path 
 
-        bool AddFile(const char* path);         // Add a file to a beerfile to be written.  
-        bool Read(const char* path);            // Read a beerfile.
-        bool Write(const char* path);           // Write out a beerfile.
+        bool AddFile(const char* path);                         // Add a file to a beerfile to be written.
+        FilesystemImageFileEntry* GetFileByPath(const char* name);  
+        bool Read(const char* path);                            // Read a beerfile.
+        bool Write(const char* path);                           // Write out a beerfile.
+        FilesystemFile* OpenFile(const char* path);             // seek to the start of a file.
+        void Close();
+
+        FilesystemImage()
+        {
+            stream = new std::fstream;   
+        }
+
+        ~FilesystemImage()
+        {
+            delete stream;
+        }
 
     private: 
         bool Open(const char* path);            // open the mage
@@ -82,11 +99,19 @@ namespace Capy
         friend class Filesystem;
 
         public:
-            std::fstream stream;                // the backing stream of the file
+            std::fstream* stream;               // the backing stream of the file
             char path[MAX_PATH];                // the path to the file (full)
             bool open;                          // is the file open?
 
+        FilesystemFile()
+        {
+            stream = new std::fstream;
+        }
 
+        ~FilesystemFile()
+        {
+            delete stream;
+        }
     };
 
     class Filesystem
@@ -105,6 +130,9 @@ namespace Capy
     private:
         static FilesystemFile* OpenInternal(const char* path, FilesystemFileMode mode, FilesystemFileType type);
     };
+
+    // Some helper functions
+    FilesystemImage* FS_GetImageByName(const char* name);
 
 };
 

@@ -13,12 +13,14 @@ namespace Brewery
 {
     // Maximum safe path length
     #define MAX_PATH                        260
-    
-    #define FILESYSTEM_PACKAGE_NAMESPACE    "beer:"                  // Namespace for loading shit from a pak
+
+    #define FILESYSTEM_PACKAGE_NAMESPACE    "beer!"                 // Namespace for loading shit from a pak
     #define FILESYSTEM_PACKAGE_EXTENSION    ".beer"                 // BEER
+    #define FILESYSTEM_PACKAGE_SEPARATOR    ':'                     // COLON
     #define FILESYSTEM_PACKAGE_MAGIC        0x52454542              // 'BEER' (little endian)
     #define FILESYSTEM_PACKAGE_VERSION      1                       // Beerfile version
     #define FILESYSTEM_PACKAGE_CHUNK_SIZE   1048576                 // 1 MB, should be reasonably fast?
+
 
     enum FilesystemFileMode
     {   

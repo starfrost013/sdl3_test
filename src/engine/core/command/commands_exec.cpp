@@ -30,17 +30,19 @@ namespace Capy
         char ch = 0x01;
         char execBuf[STRING_MAX] = {0}; 
 
-        while (!execCfg->stream.eof())
+        while (!execCfg->stream->eof())
         {
-            auto pos = execCfg->stream.tellp();
+            auto pos = execCfg->stream->tellp();
             // yes this reads some irrelevant data but i don't want to use std::string
-            execCfg->stream.getline(execBuf, STRING_MAX); 
+            execCfg->stream->getline(execBuf, STRING_MAX); 
             auto length = strlen(execBuf);
-            execCfg->stream.seekp(pos + length, std::_S_beg);
+            execCfg->stream->seekp(pos + length, std::_S_beg);
         
             Command_Execute(execBuf, CommandType::COMMAND_CONSOLE);
 
         }
 
+        Filesystem::Close(execCfg);
+        delete execCfg; 
     }
 }

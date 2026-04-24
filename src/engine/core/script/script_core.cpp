@@ -35,7 +35,6 @@ namespace Capy
         sq_setcompilererrorhandler(script.handle, Script_CompileFatal);
         
         script.sqratTable = Sqrat::Table(script.handle);
-
         script.initialised = true; 
     }
 
@@ -44,10 +43,10 @@ namespace Capy
     {
         FilesystemFile* f = (FilesystemFile*)file;
 
-        if (f->stream.eof())
+        if (f->stream->eof())
             return 0x00;
         else
-            return f->stream.get();
+            return f->stream->get();
     }    
 
     // open and compile a script

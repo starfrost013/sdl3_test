@@ -9,7 +9,7 @@
 namespace Capy
 {
     // Open the world file (returns true if it succeeded or is already open, returns false if it failed)
-    bool World::OpenWorldFile(const char* fileName = WORLD_DEFAULT_FILENAME, bool tryCreate = true)
+    bool WorldGenerator::OpenWorldFile(const char* fileName = WORLD_DEFAULT_FILENAME, bool tryCreate = true)
     {
         // create the file if it does not exist
         if (!file)
@@ -28,13 +28,13 @@ namespace Capy
         return true; 
     }
 
-    void World::CloseWorldFile()
+    void WorldGenerator::CloseWorldFile()
     {
         Filesystem::Close(file);
     }
 
     // Save level
-    bool World::Serialise(const char* fileName = WORLD_DEFAULT_FILENAME)
+    bool WorldGenerator::Serialise(const char* fileName = WORLD_DEFAULT_FILENAME)
     {        
         Logging_LogChannel("Serialising level to %s", LogChannel::Debug, fileName);
 
@@ -57,7 +57,7 @@ namespace Capy
     }
 
     // Called during level loading
-    bool World::Deserialise(const char* fileName = WORLD_DEFAULT_FILENAME)
+    bool WorldGenerator::Deserialise(const char* fileName = WORLD_DEFAULT_FILENAME)
     {        
         Logging_LogChannel("Deserialising level from %s", LogChannel::Debug, fileName);
 

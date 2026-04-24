@@ -111,8 +111,8 @@ namespace Capy
             uint32_t magic;                 // magic
             std::size_t seqNumber;          // sequence number for message re-ordering etc
             // these are not enums because they could theoretically be out of range
-            uint32_t size;                  // size does not need to be 8 bytes (nobody will send 2 GB packet!)
-            uint8_t type;                // type of message
+            uint32_t size;                  // size does not need to be 8 bytes (nobody will send 4 GB packet!)
+            uint8_t type;                   // type of message
         };
 
         NetHeader header;                   // header
@@ -242,7 +242,7 @@ namespace Capy
     class NetMode
     {
         public:
-            World world;              // replicated from server to client *** temporary - make protected when input system exists ***
+            WorldGenerator world;              // replicated from server to client *** temporary - make protected when input system exists ***
             
             virtual void Init() { };
             virtual void Frame();

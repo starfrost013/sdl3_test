@@ -38,46 +38,81 @@ namespace Capy
     /// @return A pointer to a FilesystemFile object.
     FilesystemFile* Filesystem::OpenInternal(const char* path, FilesystemFileMode mode, FilesystemFileType type)
     {
-        FilesystemFile* ff = new FilesystemFile;
-
         switch (type)
         {
             case FilesystemFileType::FILETYPE_FS:
-                
-                break;
+                char finalPathBuf[STRING_MAX] = {0};
 
+                snprintf(finalPathBuf, STRING_MAX, "%s%s", fsBasedir->string, path);
+
+                FilesystemFile* ff = new FilesystemFile;
+                
+                // just trunc the file
+                // we already have the version from deserialisation
+
+                auto iosMode = std::ios_base::in | std::ios_base::out | std::ios_base::trunc;
+
+                if (mode & FILE_BINARY)
+                    iosMode |= std::ios_base::binary;
+                
+                ff->stream->open(finalPathBuf, iosMode);
+
+                if (ff->stream->bad())
+                {
+                    delete ff; 
+                    return nullptr;
+                }
+
+                strncpy(ff->path, finalPathBuf, MAX_PATH);
+                ff->open = true;
+                return ff;
+            case FilesystemFileType::FILETYPE_PAK:
+                char buf[MAX_PATH] = {0}; //allocate a temporary buffer to find the image
+
+                const char* firstColon = strchr(path, FILESYSTEM_PACKAGE_SEPARATOR);
+
+                if (!firstColon)
+                {
+                    Logging_LogChannel("Filesystem::OpenInternal - somehow no beer in FilesystemFileType::FILETYPE_PAK",
+                    LogChannel::Error);
+                    return nullptr;
+                }
+
+                // lop off the "beer!" thing
+                const char* initial = path + strlen(FILESYSTEM_PACKAGE_NAMESPACE);
+                size_t bufLength = firstColon - initial;
+                const char* filenameWithinPak = path + bufLength;
+
+                strncpy(buf, initial, bufLength);
+                FilesystemImage* image = FS_GetImageByName(path);
+
+                if (!image)
+                {
+                    Logging_LogChannel("Filesystem::OpenInternal - couldn't find image with path %s (FilesystemFileType = FilesystemFileType::FILETYPE_PAK)",
+                    LogChannel::Error);
+                    return nullptr;
+                }
+
+                // copy the rest of the string back in
+                strncpy(buf, filenameWithinPak, MAX_PATH);
+                FilesystemFile* ff = image->OpenFile(buf);
+
+                return ff; 
         }
 
-        return ff; 
+        return nullptr; 
     }
 
     FilesystemFile* Filesystem::Open(const char* path, FilesystemFileMode mode)
     {
-        char finalPathBuf[STRING_MAX] = {0};
-
-        snprintf(finalPathBuf, STRING_MAX, "%s%s", fsBasedir->string, path);
-
-        FilesystemFile* ff = new FilesystemFile;
-        
-        // just trunc the file
-        // we already have the version from deserialisation
-
-        auto iosMode = std::ios_base::in | std::ios_base::out | std::ios_base::trunc;
-
-        if (mode & FILE_BINARY)
-            iosMode |= std::ios_base::binary;
-        
-        ff->stream.open(finalPathBuf, iosMode);
-
-        if (ff->stream.bad())
+        // check for beer file path - ensure it is long enough and contains a colon
+        if (strstr(path, FILESYSTEM_PACKAGE_NAMESPACE)
+        && strchr(path, FILESYSTEM_PACKAGE_SEPARATOR))
         {
-            delete ff; 
-            return nullptr;
+            return OpenInternal(path, mode, FilesystemFileType::FILETYPE_PAK);
         }
-
-        strncpy(ff->path, finalPathBuf, MAX_PATH);
-        ff->open = true;
-        return ff;
+        else
+            return OpenInternal(path, mode, FilesystemFileType::FILETYPE_FS);
     }
 
     void Filesystem::Close(FilesystemFile* ff)
@@ -86,7 +121,7 @@ namespace Capy
         if (!ff)
             return;
 
-        ff->stream.close();
+        ff->stream->close();
         
         delete ff; 
         ff = nullptr;
@@ -162,9 +197,9 @@ namespace Capy
             return false; 
         }
 
-        stream.open(path, std::ios_base::out | std::ios_base::trunc | std::ios_base::binary);
+        stream->open(path, std::ios_base::out | std::ios_base::trunc | std::ios_base::binary);
 
-        if (stream.bad())
+        if (stream->bad())
         {
             Logging_LogChannel("Failed to open beerfile: Could not open file", LogChannel::Error);
             return false;
@@ -180,7 +215,7 @@ namespace Capy
         if (!Open(path))
             return false;
 
-        stream.read((char*)(&header), sizeof(FilesystemImageHeader));
+        stream->read((char*)(&header), sizeof(FilesystemImageHeader));
         
         if (header.magic != FILESYSTEM_PACKAGE_MAGIC)
         {
@@ -210,15 +245,20 @@ namespace Capy
         {
             FilesystemImageFileEntry fileEntry = {0};
 
+            stream->read((char*)(&fileEntry.size), sizeof(size_t));          
+            stream->read((char*)(&fileEntry.location), sizeof(size_t));
+
             while (len < MAX_PATH && curByte != '\0')
             {
-                curByte = stream.get();
+                curByte = stream->get();
                 len++;
             }
 
+            fileEntry.id = i;
+
             // go back
-            stream.seekg(-len, std::ios_base::cur);
-            stream.read(fileEntry.path, len);            
+            stream->seekg(-len, std::ios_base::cur);
+            stream->read(fileEntry.path, len);  
         }
 
         // add this image to the linked list of images (Capy only)
@@ -227,7 +267,7 @@ namespace Capy
             imageListHead = imageListTail = this;
         else 
         {
-            imageListTail->nextImage = this;
+            imageListTail->next = this;
             imageListTail = this;
         }
     }
@@ -241,7 +281,7 @@ namespace Capy
         header.magic = FILESYSTEM_PACKAGE_MAGIC;
         header.version = FILESYSTEM_PACKAGE_VERSION;
 
-        stream.write((char*)(&header), sizeof(header));
+        stream->write((char*)(&header), sizeof(header));
 
         size_t currentLocation = 0;
 
@@ -249,12 +289,12 @@ namespace Capy
         for (FilesystemImageFileEntry entry : fileList)
         {
             // only write the actual length of things
-            stream.write((char*)(&entry.size), sizeof(size_t));
+            stream->write((char*)(&entry.size), sizeof(size_t));
             // now write the location
             entry.location = currentLocation;
             currentLocation += entry.size;
-            stream.write((char*)(&entry.location), sizeof(size_t));
-            stream.write((char*)(&entry.path), strlen(entry.path) + 1); // include the null terminator. should we change this
+            stream->write((char*)(&entry.location), sizeof(size_t));
+            stream->write((char*)(&entry.path), strlen(entry.path) + 1); // include the null terminator. should we change this
         }
         
         std::fstream tempStream; 
@@ -291,7 +331,7 @@ namespace Capy
                 tempStream.read(fileBuf, FILESYSTEM_PACKAGE_CHUNK_SIZE);
 
                 gcount = tempStream.gcount();
-                stream.write(fileBuf, gcount); // only write what was really written so we don't get junk from older files in there
+                stream->write(fileBuf, gcount); // only write what was really written so we don't get junk from older files in there
             }
 
             // not the best code but we depend on failbit
@@ -303,9 +343,80 @@ namespace Capy
         }
 
         delete[] fileBuf; 
-        stream.close();
+        stream->close();
 
         Logging_LogChannel("Successfully wrote %d files to beerfile %s!", LogChannel::Message, fileList.size(), path);
         return true;
+    }
+
+    /// @brief Get a file entry for a path within the current filesystem image.
+    /// @param name the name of the file to obtain
+    /// @return the FilesystemImageFileEntry for the name name, or nullptr if not found
+    FilesystemImageFileEntry* FilesystemImage::GetFileByPath(const char* name)
+    {
+        for (FilesystemImageFileEntry fileEntry : fileList)
+        {
+            if (!strncmp(fileEntry.path, name, MAX_PATH))
+                return &fileEntry;
+        }
+
+        return nullptr; 
+    }
+
+    FilesystemFile* FilesystemImage::OpenFile(const char* name)
+    {
+        FilesystemImageFileEntry* imageEntry = GetFileByPath(name);
+
+        if (!imageEntry)
+        {
+            Logging_LogChannel("FilesystemImage::OpenFile - could not find path %s in pakfile %s",
+            LogChannel::Error, name, path);    // Some helper functions
+        }
+
+        size_t currentLocation = 0;
+
+        for (int32_t i = 0; i < imageEntry->id; i++)
+        {
+            if (i > fileList.size()) // wat
+            {
+                Logging_LogChannel("Not really an assert: FilesystemImage::OpenFile: Bing Bong Big Bug", LogChannel::Fatal);
+                break; 
+            }
+
+            currentLocation += fileList[i].size;
+        }
+
+        // calculate the 
+        stream->seekg(currentLocation);
+
+        FilesystemFile* file = new FilesystemFile;
+
+        file->open = true;
+        // of the format "beer!pak0.pak:hhehehe" so that we only have to look for one character
+        snprintf(file->path, MAX_PATH, "%s%s:%s", FILESYSTEM_PACKAGE_NAMESPACE, this->path, name);
+        file->stream = stream;
+
+        return file; 
+    }
+
+    void FilesystemImage::Close()
+    {
+        stream->close();
+    }
+
+    // Some helper functions
+    FilesystemImage* FS_GetImageByName(const char* name)
+    {
+        FilesystemImage* image = imageListHead;
+
+        while (image)
+        {
+            if (!strcmp(image->path, name))
+                return image;
+
+            image = image->next;
+        }
+        
+        return nullptr;
     }
 };

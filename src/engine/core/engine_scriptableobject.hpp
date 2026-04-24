@@ -18,6 +18,7 @@ namespace Capy
         CapyScriptableObject()
         {
             SetName("Generic Scriptable");    
+            RegisterClass();
         }
 
         char* GetName()
