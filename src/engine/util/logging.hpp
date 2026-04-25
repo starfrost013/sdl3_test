@@ -1,7 +1,9 @@
 //
-// Starfrost Shared Logging System (Version 4.6.1) 
+// Starfrost Shared Logging System (Version 4.7) 
 // An easy to use, multi-channel and multi-destination C/C++ logging system
 // Copyright © 2023-2026 starfrost
+//
+// NOTE: YOU CANNOT USE NEW/DELETE OR ANY DYNAMIC MEMORY MANAGEMENT AFTER INIT IN THIS CODE, AS IT IS CALLED IN THE CASE OF MEMORY BEING HOSED!
 // 
 // Version history - everything before 4.3 is retroactive
 //

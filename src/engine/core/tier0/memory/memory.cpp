@@ -1,6 +1,8 @@
 /* 
     Tracked memory allocator
     TODO: Tagging
+
+    NOTE: Logging is called from here. So don't use new/delete in logging
 */
 
 #include "util/logging.hpp"
@@ -19,11 +21,11 @@ void* operator new(std::size_t size)
     void* ptr = malloc(size);
 
     if (!ptr)
-        throw std::bad_alloc();
+        Capy::Logging_LogChannel("**** Internal Problem **** Failed to allocate %ld bytes.", Capy::LogChannel::SuperFatal, size);
     
 #ifdef DEBUG
     if (Capy::Cmdline_Check("-memdebug"))
-        Capy::Logging_LogChannel("operator new: Allocated %d bytes (total is now %d)", Capy::LogChannel::Debug, size, sysTotalRam);
+        Capy::Logging_LogChannel("operator new: Allocated %ld bytes (total is now %ld)", Capy::LogChannel::Debug, size, sysTotalRam);
 #endif
     return ptr;
 }
@@ -36,11 +38,11 @@ void* operator new[](std::size_t size)
     void* ptr = malloc(size);
 
     if (!ptr)
-        throw std::bad_alloc();
+        Capy::Logging_LogChannel("**** Internal Problem **** operator new[]: Failed to allocate %ld bytes.", Capy::LogChannel::SuperFatal, size);
     
 #ifdef DEBUG
     if (Capy::Cmdline_Check("-memdebug"))
-        Capy::Logging_LogChannel("operator new[]: Allocated %d bytes (total is now %d)", Capy::LogChannel::Debug, size, sysTotalRam);
+        Capy::Logging_LogChannel("operator new[]: Allocated %ld bytes (total is now %ld)", Capy::LogChannel::Debug, size, sysTotalRam);
 #endif
     return ptr;
 }
@@ -48,17 +50,16 @@ void* operator new[](std::size_t size)
 void operator delete(void *p) _GLIBCXX_TXN_SAFE _GLIBCXX_USE_NOEXCEPT
 {
     if (!p)
-        throw std::bad_alloc();
+        Capy::Logging_LogChannel("**** Internal Problem **** operator delete: Failed to free memory at 0x%x.", Capy::LogChannel::SuperFatal, p);
 
     if (!sysNumAllocs)
-        throw std::bad_alloc();
+        Capy::Logging_LogChannel("**** Internal Problem **** operator delete: Tried to free 0x%x with no allocations!", Capy::LogChannel::SuperFatal, p);
 
     sysNumAllocs--;
     sysTotalRam -= sizeof(p);
 #ifdef DEBUG
-
     if (Capy::Cmdline_Check("-memdebug"))
-        Capy::Logging_LogChannel("operator delete: Freed %d bytes (total is now %d)", Capy::LogChannel::Debug, sizeof(p), sysTotalRam);
+        Capy::Logging_LogChannel("operator delete: Freed %ld bytes (total is now %ld)", Capy::LogChannel::Debug, sizeof(p), sysTotalRam);
 #endif
 
     free(p);
@@ -67,17 +68,17 @@ void operator delete(void *p) _GLIBCXX_TXN_SAFE _GLIBCXX_USE_NOEXCEPT
 void operator delete[](void *p) _GLIBCXX_TXN_SAFE _GLIBCXX_USE_NOEXCEPT
 {
     if (!p)
-        throw std::bad_alloc();
+        Capy::Logging_LogChannel("**** Internal Problem **** operator delete[]: Failed to free memory at 0x%x.", Capy::LogChannel::SuperFatal, p);
 
     if (!sysNumAllocs)
-        throw std::bad_alloc();
+        Capy::Logging_LogChannel("**** Internal Problem **** operator delete[]: Tried to free 0x%x with no allocations!", Capy::LogChannel::SuperFatal, p);
 
     sysNumAllocs--;
     sysTotalRam -= sizeof(p);
 #ifdef DEBUG
 
     if (Capy::Cmdline_Check("-memdebug"))
-        Capy::Logging_LogChannel("operator delete[]: Freed %d bytes (total is now %d)", Capy::LogChannel::Debug, sizeof(p), sysTotalRam);
+        Capy::Logging_LogChannel("operator delete[]: Freed %ld bytes (total is now %ld)", Capy::LogChannel::Debug, sizeof(p), sysTotalRam);
 #endif
 
     free(p);
