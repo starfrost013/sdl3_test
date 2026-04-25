@@ -9,8 +9,6 @@
 #pragma once 
 
 // includes
-#include <core/filesystem/filesystem.hpp>
-#include <Capy.hpp>
 #include <squirrel.h>
 #include <sqstdblob.h>
 #include <sqstdsystem.h>
@@ -22,11 +20,10 @@
 #include <sqstdmodule.h>
 #include <sqrat.h>
 
+class Cvar;
+
 namespace Capy
 {
-    // convars
-    extern Cvar* scriptStackSize;
-
     class ScriptVM
     {
     public: 
@@ -45,10 +42,27 @@ namespace Capy
     void Script_CompileFatal(HSQUIRRELVM vm, const SQChar* ch, const SQChar* source,
                       SQInteger line, SQInteger column);                        // fatal error reported by Squirrel VM
     
-    template <typename T> Sqrat::Class<T> Script_ExposeClass();
-    template <typename T, class F> void Script_ExposeMethod(const char* name, Sqrat::Class<T> sqratClass, F method);
-    template <typename T, class V> void Script_ExposeVar(const char* name, Sqrat::Class<T> sqratClass, V var);
-    template <typename T> void Script_ClassDone(const char* name,   Sqrat::Class<T> sqratClass);
+    template <typename T> Sqrat::Class<T> Script_ExposeClass(const char* name)
+    {
+        Sqrat::Class<T> theClass(script.handle, name);
+        return theClass; 
+    }
+
+    template <typename T, class F> void Script_ExposeMethod(const char* name, Sqrat::Class<T> sqratClass, F method)
+    {
+        sqratClass.Func(name, method);
+    }
+
+    template <typename T, class V> void Script_ExposeVar(const char* name, Sqrat::Class<T> sqratClass, V var)
+    {
+        sqratClass.Var(name, var);
+    }
+
+    // call after above
+    template <typename T> void Script_ClassDone(const char* name, Sqrat::Class<T> sqratClass)
+    {
+        script.sqratTable.Bind(name, sqratClass);
+    }
 
     void Script_Shutdown();                                                     // SHutdown
 }

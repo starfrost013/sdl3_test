@@ -14,7 +14,9 @@ namespace Capy
 
         void RegisterClass() override
         {
-            //Script_ExposeClass<Component>();
+            Sqrat::Class<Component> cl = Script_ExposeClass<Component>("Component");
+        
+        
         };
     };
 }
